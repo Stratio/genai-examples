@@ -10,7 +10,7 @@ Example configuration for [GenAI API](https://github.com/Stratio/genai-api):
 {
   "chain_id": "chain_echo",
   "chain_config": {
-    "package_id": "genai_chain_examples-0.3.1",
+    "package_id": "genai_chain_examples-0.1.0",
     "chain_module": "genai_chain_echo.chain",
     "chain_class": "EchoChain",
     "chain_params": {

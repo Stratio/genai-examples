@@ -1,0 +1,22 @@
+# User-specific stuff:
+.idea
+.vscode
+.run
+
+# File-based project format:
+*.iml
+
+# Log file
+*.log
+
+# Python
+__pycache__/
+*/dist/
+*.cert
+*.key
+**/scratches
+**/turing_results
+**/.env*
+
+# Coverage
+.coverage

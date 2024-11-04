@@ -1,1 +1,1 @@
-# genai-examples
+# Chains examples for developers

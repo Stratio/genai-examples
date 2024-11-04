@@ -1,0 +1,103 @@
+[tool.poetry]
+name = "genai-chain-examples"
+version = "0.3.2a0"
+description = ""
+authors = []
+packages = [
+    { include = "genai_chain_auth" },
+    { include = "genai_chain_echo" },
+    { include = "genai_chain_joke" },
+    { include = "genai_chain_metrics" },
+    { include = "genai_chain_gateway" },
+    { include = "genai_chain_memory" },
+]
+include = ["requirements.txt"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+genai-core = "0.3.1"
+lmdb = "1.4.1"
+# already included in genai-core but we set a fixed version
+langchain = "0.2.16"
+langchain-community = "0.2.16"
+langchain-openai = "0.1.22"
+langchain-aws = "0.1.17"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+pytest-asyncio = "^0.23.2"
+pytest-mock = "^3.12.0"
+pytest-cov = "^4.1.0"
+pylint = "^3.0.3"
+pylintfileheader = "^1.0.0"
+black = "^23.12.0"
+mypy = "^1.8.0"
+
+[tool.poetry.scripts]
+start_auth = 'genai_chain_auth.main:main'
+start_echo = 'genai_chain_echo.main:main'
+start_joke = 'genai_chain_joke.main:main'
+start_memory = 'genai_chain_memory.main:main'
+start_metrics = 'genai_chain_metrics.main:main'
+start_gateway = 'genai_chain_gateway.main:main'
+
+[[tool.poetry.source]]
+name = "stratio-releases"
+url = "http://qa.int.stratio.com/repository/python-releases/simple/"
+priority = "supplemental"
+
+[[tool.poetry.source]]
+name = "stratio-snapshots"
+url = "http://qa.int.stratio.com/repository/python-snapshots/simple/"
+priority = "supplemental"
+
+[[tool.poetry.source]]
+name = "stratio-staging"
+url = "http://qa.int.stratio.com/repository/python-staging/simple/"
+priority = "supplemental"
+
+[tool.coverage.run]
+omit = [
+    "tests/*",
+    "scripts/*",
+]
+
+[tool.pylint.main]
+py-version = "3.9"
+ignore-patterns = ["^\\.#"]
+ignore-paths = [
+    "^tests$",
+    "^tests/.*$",
+    "^scripts/.*$",
+]
+load-plugins = ["pylintfileheader"]
+file-header = "[\\S\\n\\t\\v ]+© 2024 Stratio Big Data Inc."
+file-header-ignore-empty-files = true
+
+[tool.pylint.basic]
+no-docstring-rgx = "^_"
+
+[tool.pylint."messages control"]
+disable = [
+    "raw-checker-failed",
+    "bad-inline-option",
+    "locally-disabled",
+    "file-ignored",
+    "suppressed-message",
+    "useless-suppression",
+    "deprecated-pragma",
+    "use-implicit-booleaness-not-comparison-to-string",
+    "use-implicit-booleaness-not-comparison-to-zero",
+    "use-symbolic-message-instead",
+    "too-few-public-methods"
+]
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.variables]
+ignored-argument-names = "_.*|^ignored_|^unused_"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

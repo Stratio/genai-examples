@@ -12,9 +12,6 @@ This repository contains a chain for RAG using OpenSearch as vector storage and 
    * Execute `main.py` in PyCharm.
    * Or execute `poetry run start` or `python main.py` in a terminal.
    * Or load the chain in GenAI API server: http://127.0.0.1:8081
-4. Test the chain:
-   * Execute `tests/test_chain.py` in PyCharm.
-   * Or execute `poetry run pytest` in a terminal.
 
 Services in docker-compose:
 
@@ -28,6 +25,18 @@ To stop the services:
 
 1. Execute `docker-compose down` to stop the services.
 2. Execute `docker-compose down -v` to remove the persistent data.
+
+### Run tests
+
+Run in PyCharm:
+
+* Execute the /tests folder. It works in debug mode too.
+
+Run in the terminal:
+
+* Execute `poetry run pytest`
+* Only unit test: `poetry run pytest tests/unit`
+* Only integration test: `poetry run pytest tests/integration`.
 
 ### Configure the secrets in Vault
 

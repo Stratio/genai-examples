@@ -82,46 +82,10 @@ services:
       - postgres
     restart: unless-stopped
 
-  opensearch:
-    # https://hub.docker.com/r/opensearchproject/opensearch
-    image: opensearchproject/opensearch:2.6.0
-    container_name: opensearch
-    environment:
-      - cluster.name=opensearch
-      - discovery.type=single-node
-      - plugins.security.disabled=true
-      # Disable JVM heap memory swapping
-      - bootstrap.memory_lock=true
-      - plugins.ml_commons.only_run_on_ml_node=false
-      # https://forum.opensearch.org/t/error-while-loading-ml-model-in-elasticsearch/13893
-      - plugins.ml_commons.native_memory_threshold=100
-      - "OPENSEARCH_JAVA_OPTS=-Xms256m -Xmx256m"
-      - "cluster.routing.allocation.disk.watermark.low=85%"
-      - "cluster.routing.allocation.disk.watermark.high=90%"
-      - "cluster.routing.allocation.disk.watermark.flood_stage=95%"
-    ports:
-      - "9201:9200"
-    volumes:
-      - opensearch-volume:/usr/share/opensearch/data:rw
-    restart: unless-stopped
-
-  opensearch-dashboards:
-    image: opensearchproject/opensearch-dashboards:2.6.0
-    container_name: opensearch-dashboards
-    environment:
-      - "OPENSEARCH_HOSTS=[\"http://opensearch:9200\"]"
-      - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true"
-    ports:
-      - "5601:5601"
-    depends_on:
-      - opensearch
-    restart: unless-stopped
-
 volumes:
   postgres-volume:
   genai-gateway-volume:
   genai-api-volume:
-  opensearch-volume:
 
 networks:
   default:

@@ -23,12 +23,17 @@ def mock_gateway(mocker: MockerFixture, msg_output: str, n: int) -> None:
         def get_endpoint_config(self):
             return {
                 "id": "openai-chat",
-                "endpoint_type": "llm/v1/chat",
+                "endpoint_type": "llm/v2/chat",
                 "model": {
                     "provider": "openai",
                     "name": "gpt-4o-mini-2024-07-18",
+                    "input_cost_1k_tokens": 0.00015,
+                    "output_cost_1k_tokens": 0.0006,
+                    "token_limit": 128000,
                     "config": {
                         "stratio_credential": "openai-token",
+                        "openai_api_type": "openai",
+                        "openai_api_base": "https://api.openai.com/v1",
                     },
                 },
             }

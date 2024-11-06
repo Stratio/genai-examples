@@ -21,12 +21,19 @@ def get_genai_gateway_base_url() -> str:
 def create_openai_chat_point() -> None:
     url = f"{get_genai_gateway_base_url()}/v1/endpoints"
     payload = {
-        "id": "openai-chat-gpt-3.5-turbo",
-        "endpoint_type": "llm/v1/chat",
+        "id": "openai-chat-gpt-4o-mini",
+        "endpoint_type": "llm/v2/chat",
         "model": {
-            "name": "gpt-3.5-turbo",
+            "name": "gpt-4o-mini-2024-07-18",
             "provider": "openai",
-            "config": {"stratio_credential": "openai-token"},
+            "input_cost_1k_tokens": 0.00015,
+            "output_cost_1k_tokens": 0.0006,
+            "token_limit": 128000,
+            "config": {
+                "stratio_credential": "openai-token",
+                "openai_api_type": "openai",
+                "openai_api_base": "https://api.openai.com/v1"
+            },
         },
     }
     response = httpx.post(url, json=payload)
@@ -40,12 +47,16 @@ def create_openai_chat_point() -> None:
 def create_openai_completions_point() -> None:
     url = f"{get_genai_gateway_base_url()}/v1/endpoints"
     payload = {
-        "id": "openai-completions-gpt-3.5-turbo",
+        "id": "openai-completions-gpt-4o",
         "endpoint_type": "llm/v1/completions",
         "model": {
-            "name": "gpt-3.5-turbo",
+            "name": "gpt-4o",
             "provider": "openai",
-            "config": {"stratio_credential": "openai-token"},
+            "config": {
+                "stratio_credential": "openai-token",
+                "openai_api_type": "openai",
+                "openai_api_base": "https://api.openai.com/v1"
+            },
         },
     }
     response = httpx.post(url, json=payload)
@@ -64,7 +75,11 @@ def create_openai_embeddings_point() -> None:
         "model": {
             "name": "text-embedding-ada-002",
             "provider": "openai",
-            "config": {"stratio_credential": "openai-token"},
+            "config": {
+                "stratio_credential": "openai-token",
+                "openai_api_type": "openai",
+                "openai_api_base": "https://api.openai.com/v1"
+            },
         },
     }
     response = httpx.post(url, json=payload)

@@ -43,12 +43,15 @@ Run in the terminal:
 
 * Execute `poetry run pytest`
 * Only unit test: `poetry run pytest tests/unit`
-* Only integration test: `poetry run pytest tests/integration`, add the following environment variables first:
+* Only integration test: `poetry run pytest tests/integration`.
 
-```bash
-# OpenAI env.vars
-export OPENAI_TOKEN=<openai-token>
-```
+### Code quality
+
+Run in the terminal:
+
+* To format the code execute `poetry run black ./`
+* To lint the code execute `poetry run pylint './**/'`
+* To check the types execute `poetry run mypy ./`
 
 ### Configure the secrets in Vault
 

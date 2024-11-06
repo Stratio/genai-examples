@@ -32,7 +32,7 @@ def create_openai_chat_point() -> None:
             "config": {
                 "stratio_credential": "openai-token",
                 "openai_api_type": "openai",
-                "openai_api_base": "https://api.openai.com/v1"
+                "openai_api_base": "https://api.openai.com/v1",
             },
         },
     }
@@ -55,7 +55,7 @@ def create_openai_completions_point() -> None:
             "config": {
                 "stratio_credential": "openai-token",
                 "openai_api_type": "openai",
-                "openai_api_base": "https://api.openai.com/v1"
+                "openai_api_base": "https://api.openai.com/v1",
             },
         },
     }
@@ -78,7 +78,7 @@ def create_openai_embeddings_point() -> None:
             "config": {
                 "stratio_credential": "openai-token",
                 "openai_api_type": "openai",
-                "openai_api_base": "https://api.openai.com/v1"
+                "openai_api_base": "https://api.openai.com/v1",
             },
         },
     }

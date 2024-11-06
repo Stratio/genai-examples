@@ -38,6 +38,14 @@ Run in the terminal:
 * Only unit test: `poetry run pytest tests/unit`
 * Only integration test: `poetry run pytest tests/integration`.
 
+### Code quality
+
+Run in the terminal:
+
+* To format the code execute `poetry run black ./`
+* To lint the code execute `poetry run pylint './**/'`
+* To check the types execute `poetry run mypy ./`
+
 ### Configure the secrets in Vault
 
 Configure the OpenAI token:

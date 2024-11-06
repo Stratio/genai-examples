@@ -100,7 +100,7 @@ services:
       - "cluster.routing.allocation.disk.watermark.high=90%"
       - "cluster.routing.allocation.disk.watermark.flood_stage=95%"
     ports:
-      - "9201:9200"
+      - "9200:9200"
     volumes:
       - opensearch-volume:/usr/share/opensearch/data:rw
     restart: unless-stopped

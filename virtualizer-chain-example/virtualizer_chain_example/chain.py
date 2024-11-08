@@ -1,0 +1,118 @@
+import os
+
+from genai_core.chain.base import BaseGenAiChain
+from genai_core.logger.logger import log
+from genai_core.clients.vault.vault_client import VaultClient
+from genai_core.constants.constants import ENV_VAR_GENAI_API_SERVICE_NAME
+from genai_core.helpers.chain_helpers import extract_uid
+from genai_core.runnables.common_runnables import runnable_extract_genai_auth
+from genai_core.services.virtualizer.virtualizer_service_helper import (
+    VirtualizerServiceHelper, VirtualizerService
+)
+from langchain_core.runnables import Runnable, RunnableLambda
+
+# Here you define your chain, which ihherits from the BaseGenAiChain, so you only need to implement
+# the `chain` method. Note that if this chain is going to call virtualizer, you need to create a
+# virtualizer service that will be used in the chain
+class VirtualizerChain(BaseGenAiChain):
+    """
+    Example chain showing how to use GenAI Core's Virtualizer Service to run queries in Virtualizer
+    """
+
+    # Note that, when registering the chain in GenAI API, the keys in the following sub-json of the
+    # request body, "chain_config" -> "chain_params" -> {json with several keys} are the parameters
+    # that will be passed here to the constructor. For local development, these parameters are
+    # passed in the main.py script (which is the script start the chain for local development)
+    def __init__(self, virtualizer_host: str, virtualizer_port: int):
+        log.info("initiating chain")
+        self.virtualizer = self._init_virtualizer(virtualizer_host, virtualizer_port)
+        log.info("chain ready")
+
+    # This should return a Langchain Runnable with an invoke method. When invoking the chain,
+    # the body of the request will be passed to the invoke method
+    def chain(self) -> Runnable:
+        # In order to be able to impersonate the nominal user (the one that has invoked the chain)
+        # we need to know its uid. GenAI API adds extra auth metadata to the body received in the
+        # invoke request before passing it to the chain. From these metadata is possible to extract
+        # the uid of the nominal user, and GenAI Core provides some Runnables to add this info
+        # to the chain data. When developing locally, you should add this metadata manually to the
+        # invoke request body.
+        return runnable_extract_genai_auth() | RunnableLambda(self._execute_query)
+
+    def _execute_query(self, chain_data: dict):
+        # Note that you should always impersonate the nominal user so that they can only see data for which
+        # they have permissions. Previous steps in the chain must have added the user info to the chain_data
+        # from extra metadata that GenAI API adds to the invoke body, and we can use GenAI Core helper
+        # methods to extract the userID from that extra info in the chain_data
+        query = chain_data["query"]
+        user = extract_uid(chain_data)
+        query = f"EXECUTE AS {user} {query}"
+        return self.virtualizer.data_query(query).data
+
+    def _init_virtualizer(self, virtualizer_host: str, virtualizer_port: int) -> VirtualizerService:
+        """
+        Creates an instance of the Virtualizer service provided by GenAI Core that is used later to send
+        queries to Virtualizer. Sets the field `self.virtualizer` with the created instance.
+        """
+        # get the needed certificates to connect to virtualizer
+        cert, key, ca = self._init_credentials()
+
+        # When running inside GenAI api, this environment variable will be defined. When developing
+        # locally you should set it with the name of the GenAI API service you are using in your
+        # KEOS cluster, which is the user that will connect to virtualizer
+        try:
+            service_name = os.environ[ENV_VAR_GENAI_API_SERVICE_NAME]
+        except Exception as e:
+            error_msg = f"Unable to init Virtualizer Chain. The env. variable {ENV_VAR_GENAI_API_SERVICE_NAME} needs to be defined"
+            log.error(error_msg)
+            raise RuntimeError(error_msg) from e
+
+
+        # create Virtualizer service
+        try:
+            # always create the virtualizer service through this helper, so we never create more than one instance
+            VirtualizerServiceHelper.init_service(
+                host=virtualizer_host,
+                port=virtualizer_port,
+                username=service_name,
+                ca_certs=ca,
+                client_cert=cert,
+                client_key=key,
+                # you could choose to make those configurable too when registering the chain
+                max_attempts=3, #graph_max_attempts,
+                request_timeout=60 # virtualizer_timeout,
+            )
+            # test the virtualier connection with a simple query
+            test_query = VirtualizerServiceHelper.get_service().data_query("SELECT 1")
+            if test_query.exception is not None:
+                raise test_query.exception
+            log.info("Connected with Virtualizer Server")
+        except Exception as e:
+            error_msg = f"Unable to init Virtualizer Chain. Unable to validate connection to Virtualizer. Error {e}"
+            log.error(error_msg)
+            raise RuntimeError(error_msg) from e
+
+        return VirtualizerServiceHelper.get_service()
+
+    def _init_credentials(self):
+        """
+        This method obtains and sets the certificates needed to access Virtualizer.
+        In production, the certificates are obtained from Vault, but for local development, you can
+        define the following environment variables and the VaultClient will use those to obtain the
+        certificates instead of trying to access Vault:
+           VAULT_LOCAL_CLIENT_CERT
+           VAULT_LOCAL_CLIENT_KEY
+           VAULT_LOCAL_CA_CERTS
+        For the production case, where the chain is executed inside GenAI API, you don't need to
+        explicitily pass the Vault connection details (hot, port and token) since these fields are
+        inferred from environment variables that are automatically set by GenAI API
+        """
+        try:
+            vault = VaultClient()
+            cert, key = vault.get_service_certificate_pem_paths()
+            ca = vault.get_ca_bundle_pem_path()
+            return cert, key, ca
+        except Exception as e:
+            error_msg = f"Unable to init Virtualizer Chain. Unable to init vault and load credentials. Error: {e}"
+            log.error(error_msg)
+            raise RuntimeError(error_msg) from e

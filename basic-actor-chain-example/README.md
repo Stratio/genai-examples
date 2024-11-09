@@ -9,7 +9,7 @@ This chain calls the OpenAI Chat through a gateway to generate a joke.
 First of all please update the url with the one provided by your admin in the `pyproject.toml` file.
 example: url = "https://genai-api-loadbalancer.s000001-genai.mydomain.com:8080/v1/pypi/simple/"
 before running `poetry install`:
-`poetry config certificates.genai-api.cert false`
+`poetry config certificates.genai-api-pypi.cert false`
 `poetry config virtualenvs.ignore-conda-env true`
 
 then run `poetry install` and you should be able to download the dependencies directly from the genai-api server.

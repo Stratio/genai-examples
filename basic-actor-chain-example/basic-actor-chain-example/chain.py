@@ -44,7 +44,7 @@ class BasicGatewayChain(BaseGenAiChain, ABC):
 
     def chain(self) -> Runnable:
         extra_params = {}
-        template = "tell me a joke about {topic}"
+        template = "tell me Mad Hutter: {topic}"
         if self.json_format:
             extra_params = {"response_format": {"type": "json_object"}}
             template += " in json format"

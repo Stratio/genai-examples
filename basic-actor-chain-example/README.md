@@ -1,121 +1,77 @@
-### GenAI Chain Gateway
+# Example chain to show how to create a simple Actor and invoke it from the chain
 
-This chain calls the OpenAI Chat through a gateway to generate a joke.
+This is an example chain to show how to define a simple actor and use it in a chain
 
-## Local Deployment
+## Local deployment
 
-### Download dependencies
-
-First of all please update the url with the one provided by your admin in the `pyproject.toml` file.
-example: url = "https://genai-api-loadbalancer.s000001-genai.mydomain.com:8080/v1/pypi/simple/"
-before running `poetry install`:
-`poetry config certificates.genai-api-pypi.cert false`
-`poetry config virtualenvs.ignore-conda-env true`
-
-then run `poetry install` and you should be able to download the dependencies directly from the genai-api server.
-
-### Deploy in local
-
-First, you must provide the following env variables. If you are using PyCharm you can set those env in your ~/.bashrc
-and launch the PyCharm with `pycharm .` in this folder, and they will be automatically added when you run the app.
-
-You can also provide them as Environment variables inside Run Configuration in PyCharm when you run your app.
-
-```bash
-GENAI_API_SERVICE_NAME=genai-api-qa1.s000001-genai
-GENAI_API_TENANT=s000001
-
-GENAI_API_REST_URL=https://genai-developer-proxy-qa1-loadbalancer.s000001-genai.k8s.oscar.labs.stratio.com:8080/service/genai-api
-GENAI_API_REST_CLIENT_CERT=/home/mleida/Descargas/s000001-user-certs/s000001-user.crt
-GENAI_API_REST_CLIENT_KEY=/home/mleida/Descargas/s000001-user-certs/s000001-user_private.key
-GENAI_API_REST_CA_CERTS=/home/mleida/Descargas/s000001-user-certs/ca-cert.crt
-
-GENAI_GATEWAY_URL=https://genai-developer-proxy-qa1-loadbalancer.s000001-genai.k8s.oscar.labs.stratio.com:8080/service/genai-gateway
-GENAI_GATEWAY_CLIENT_CERT=/home/mleida/Descargas/s000001-user-certs/s000001-user.crt
-GENAI_GATEWAY_CLIENT_KEY=/home/mleida/Descargas/s000001-user-certs/s000001-user_private.key
-GENAI_GATEWAY_CA_CERTS=/home/mleida/Descargas/s000001-user-certs/ca-cert.crt
-
-VAULT_LOCAL_CLIENT_CERT=/home/mleida/Descargas/s000001-user-certs/s000001-user.crt
-VAULT_LOCAL_CLIENT_KEY=/home/mleida/Descargas/s000001-user-certs/s000001-user_private.key
-VAULT_LOCAL_CA_CERTS=/home/mleida/Descargas/s000001-user-certs/ca-cert.crt
-
-VIRTUALIZER_HOST=genai-developer-proxy-qa1-loadbalancer.s000001-genai.k8s.oscar.labs.stratio.com
-VIRTUALIZER_PORT=8080
-VIRTUALIZER_BASE_PATH=/service/virtualizer
-
-GOVERNANCE_URL=https://genai-developer-proxy-qa1-loadbalancer.s000001-genai.k8s.oscar.labs.stratio.com:8080/service/governance/
+Verify that you have a dependencies source in your `pyproject.toml` with the url of the pypi server in genai-api
+providing the needed stratio packages, like genai-core. Note that the URL below is just an example, and you
+should add the correct URL for your case.
+```toml
+[[tool.poetry.source]]
+name = "genai-api-pypi"
+url = "https://genai-api-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080/v1/pypi/simple/"
+priority = "supplemental"
+```
+If using a SSL server, you should configure poetry to use the CA of the cluster to verify the certificate of the
+above configured repository (the CA of the cluster can be found in the zip you obtain from Gosec with your
+certificates)
 
 ```
+$ poetry config certificates.genai-api-pypi.cert /path/to/ca-cert.crt 
+```
 
-1. Ensure you have the environment variables defined in `Deploy in local`:
-2. Run the Chain:
-    * Execute `main.py` in PyCharm.
-    * Or execute `poetry run start_<chain>` or `python main.py` in a terminal.
-    * Or load the chain in GenAI API server: http://127.0.0.1:8081
-3. Test the chain:
-    * Execute `tests/test_chain.py` in PyCharm.
-    * Or execute `poetry run pytest` in a terminal.
+Then install the poetry environment
+```
+$ poetry install
+```
 
-### Chain Configuration
+Set up the needed environment variables. You can create a file `env.sh` like the following:
+```bash
+# 1. Variables needed to access Virtualizer (here we show an example with):
+export GENAI_API_REST_URL=https://genai-developer-proxy-qa1-loadbalancer.s000001-genai.k8s.oscar.labs.stratio.com:8080/service/genai-api
+export GENAI_API_REST_CLIENT_CERT=/home/mleida/Descargas/s000001-user-certs/s000001-user.crt
+export GENAI_API_REST_CLIENT_KEY=/home/mleida/Descargas/s000001-user-certs/s000001-user_private.key
+export GENAI_API_REST_CA_CERTS=/home/mleida/Descargas/s000001-user-certs/ca-cert.crt
 
-Example configuration for [GenAI API](https://github.com/Stratio/genai-api):
+export GENAI_GATEWAY_URL=https://genai-developer-proxy-qa1-loadbalancer.s000001-genai.k8s.oscar.labs.stratio.com:8080/service/genai-gateway
+export GENAI_GATEWAY_CLIENT_CERT=/path/to/user-cert.crt
+export GENAI_GATEWAY_CLIENT_KEY=/path/to/user_private.key
+export GENAI_GATEWAY_CA_CERTS=/path/to/ca-cert.crt
 
+# This is needed by the Virtualizer client that the chain uses. Normally this variable is already
+# defined when running inside genai-api, but for local development you need to provide it yourself.
+# It should match the service name of the GenAI API that your GenAI development proxy is configured to use
+export GENAI_API_SERVICE_NAME="genai-api.s000001-genai"
+```
+and then source it (or add to PyCharm)
+```
+$ source env.sh
+```
+
+Finally, you can now run the chain locally by calling the `main.py` script in the poetry environment
+```
+$ poetry run python basic_actor_chain_example/main.py
+```
+
+You can test your chain either via the swagger UI exposed by the local chain server, or with curl.
+An example of request body for the invoke POST is the following:
 ```json
 {
-  "chain_id": "basic_Actor_chain",
-  "chain_config": {
-    "package_id": "basic-actor-chain-example-0.1.0a0",
-    "chain_module": "basic-actor-chain-example.chain",
-    "chain_class": "BasicActorChain",
-    "chain_params": {
-      "chat_temperature": 0.5,
-      "request_timeout": 30, 
-      "n": 1,
-      "json_format": false
-    },
-    "worker_config": {
-      "log_level": "info",
-      "workers": 1,
-      "invoke_timeout": 120
+  "input": {
+     "user_request": "Hi! Nice to meet you! Where's the Queen of Hearts?"
+  },
+  "config": {
+    "metadata": {
+      "__genai_state": {
+        "client_auth_type": "mtls",
+        "client_user_id": "admin",
+        "client_tenant": "s000001"
+      }
     }
   }
 }
 ```
+The `"config"` key with the extra metadata is normally added by GenAI API before passing the input to the chain,
+but while developing locally you should add it by hand.
 
-### Invoke input
-
-* `topic`: Topic of the joke.
-
-Example JSON:
-
-```json
-{
-  "input": {
-    "topic": "cars"
-  },
-  "config": {},
-  "kwargs": {}
-}
-```
-
-### Invoke output
-
-Example JSON:
-
-```json
-{
-  "output": {
-    "content": "Why don't cars make good comedians? \n\nBecause their jokes always run out of gas!",
-    "additional_kwargs": {},
-    "response_metadata": {},
-    "type": "ai", 
-    "name": null,
-    "id": null,
-    "example": false
-  },
-  "callback_events": [],
-  "metadata": {
-    "run_id": "256e6683-09ef-4844-9a8d-d6fe64661807"
-  }
-}
-```

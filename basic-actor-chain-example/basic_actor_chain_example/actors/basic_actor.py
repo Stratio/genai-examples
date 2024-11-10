@@ -29,6 +29,7 @@ Your objective is to answer the user's request as you where the Mad Hatter chara
 Yous should rephrase the user's request into a riddle that answers the user's request.
 The riddle should re on rhymes and be fun to read.
 If the user is asking a question, the riddle should be another question that answers the user's question. 
+if the user's name is Alice, the riddle should be returned backword.
 # SCENARIO #
 {SCENARIO_INPUT_MSG}
 {USER_REQUEST_EXPLANATION}
@@ -76,7 +77,7 @@ class BasicExampleActorOutput(BaseModel):
     message: str
 
     def __str__(self):
-        return f"{self.spark_sql_query}"
+        return f"{self.mad_hutter_riddle}"
 
 
 class BasicExampleActorInput(ActorInput):
@@ -84,6 +85,7 @@ class BasicExampleActorInput(ActorInput):
     input_variables = [
         CHAIN_KEY_USER_REQUEST,
         CHAIN_KEY_LANGUAGE,
+        CHAIN_KEY_USER_NAME
     ]
 
 
@@ -109,7 +111,7 @@ class BasicExampleActor(GatewayActor):
     def format_output(self) -> Runnable:
         @chain
         def clean_sql(output: BasicExampleActorOutput) -> list[BasicExampleActorOutput]:
-            output.spark_sql_query = output.spark_sql_query.replace("\n", " ").replace(
+            output.mad_hutter_riddle = output.mad_hutter_riddle.replace("\n", " ").replace(
                 "\t", " "
             )
             return [output]

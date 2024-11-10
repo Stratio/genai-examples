@@ -13,13 +13,11 @@ from genai_core.server.server import GenAiServer
 
 def main():
     app = GenAiServer(
-        module_name="genai_chain_basic.chain",
-        class_name="BasicGatewayChain",
+        module_name="basic_actor_chain_example.chain",
+        class_name="BasicActorChain",
         config={
-            "chat_temperature": 0.5,
-            "request_timeout": 30,
-            "n": 2,
-            "json_format": False,
+            "gateway_endpoint": "QA-openai-chat-gpt-4o-mini",
+            "llm_timeout": 30
         },
     )
     app.start_server()

@@ -28,21 +28,11 @@ $ poetry install
 
 Set up the needed environment variables. You can create a file `env.sh` like the following:
 ```bash
-# 1. Variables needed to access Virtualizer (here we show an example with):
-export GENAI_API_REST_URL=https://genai-developer-proxy-qa1-loadbalancer.s000001-genai.k8s.oscar.labs.stratio.com:8080/service/genai-api
-export GENAI_API_REST_CLIENT_CERT=/home/mleida/Descargas/s000001-user-certs/s000001-user.crt
-export GENAI_API_REST_CLIENT_KEY=/home/mleida/Descargas/s000001-user-certs/s000001-user_private.key
-export GENAI_API_REST_CA_CERTS=/home/mleida/Descargas/s000001-user-certs/ca-cert.crt
-
+# 1. Variables needed to access the Genai-Gateway (here we show an example with):
 export GENAI_GATEWAY_URL=https://genai-developer-proxy-qa1-loadbalancer.s000001-genai.k8s.oscar.labs.stratio.com:8080/service/genai-gateway
 export GENAI_GATEWAY_CLIENT_CERT=/path/to/user-cert.crt
 export GENAI_GATEWAY_CLIENT_KEY=/path/to/user_private.key
 export GENAI_GATEWAY_CA_CERTS=/path/to/ca-cert.crt
-
-# This is needed by the Virtualizer client that the chain uses. Normally this variable is already
-# defined when running inside genai-api, but for local development you need to provide it yourself.
-# It should match the service name of the GenAI API that your GenAI development proxy is configured to use
-export GENAI_API_SERVICE_NAME="genai-api.s000001-genai"
 ```
 and then source it (or add to PyCharm)
 ```
@@ -65,7 +55,7 @@ An example of request body for the invoke POST is the following:
     "metadata": {
       "__genai_state": {
         "client_auth_type": "mtls",
-        "client_user_id": "admin",
+        "client_user_id": "Alice",
         "client_tenant": "s000001"
       }
     }

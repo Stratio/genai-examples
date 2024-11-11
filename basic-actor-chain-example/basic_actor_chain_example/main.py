@@ -40,6 +40,7 @@ def main():
         module_name="basic_actor_chain_example.chain",
         class_name="BasicActorChain",
         config={
+            # Change the endpoint according to the model you will use
             "gateway_endpoint": "QA-openai-chat-gpt-4o-mini",
             "llm_timeout": 30
         },

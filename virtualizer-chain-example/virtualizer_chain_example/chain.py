@@ -11,9 +11,12 @@ from genai_core.services.virtualizer.virtualizer_service_helper import (
 )
 from langchain_core.runnables import Runnable, RunnableLambda
 
-# Here you define your chain, which ihherits from the BaseGenAiChain, so you only need to implement
-# the `chain` method. Note that if this chain is going to call virtualizer, you need to create a
-# virtualizer service that will be used in the chain
+# You should define your chains in a class ihheriting from the BaseGenAiChain.
+# By inheriting BaseGenAiChain you get the integration with Gen AI API, so that the chain can be
+# invoked through Gen AI API once it has been deployed there. You only need to implement the
+# `chain` method, which should return and "invokable" LangChain Runnable. In this expample the
+# chain is going to call virtualizer, so you will need also to create a virtualizer service
+# that will be used in the chain itself.
 class VirtualizerChain(BaseGenAiChain):
     """
     Example chain showing how to use GenAI Core's Virtualizer Service to run queries in Virtualizer
@@ -46,8 +49,17 @@ class VirtualizerChain(BaseGenAiChain):
         # methods to extract the userID from that extra info in the chain_data
         query = chain_data["query"]
         user = extract_uid(chain_data)
+
+        # modify the query so that it is impersonated
         query = f"EXECUTE AS {user} {query}"
-        return self.virtualizer.data_query(query).data
+
+        # execute the query with the virtualizer service
+        query_result = self.virtualizer.data_query(query).data
+
+        # tipically each step in the chain just adds more keys to chain data
+        chain_data["query_result"] = query_result
+
+        return chain_data
 
     def _init_virtualizer(self, virtualizer_host: str, virtualizer_port: int) -> VirtualizerService:
         """

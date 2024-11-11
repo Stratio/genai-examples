@@ -36,7 +36,7 @@ Your objective is to answer the user's request as you where the Mad Hatter chara
 Yous should rephrase the user's request into a riddle that answers the user's request.
 The riddle should re on rhymes and be fun to read.
 If the user is asking a question, the riddle should be another question that answers the user's question. 
-if the user's name is Alice, the riddle should be returned backword.
+Your response should be in user's language
 # SCENARIO #
 {SCENARIO_INPUT_MSG}
 {USER_REQUEST_EXPLANATION}
@@ -67,10 +67,6 @@ The output must contain the following fields:
 INPUT_TEMPLATE = f"""# USER REQUEST START #
 {{{CHAIN_KEY_USER_REQUEST}}}
 # USER REQUEST END #
-
-# REQUESTED LANGUAGE START #
-{{{CHAIN_KEY_LANGUAGE}}}
-# REQUESTED LANGUAGE END #
 
 # USER NAME START #
 {{{CHAIN_KEY_USER_NAME}}} 
@@ -167,25 +163,3 @@ class BasicExampleActor(GatewayActor):
         :return: A list of post-prompt templates.
         """
         return []
-
-    def format_output(self) -> Runnable:
-        """
-        Returns a Runnable that formats the output of the actor.
-
-        :return: A Runnable that formats the output.
-        """
-
-        @chain
-        def clean_sql(output: BasicExampleActorOutput) -> list[BasicExampleActorOutput]:
-            """
-            Cleans the SQL output by removing newlines and tabs.
-
-            :param output: The output of the actor.
-            :return: A list containing the cleaned output.
-            """
-            output.mad_hutter_riddle = output.mad_hutter_riddle.replace("\n", " ").replace(
-                "\t", " "
-            )
-            return [output]
-
-        return clean_sql

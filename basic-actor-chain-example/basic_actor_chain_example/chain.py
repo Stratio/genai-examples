@@ -26,7 +26,7 @@ from .constants.constants import CHAIN_KEY_USER_NAME
 # the `chain` method. Note that this chain is using a custom basic actor that needs to be instantiated with the gateway endpoint (the LLM model used).
 # the model need to be registered in the Stratio Gateway, and the gateway_endpoint variable is the id of the model in the gateway.
 class BasicActorChain(BaseGenAiChain, ABC):
-    # Actor
+    # Actor instance of BasicExampleActor, which will be used in the chain
     basic_actor: BasicExampleActor
 
     # Internal chain
@@ -36,6 +36,12 @@ class BasicActorChain(BaseGenAiChain, ABC):
         gateway_endpoint: str,
         llm_timeout: int = 30
     ):
+        """
+        Initializes the BasicActorChain with the given gateway endpoint and timeout.
+
+        :param gateway_endpoint: The ID of the endpoint in the GenAI Gateway pointing to the desired .
+        :param llm_timeout: Timeout for the LLM model, default is 30 seconds.
+        """
         log.info("Preparing Basic Actor Example chain")
         self.basic_actor = BasicExampleActor(
             gateway_endpoint=gateway_endpoint,
@@ -52,6 +58,12 @@ class BasicActorChain(BaseGenAiChain, ABC):
         # the uid of the nominal user, and GenAI Core provides some Runnables to add this info
         # to the chain data. When developing locally, you should add this metadata manually to the
         # invoke request body.
+        """
+        Returns a Langchain Runnable with an invoke method. When invoking the chain,
+        the body of the request will be passed to the invoke method.
+
+        :return: A Runnable instance representing the chain.
+        """
         return (runnable_extract_genai_auth()
                 | RunnableLambda(self._extract_language)
                 | RunnableLambda(self._extract_username)
@@ -59,7 +71,12 @@ class BasicActorChain(BaseGenAiChain, ABC):
 
     @staticmethod
     def _extract_language(chain_data: dict) -> dict:
-        """Extracts desired output language from headers or sets english by default"""
+        """
+        Extracts desired output language from headers or sets English by default.
+
+        :param chain_data: The data passed through the chain.
+        :return: Updated chain data with the extracted language.
+        """
         headers = cast(GenAiHeaders, chain_data.get(CHAIN_KEY_GENAI_HEADERS))
         language = headers.language if headers else None
         # Set default language as English
@@ -84,7 +101,12 @@ class BasicActorChain(BaseGenAiChain, ABC):
         # they have permissions. Previous steps in the chain must have added the user info to the chain_data
         # from extra metadata that GenAI API adds to the invoke body, and we can use GenAI Core helper
         # methods to extract the userID from that extra info in the chain_data
+        """
+        Extracts the user ID from the chain data and adds it to the chain data.
 
+        :param chain_data: The data passed through the chain.
+        :return: Updated chain data with the extracted user ID.
+        """
         chain_data[CHAIN_KEY_USER_NAME] = extract_uid(chain_data)
 
         return chain_data
@@ -94,5 +116,11 @@ class BasicActorChain(BaseGenAiChain, ABC):
         # they have permissions. Previous steps in the chain must have added the user info to the chain_data
         # from extra metadata that GenAI API adds to the invoke body, and we can use GenAI Core helper
         # methods to extract the userID from that extra info in the chain_data
+        """
+        Invokes the actor with the given chain data.
+
+        :param chain_data: The data passed through the chain.
+        :return: The result of the actor's invocation.
+        """
         return self.basic_actor.get_chain().invoke(chain_data)
 

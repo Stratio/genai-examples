@@ -3,5 +3,5 @@ USER_REQUEST_EXPLANATION = (
     "- USER REQUEST: The user's current request, including any conversational context."
 )
 
-# Chain keys
+# Basic Chain specific keys
 CHAIN_KEY_USER_NAME = "username"

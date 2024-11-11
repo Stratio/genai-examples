@@ -12,11 +12,8 @@ from abc import ABC
 from typing import Optional, cast
 
 from genai_core.chain.base import BaseGenAiChain
-from genai_core.constants.constants import CHAIN_KEY_GENAI_HEADERS, CHAT_LANGUAGE_ENGLISH, CHAT_LANGUAGE_SPANISH, \
-    CHAIN_KEY_LANGUAGE
 from genai_core.helpers.chain_helpers import extract_uid
 from genai_core.logger.logger import log
-from genai_core.runnables.genai_headers import GenAiHeaders, Language
 from langchain_core.runnables import Runnable, RunnableLambda
 from genai_core.runnables.common_runnables import runnable_extract_genai_auth
 from .actors.basic_actor import BasicExampleActor
@@ -65,35 +62,8 @@ class BasicActorChain(BaseGenAiChain, ABC):
         :return: A Runnable instance representing the chain.
         """
         return (runnable_extract_genai_auth()
-                | RunnableLambda(self._extract_language)
                 | RunnableLambda(self._extract_username)
                 | RunnableLambda(self._invoke_actor))
-
-    @staticmethod
-    def _extract_language(chain_data: dict) -> dict:
-        """
-        Extracts desired output language from headers or sets English by default.
-
-        :param chain_data: The data passed through the chain.
-        :return: Updated chain data with the extracted language.
-        """
-        headers = cast(GenAiHeaders, chain_data.get(CHAIN_KEY_GENAI_HEADERS))
-        language = headers.language if headers else None
-        # Set default language as English
-        language_str = CHAT_LANGUAGE_ENGLISH
-        if language is not None:
-            log.info(f"Requested language: {language.value}", chain_data)
-            if language == Language.SPANISH.value:
-                language_str = CHAT_LANGUAGE_SPANISH
-        else:
-            log.warning(
-                "Language is not found in headers. Setting language to english.",
-                chain_data,
-            )
-
-        # Extract language from headers
-        chain_data[CHAIN_KEY_LANGUAGE] = language_str
-        return chain_data
 
     @staticmethod
     def _extract_username(chain_data: dict):

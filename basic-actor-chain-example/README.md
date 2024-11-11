@@ -13,7 +13,7 @@ name = "genai-api-pypi"
 url = "https://genai-api-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080/v1/pypi/simple/"
 priority = "supplemental"
 ```
-If using a SSL server, you should configure poetry to use the CA of the cluster to verify the certificate of the
+If using an SSL server, you should configure poetry to use the CA of the cluster to verify the certificate of the
 above configured repository (the CA of the cluster can be found in the zip you obtain from Gosec with your
 certificates)
 
@@ -65,3 +65,22 @@ An example of request body for the invoke POST is the following:
 The `"config"` key with the extra metadata is normally added by GenAI API before passing the input to the chain,
 but while developing locally you should add it by hand.
 
+### Run tests
+
+Run in PyCharm:
+
+* Execute the /tests folder. It works in debug mode too.
+
+Run in the terminal:
+
+* Execute `poetry run pytest`
+* Only unit test: `poetry run pytest tests/unit`
+* Only integration test: `poetry run pytest tests/integration`.
+
+### Code quality
+
+Run in the terminal:
+
+* To format the code execute `poetry run black ./`
+* To lint the code execute `poetry run pylint './**/'`
+* To check the types execute `poetry run mypy ./`

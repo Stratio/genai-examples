@@ -15,7 +15,6 @@ from genai_core.chain.base import BaseGenAiChain
 from genai_core.constants.constants import CHAIN_KEY_GENAI_HEADERS, CHAT_LANGUAGE_ENGLISH, CHAT_LANGUAGE_SPANISH, \
     CHAIN_KEY_LANGUAGE
 from genai_core.helpers.chain_helpers import extract_uid
-from genai_core.logger.chain_logger import ChainLogger
 from genai_core.logger.logger import log
 from genai_core.runnables.genai_headers import GenAiHeaders, Language
 from langchain_core.runnables import Runnable, RunnableLambda

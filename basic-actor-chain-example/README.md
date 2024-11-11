@@ -43,6 +43,7 @@ Finally, you can now run the chain locally by calling the `main.py` script in th
 ```
 $ poetry run python basic_actor_chain_example/main.py
 ```
+In case you want to run the chain in debug mode, you can run it in PyCharm.
 
 You can test your chain either via the swagger UI exposed by the local chain server, or with curl.
 An example of request body for the invoke POST is the following:

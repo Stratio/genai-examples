@@ -17,7 +17,7 @@ from basic_actor_chain_example.chain import BasicActorChain
 
 
 class TestBasicActorChain:
-    def test_chain(self, setup_test_envs):
+    def test_chain_english(self, setup_test_envs):
         chain = BasicActorChain(
             gateway_endpoint="QA-openai-chat-gpt-4o-mini",
             llm_timeout=100
@@ -25,9 +25,17 @@ class TestBasicActorChain:
         chain_dag = chain.chain()
         result = chain_dag.invoke({"user_request": "Hi! Nice to meet you! Where's the Queen of Hearts?"})
 
-        assert len(result) == 1
-        assert "roses" in result[0].mad_hutter_riddle
-        assert "roses" in result[0].mad_hutter_riddle.lower()
+        assert "roses" in result.mad_hutter_riddle
+
+    def test_chain_spanish(self, setup_test_envs):
+        chain = BasicActorChain(
+            gateway_endpoint="QA-openai-chat-gpt-4o-mini",
+            llm_timeout=100
+        )
+        chain_dag = chain.chain()
+        result = chain_dag.invoke({"user_request": "Hola! Encantada de conocerte! Sabes donde está la reina de corazones?"})
+
+        assert "flores" in result.mad_hutter_riddle
 
 
 if __name__ == "__main__":

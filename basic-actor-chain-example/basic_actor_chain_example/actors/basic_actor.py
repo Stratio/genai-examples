@@ -53,7 +53,7 @@ Follow the steps below to complete the task:
 	- Generate a valid riddle that accurately answers the USER REQUEST.
 	- Write the generated riddle in the 'mad_hutter_riddle' field.
 	- Write a short explanation of the riddle in the 'message' field. 
-    - Your response should be in user's language and if the USER NAME is Alice the mad_hutter_riddle should be returned backword.
+    - Your response should be in user's language and if the USER NAME is Alice the mad_hutter_riddle should be returned backword in user's language.
 
 # EXPECTED OUTCOME #
 The output must contain the following fields:

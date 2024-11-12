@@ -61,7 +61,7 @@ class TestBasicActorChain:
             }
         )
 
-        assert "s'erehT" in result.mad_hutter_riddle
+        assert "neerc" in result.mad_hutter_riddle
 
 
 if __name__ == "__main__":

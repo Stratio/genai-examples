@@ -7,9 +7,11 @@ from genai_core.constants.constants import ENV_VAR_GENAI_API_SERVICE_NAME
 from genai_core.helpers.chain_helpers import extract_uid
 from genai_core.runnables.common_runnables import runnable_extract_genai_auth
 from genai_core.services.virtualizer.virtualizer_service_helper import (
-    VirtualizerServiceHelper, VirtualizerService
+    VirtualizerServiceHelper,
+    VirtualizerService,
 )
 from langchain_core.runnables import Runnable, RunnableLambda
+
 
 # You should define your chains in a class ihheriting from the BaseGenAiChain.
 # By inheriting BaseGenAiChain you get the integration with Gen AI API, so that the chain can be
@@ -61,7 +63,9 @@ class VirtualizerChain(BaseGenAiChain):
 
         return chain_data
 
-    def _init_virtualizer(self, virtualizer_host: str, virtualizer_port: int) -> VirtualizerService:
+    def _init_virtualizer(
+        self, virtualizer_host: str, virtualizer_port: int
+    ) -> VirtualizerService:
         """
         Creates an instance of the Virtualizer service provided by GenAI Core that is used later to send
         queries to Virtualizer. Sets the field `self.virtualizer` with the created instance.
@@ -79,7 +83,6 @@ class VirtualizerChain(BaseGenAiChain):
             log.error(error_msg)
             raise RuntimeError(error_msg) from e
 
-
         # create Virtualizer service
         try:
             # always create the virtualizer service through this helper, so we never create more than one instance
@@ -91,8 +94,8 @@ class VirtualizerChain(BaseGenAiChain):
                 client_cert=cert,
                 client_key=key,
                 # you could choose to make those configurable too when registering the chain
-                max_attempts=3, #graph_max_attempts,
-                request_timeout=60 # virtualizer_timeout,
+                max_attempts=3,  # graph_max_attempts,
+                request_timeout=60,  # virtualizer_timeout,
             )
             # test the virtualier connection with a simple query
             test_query = VirtualizerServiceHelper.get_service().data_query("SELECT 1")

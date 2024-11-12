@@ -1,4 +1,3 @@
-
 import os
 
 from genai_core.server.server import GenAiServer
@@ -34,11 +33,10 @@ def main():
         class_name="VirtualizerChain",
         config={
             "virtualizer_host": os.environ["VIRTUALIZER_HOST"],
-            "virtualizer_port": int(os.environ["VIRTUALIZER_PORT"])
+            "virtualizer_port": int(os.environ["VIRTUALIZER_PORT"]),
         },
     )
     app.start_server()
-
 
 
 if __name__ == "__main__":

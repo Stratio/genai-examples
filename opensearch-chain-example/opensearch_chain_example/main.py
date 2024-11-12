@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
     Opensearch service URL
     OPENSEARCH_URL=https://opensearch.s000001-genai.k8s.fifteen.labs.stratio.com:9200
-    
+
     GenAI API service name
     GENAI_API_SERVICE_NAME=genai-api-qa3.s000001-genai
     """

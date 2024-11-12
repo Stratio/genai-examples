@@ -7,32 +7,36 @@ otherwise made available, licensed or sublicensed to third parties;
 nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
+import os
 
 import pytest
 
 from genai_core.test.pytest_utils import setup_test_envs
+from genai_core.logger.logger import log
 
 from opensearch_chain_example.chain import OpensourceChain
 
 
 class TestOpensearchChain:
-
     def test_chain(self, setup_test_envs):
         chain = OpensourceChain(
-            opensearch_url="https://opensearch.s000001-genai.k8s.fifteen.labs.stratio.com:9200",
-            opensearch_min_score=30
+            opensearch_url=os.getenv("OPENSEARCH_URL"),
+            opensearch_min_score=30,
         )
         chain_dag = chain.chain()
         result = chain_dag.invoke(
             {
-                    "search_value":"Scott",
-                    "collection_name":"semantic_banking_customer_product360",
-                    "table_value":"customer",
-                    "column_value":"Full_Name"
+                "search_value": "Scott",
+                "collection_name": "semantic_banking_customer_product360",
+                "table_value": "customer",
+                "column_value": "Full_Name",
             }
         )
-
-        assert "neerc" in result.mad_hutter_riddle
+        log.info(result)
+        assert (
+            "To obtain the requested value 'Scott' in the column 'Full_Name' of the table  'customer', the exact value to filter is 'Scott Edwards'."
+            == result["opensearch_explanation"]
+        )
 
 
 if __name__ == "__main__":
@@ -46,7 +50,7 @@ if __name__ == "__main__":
 
     Opensearch service URL
     OPENSEARCH_URL=https://opensearch.s000001-genai.k8s.fifteen.labs.stratio.com:9200
-    
+
     GenAI API service name
     GENAI_API_SERVICE_NAME=genai-api-qa3.s000001-genai
     """

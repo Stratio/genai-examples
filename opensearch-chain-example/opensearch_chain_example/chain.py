@@ -11,12 +11,11 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 from abc import ABC
 from typing import Optional
 
-from aiohttp.web_routedef import static
 from genai_core.chain.base import BaseGenAiChain
 from genai_core.clients.vault.vault_client import VaultClient
 from genai_core.logger.logger import log
 from genai_core.runnables.common_runnables import runnable_extract_genai_auth
-from langchain_core.runnables import Runnable, RunnableLambda, chain
+from langchain_core.runnables import Runnable, chain
 
 from opensearch_chain_example.constants.constants import (
     OPENSEARCH_SEARCH_VALUE_KEY,

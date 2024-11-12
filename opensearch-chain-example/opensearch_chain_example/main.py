@@ -44,7 +44,7 @@ def main():
         config={
             # Change the endpoint according to the model you will use
             "opensearch_url": os.getenv("OPENSEARCH_URL"),
-            "opensearch_min_score": 30
+            "opensearch_min_score": 30,
         },
     )
     app.start_server()

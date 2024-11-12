@@ -2,6 +2,7 @@
 .idea
 .vscode
 .run
+*.env
 
 # File-based project format:
 *.iml

@@ -36,6 +36,9 @@ export VAULT_LOCAL_CA_CERTS=/path/to/ca-cert.crt
 
 # Opensearch service URL
 export OPENSEARCH_URL=https://opensearch.s000001-genai.k8s.fifteen.labs.stratio.com:9200
+
+# GenAI API service name
+export GENAI_API_SERVICE_NAME=genai-api-qa3.s000001-genai
 ```
 and then source it (or add to PyCharm)
 ```

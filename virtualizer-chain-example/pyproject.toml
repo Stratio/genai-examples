@@ -5,7 +5,6 @@ description = "A simple chain to show how to connect to virtualizer from a chain
 authors = []
 include = ["requirements.txt"]
 
-# TODO: check what dependencies we really need
 [tool.poetry.dependencies]
 python = "^3.9"
 genai-core = "0.3.1"

@@ -18,9 +18,7 @@ from basic_actor_chain_example.chain import BasicActorChain
 
 class TestBasicActorChain:
     def test_chain_english(self, setup_test_envs):
-        chain = BasicActorChain(
-            gateway_endpoint="openai-chat", llm_timeout=100
-        )
+        chain = BasicActorChain(gateway_endpoint="openai-chat", llm_timeout=100)
         chain_dag = chain.chain()
         result = chain_dag.invoke(
             {"user_request": "Hi! Nice to meet you! Where's the Queen of Hearts?"}
@@ -29,9 +27,7 @@ class TestBasicActorChain:
         assert "roses" in result.mad_hutter_riddle
 
     def test_chain_spanish(self, setup_test_envs):
-        chain = BasicActorChain(
-            gateway_endpoint="openai-chat", llm_timeout=100
-        )
+        chain = BasicActorChain(gateway_endpoint="openai-chat", llm_timeout=100)
         chain_dag = chain.chain()
         result = chain_dag.invoke(
             {
@@ -42,9 +38,7 @@ class TestBasicActorChain:
         assert "rosas" in result.mad_hutter_riddle
 
     def test_chain_alice(self, setup_test_envs):
-        chain = BasicActorChain(
-            gateway_endpoint="openai-chat", llm_timeout=100
-        )
+        chain = BasicActorChain(gateway_endpoint="openai-chat", llm_timeout=100)
         chain_dag = chain.chain()
         result = chain_dag.invoke(
             {

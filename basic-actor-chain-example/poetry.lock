@@ -1431,13 +1431,13 @@ files = [
 
 [[package]]
 name = "genai-core"
-version = "0.3.0"
+version = "0.3.1"
 description = ""
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "genai_core-0.3.0-py3-none-any.whl", hash = "sha256:defe42849a34ee98f130de3ab1af86369a3b6c04cd5a90e4c9e72067e551f456"},
-    {file = "genai_core-0.3.0.tar.gz", hash = "sha256:8aa0479a9e17b348cca72557e038b0f6a3b44a8f22e3e661e91898cf7590261c"},
+    {file = "genai_core-0.3.1-py3-none-any.whl", hash = "sha256:911b237e5c3d0f17c2f0fdd5758dda3a6d4689e16c4f0242e3c9ac6609e93ca4"},
+    {file = "genai_core-0.3.1.tar.gz", hash = "sha256:50ca5b195d6983b46e60682b4313be6ab1975f714ddd8e4f934565dd5cf30786"},
 ]
 
 [package.dependencies]
@@ -6228,4 +6228,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "a0d8d486ac2703a88a03b01d8c5751ff37358b49aee580b04ff5c61180582c16"
+content-hash = "810ee9dcd842e95d7386d07a29572f661c0de9fd0813727c29279a988abe8605"

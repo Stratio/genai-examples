@@ -8,6 +8,8 @@ otherwise made available, licensed or sublicensed to third parties;
 nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
+import os
+
 from genai_core.server.server import GenAiServer
 
 
@@ -37,17 +39,27 @@ def main():
       passing the data to the chain
     """
     app = GenAiServer(
-        module_name="basic_actor_chain_example.chain",
-        class_name="BasicActorChain",
+        module_name="opensearch_chain_example.chain",
+        class_name="OpensourceChain",
         config={
             # Change the endpoint according to the model you will use
-            "gateway_endpoint": "QA-openai-chat-gpt-4o-mini",
-            "llm_timeout": 30,
+            "opensearch_url": os.getenv("OPENSEARCH_URL"),
+            "opensearch_min_score": 30
         },
     )
     app.start_server()
 
 
 if __name__ == "__main__":
-    # Before running this script, refer to the README.md file to know how to set up your environment correctly in order to communicate with the Stratio GenAI Gateway
+    """
+    Before running this script, you should configure the following environment variables:
+    variables needed to tell the VaulClient where to find the certificates so it does not need to
+    actually access any Vault. You can obtain your certificates from your profile in Gosec
+    VAULT_LOCAL_CLIENT_CERT=/path/to/cert.crt
+    VAULT_LOCAL_CLIENT_KEY=/path/to/private-key.key
+    VAULT_LOCAL_CA_CERTS=/path/to/ca-cert.crt
+
+    Opensearch service URL
+    OPENSEARCH_URL=https://opensearch.s000001-genai.k8s.fifteen.labs.stratio.com:9200
+    """
     main()

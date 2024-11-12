@@ -55,10 +55,10 @@ class TestBasicActorChain:
                     "__genai_state": {
                         "client_auth_type": "mtls",
                         "client_user_id": "Alice",
-                        "client_tenant": "s000001"
+                        "client_tenant": "s000001",
                     }
                 }
-            }
+            },
         )
 
         assert "neerc" in result.mad_hutter_riddle

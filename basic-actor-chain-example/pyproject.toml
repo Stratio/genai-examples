@@ -46,6 +46,9 @@ name = "stratio-releases"
 url = "http://qa.int.stratio.com/repository/python-releases/simple/"
 priority = "supplemental"
 
+[certificates.genai-api-pypi]
+cert = false
+
 [tool.coverage.run]
 omit = [
     "tests/*",

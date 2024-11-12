@@ -42,7 +42,7 @@ def main():
         config={
             # Change the endpoint according to the model you will use
             "gateway_endpoint": "QA-openai-chat-gpt-4o-mini",
-            "llm_timeout": 30
+            "llm_timeout": 30,
         },
     )
     app.start_server()

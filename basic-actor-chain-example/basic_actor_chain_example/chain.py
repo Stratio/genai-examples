@@ -19,6 +19,7 @@ from genai_core.runnables.common_runnables import runnable_extract_genai_auth
 from .actors.basic_actor import BasicExampleActor
 from .constants.constants import CHAIN_KEY_USER_NAME
 
+
 # Here you define your chain, which inherits from the BaseGenAiChain, so you only need to implement
 # the `chain` method. Note that this chain is using a custom basic actor that needs to be instantiated with the gateway endpoint (the LLM model used).
 # the model need to be registered in the Stratio Gateway, and the gateway_endpoint variable is the id of the model in the gateway.
@@ -28,11 +29,8 @@ class BasicActorChain(BaseGenAiChain, ABC):
 
     # Internal chain
     _chain: Optional[Runnable] = None
-    def __init__(
-        self,
-        gateway_endpoint: str,
-        llm_timeout: int = 30
-    ):
+
+    def __init__(self, gateway_endpoint: str, llm_timeout: int = 30):
         """
         Initializes the BasicActorChain with the given gateway endpoint and timeout.
 
@@ -61,9 +59,11 @@ class BasicActorChain(BaseGenAiChain, ABC):
 
         :return: A Runnable instance representing the chain.
         """
-        return (runnable_extract_genai_auth()
-                | RunnableLambda(self._extract_username)
-                | RunnableLambda(self._invoke_actor))
+        return (
+            runnable_extract_genai_auth()
+            | RunnableLambda(self._extract_username)
+            | RunnableLambda(self._invoke_actor)
+        )
 
     @staticmethod
     def _extract_username(chain_data: dict):
@@ -93,4 +93,3 @@ class BasicActorChain(BaseGenAiChain, ABC):
         :return: The result of the actor's invocation.
         """
         return self.basic_actor.get_chain().invoke(chain_data)
-

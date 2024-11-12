@@ -39,10 +39,9 @@ markers = ["manual: to mark tests as manual"]
 addopts = "-m 'not manual'"
 
 [[tool.poetry.source]]
-name = "stratio-releases"
-# here you should replace the existing Url, with the genai-api-development-proxy url.
-# See also basic-actor-chain-example/README.md
-#url = "https://genai.s000001.k8s.oscar.labs.stratio.com/genai-developer-proxy-qa3:8080"
+name = "genai-api-pypi"
+# here you should add the genai-api-development-proxy url. See also basic-actor-chain-example/README.md
+# url = "https://genai-api-test-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080/v1/pypi/simple/"
 url = "http://qa.int.stratio.com/repository/python-releases/simple/"
 priority = "supplemental"
 

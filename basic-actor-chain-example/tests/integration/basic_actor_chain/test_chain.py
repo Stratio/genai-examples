@@ -19,7 +19,7 @@ from basic_actor_chain_example.chain import BasicActorChain
 class TestBasicActorChain:
     def test_chain_english(self, setup_test_envs):
         chain = BasicActorChain(
-            gateway_endpoint="QA-openai-chat-gpt-4o-mini", llm_timeout=100
+            gateway_endpoint="openai-chat", llm_timeout=100
         )
         chain_dag = chain.chain()
         result = chain_dag.invoke(

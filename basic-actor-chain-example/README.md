@@ -11,7 +11,10 @@ Finally, you can now run the chain locally by calling the `main.py` script in th
 ```
 $ poetry run python basic_actor_chain_example/main.py
 ```
-In case you want to run the chain in debug mode, you can run it in PyCharm.
+
+In case you want to debug the chain, you can run it in PyCharm as explained in the main [README.md](../README.md) file.
+
+Once started, the chain will expose a swagger UI in the following URL: `http://0.0.0.0:8080/`.
 
 In case you want to debug the chain, you can run it in PyCharm as explained in the main [README.md](../README.md) file.
 

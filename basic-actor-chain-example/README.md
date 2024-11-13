@@ -16,10 +16,6 @@ In case you want to debug the chain, you can run it in PyCharm as explained in t
 
 Once started, the chain will expose a swagger UI in the following URL: `http://0.0.0.0:8080/`.
 
-In case you want to debug the chain, you can run it in PyCharm as explained in the main [README.md](../README.md) file.
-
-Once started, the chain will expose a swagger UI in the following URL: `http://0.0.0.0:8080/`.
-
 You can test your chain either via the swagger UI exposed by the local chain server, or with curl.
 
 An example of request body for the invoke POST is the following:

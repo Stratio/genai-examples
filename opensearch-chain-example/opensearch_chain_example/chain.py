@@ -32,6 +32,7 @@ class OpensourceChain(BaseGenAiChain, ABC):
     Example of a GenAI Chain that interacts with OpenSearch service to obtain and process the result of a search.
 
     """
+
     def __init__(
         self, opensearch_url: Optional[str] = None, opensearch_min_score: int = 5
     ):

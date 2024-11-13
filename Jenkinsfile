@@ -25,8 +25,6 @@ hose {
                 "sonar.exclusions": "*/tests/**,*/scripts/**,*/pytest-coverage.xml",
                 "sonar.tests": ".",
                 "sonar.test.inclusions": "*/tests/**",
-                "sonar.python.coverage.reportPaths": "genai-chain-examples/pytest-coverage.xml,genai-chain-docs/pytest-coverage.xml",
-                "sonar.python.pylint.reportPaths": "genai-chain-examples/pylint-report.txt,genai-chain-docs/pylint-report.txt",
                 "sonar.scm.disabled": "true"
             ])
         doPackage(config)

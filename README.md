@@ -1,9 +1,16 @@
 ## Stratio GenAI Chain Examples
 
-This repository contains some examples of GenAI chains. Check the readme of each chain for more information.
+This repository is intended to developers who want to create GenAI chains. 
 
-* [Chain Examples](genai-chain-examples/README.md): Examples of GenAI chains.
-* [Chain Docs](genai-chain-docs/README.md): Example GenAI chain to perform a RAG.
+This repository provides some simple examples of GenAI chains focused on a specific task.
+There are four basic chains that you can use as a starting point to create your own chains:
+
+* [Basic Actor Chain](genai-chain-examples/README.md): Examples of a chain where the user implementas a basic actor and invoke it.
+* [Stratio Virtualizer Chain](genai-chain-docs/README.md): Example of a GenAI chain that connects to the Stratio Virtualizer service to perform a query.
+* [Opensearch Chain](genai-chain-docs/README.md): Example of a GenAI chain that connects to Opensearch service and processes the result of a search.
+* [Memory Chain](genai-chain-docs/README.md): Example of a GenAI chain that persist the user's conversation in order to remember the context.
+
+Please check the readme of each chain for more information.
 
 ## Requirements
 
@@ -66,10 +73,10 @@ You will find a `.env` file in the `genai-examples/scripts` folder with the envi
 
 The dependencies are defined in the `pyproject.toml` file, and they are managed by Poetry. First of all, we need to configure the PyPi repository to download the *Stratio GenAI Core* dependency. This dependency is not public, and it is hosted in the *Stratio GenAI Developer Proxy* service.
 
-Change the directory to the `genai-chain-examples/genai-chain-examples` folder. This folder contains a basic chain example:
+Change the directory to the desired example chain, as instance `basic-actor-chain-example` folder. This folder contains a basic chain example:
 
 ```bash
-cd genai-examples/genai-chain-examples
+cd genai-examples/basic-actor-chain-example
 ```
 
 Edit the `pyproject.toml` file and change the `url` value with the URL of the *Stratio GenAI Developer Proxy* service:
@@ -91,7 +98,7 @@ poetry install
 
 ### Configure the IDE (PyCharm)
 
-Open the example chain in PyCharm. Make sure you select a submodule like `genai-chain-examples/genai-chain-examples`:
+Open the example chain in PyCharm. Make sure you select a submodule like `genai-examples/basic-actor-chain-example`:
 
 * File => Open => Select the folder
 

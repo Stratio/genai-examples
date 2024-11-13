@@ -20,6 +20,7 @@ from genai_core.runnables.common_runnables import runnable_extract_genai_auth
 from .actors.basic_actor import BasicExampleActor
 from .constants.constants import CHAIN_KEY_USER_NAME
 
+
 # Here you define your chain, which inherits from the BaseGenAiChain, so you only need to implement
 # the `chain` method. Note that this chain is using a custom basic actor that needs to be instantiated with the gateway endpoint (the LLM model used).
 # the model need to be registered in the Stratio Gateway, and the gateway_endpoint variable is the id of the model in the gateway.

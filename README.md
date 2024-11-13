@@ -5,10 +5,10 @@ This repository is intended to developers who want to create GenAI chains.
 This repository provides some simple examples of GenAI chains focused on a specific task.
 There are four basic chains that you can use as a starting point to create your own chains:
  # TODO: Add the links to the chains once merged
-* [Basic Actor Chain](genai-chain-examples/README.md): Examples of a chain where the user implementas a basic actor and invoke it.
-* [Stratio Virtualizer Chain](genai-chain-docs/README.md): Example of a GenAI chain that connects to the Stratio Virtualizer service to perform a query.
-* [Opensearch Chain](genai-chain-docs/README.md): Example of a GenAI chain that connects to Opensearch service and processes the result of a search.
-* [Memory Chain](genai-chain-docs/README.md): Example of a GenAI chain that persist the user's conversation in order to remember the context.
+* [Basic Actor Chain](./README.md): Examples of a chain where the user implementas a basic actor and invoke it.
+* [Stratio Virtualizer Chain](./README.md): Example of a GenAI chain that connects to the Stratio Virtualizer service to perform a query.
+* [Opensearch Chain](./README.md): Example of a GenAI chain that connects to Opensearch service and processes the result of a search.
+* [Memory Chain](./README.md): Example of a GenAI chain that persist the user's conversation in order to remember the context.
 
 Please check the readme of each chain for more information.
 

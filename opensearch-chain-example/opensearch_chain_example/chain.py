@@ -48,9 +48,7 @@ class OpensourceChain(BaseGenAiChain, ABC):
         cert, key, ca = self._init_credentials()
         # Init OpenSearch
         try:
-            log.info(
-                f"Trying to connect with OpenSearch {opensearch_url}..."
-            )
+            log.info(f"Trying to connect with OpenSearch {opensearch_url}...")
             opensearch_service = OpenSearchService(
                 opensearch_url=opensearch_url,
                 ca_certs=ca,

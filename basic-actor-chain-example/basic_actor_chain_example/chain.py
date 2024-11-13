@@ -11,12 +11,14 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 from abc import ABC
 from typing import Optional, cast
 
+from langchain_core.runnables import Runnable, RunnableLambda, chain
 from genai_core.chain.base import BaseGenAiChain
 from genai_core.helpers.chain_helpers import extract_uid
 from genai_core.logger.logger import log
-from langchain_core.runnables import Runnable, RunnableLambda, chain
-from .actors.basic_actor import BasicExampleActor
+from genai_core.runnables.common_runnables import runnable_extract_genai_auth
 
+from .actors.basic_actor import BasicExampleActor
+from .constants.constants import CHAIN_KEY_USER_NAME
 
 # Here you define your chain, which inherits from the BaseGenAiChain, so you only need to implement
 # the `chain` method. Note that this chain is using a custom basic actor that needs to be instantiated with the gateway endpoint (the LLM model used).
@@ -68,14 +70,16 @@ class BasicActorChain(BaseGenAiChain, ABC):
             :return: The username extracted from the chain data.
             """
             # The actor replies differently in case the username is Alice.
-            # GenAI API adds extra auth metadata to the body received in the
-            # invoke request before passing it to the chain. From these metadata is
-            # possible to extract the uid of the nominal user.
-            # When developing locally, you should add this metadata manually
-            # to the invoke request body as part of the config section of the body (see README.md).
+            # This steps extract the user name from the auth metadata extracted by the extract_genai_auth runnable.
             chain_data[CHAIN_KEY_USER_NAME] = extract_uid(chain_data)
             return chain_data
 
-        # The chain is composed of two runnables steps:
-        # _extract_user_name and _invoke_actor.
-        return _extract_user_name | _invoke_actor
+        # The chain is composed of three runnables steps:
+        # runnable_extract_genai_auth, _extract_user_name and _invoke_actor.
+        # GenAI API adds extra auth metadata to the body received in the
+        # invoke request before passing it to the chain. From these metadata is
+        # possible to extract the uid of the nominal user.
+        # When developing locally, you should add this metadata manually
+        # to the invoke request body as part of the config section of the body (see README.md).
+        # for ths reason the first step is to extract the auth metadata.
+        return runnable_extract_genai_auth() | _extract_user_name | _invoke_actor

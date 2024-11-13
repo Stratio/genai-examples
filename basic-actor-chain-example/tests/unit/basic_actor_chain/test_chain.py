@@ -20,7 +20,9 @@ from genai_core.test.mock_helper import mock_init_stratio_gateway, mock_actor
 
 GATEWAY_ENDPOINT = "openai-chat"
 
-USER_REQUEST_EXPLANATION = "The user is asking about the location of the Queen of Hearts in Wonderland."
+USER_REQUEST_EXPLANATION = (
+    "The user is asking about the location of the Queen of Hearts in Wonderland."
+)
 MAD_HUTTER_RIDDLE = "In a garden of red, where the roses bloom, Who rules with a heart, and brings forth the doom? With a croquet mallet, she swings with delight, Where is she hiding, in day or in night?"
 MESSAGE = "This riddle hints at the Queen of Hearts, known for her love of croquet and her fierce demeanor. The garden of roses symbolizes her domain, where she reigns with authority."
 

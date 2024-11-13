@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "basic-actor-chain-example"
+name = "opensearch-chain-example"
 version = "0.3.1a0"
-description = "A simple chain to show how to define and use an actor in a chain"
+description = "A simple chain that connects to Opensearch service and processes the result of a search"
 authors = []
 include = ["requirements.txt"]
 
@@ -14,6 +14,7 @@ langchain = "0.2.16"
 langchain-community = "0.2.16"
 langchain-openai = "0.1.23"
 langchain-aws = "0.1.18"
+opensearch-py = "2.7.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
@@ -39,10 +40,10 @@ markers = ["manual: to mark tests as manual"]
 addopts = "-m 'not manual'"
 
 [[tool.poetry.source]]
-name = "genai-api-pypi"
+name = "stratio-releases"
 # here you should add the genai-api-development-proxy url. See also basic-actor-chain-example/README.md
-# url = "https://genai-api-test-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080/v1/pypi/simple/"
-url = "http://qa.int.stratio.com/repository/python-releases/simple/"
+url = "https://genai.s000001.k8s.oscar.labs.stratio.com/genai-developer-proxy-qa3:8080"
+#url = "http://qa.int.stratio.com/repository/python-releases/simple/"
 priority = "supplemental"
 
 [certificates.genai-api-pypi]

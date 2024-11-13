@@ -13,7 +13,7 @@ If you have any issue with the connection, please contact the Operator that conf
 
 Finally, you can now run the chain locally by calling the `main.py` script in the poetry environment
 ```
-$ poetry run python basic_actor_chain_example/main.py
+$ poetry run python opensearch_chain_example/main.py
 ```
 
 In case you want to debug the chain, you can run it in PyCharm as explained in the main [README.md](../README.md) file.

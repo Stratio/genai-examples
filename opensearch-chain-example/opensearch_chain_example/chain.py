@@ -46,25 +46,21 @@ class OpensourceChain(BaseGenAiChain, ABC):
         # get certificates
         # get the needed certificates to connect to OpenSearch
         cert, key, ca = self._init_credentials()
-        # Init OpenSearch if defined
+        # Init OpenSearch
         try:
-            if opensearch_url:
-                log.info(
-                    f"OpenSearch URL is defined. Trying to connect with OpenSearch..."
-                )
-                opensearch_service = OpenSearchService(
-                    opensearch_url=opensearch_url,
-                    ca_certs=ca,
-                    client_cert=cert,
-                    client_key=key,
-                )
-                assert opensearch_service.client.indices.get_alias("*")
-                log.info(f"Connected with OpenSearch")
-            else:
-                opensearch_service = None
-                log.info("OpenSearch not defined. Skipping connection.")
+            log.info(
+                f"Trying to connect with OpenSearch {opensearch_url}..."
+            )
+            opensearch_service = OpenSearchService(
+                opensearch_url=opensearch_url,
+                ca_certs=ca,
+                client_cert=cert,
+                client_key=key,
+            )
+            assert opensearch_service.client.indices.get_alias("*")
+            log.info(f"Connected with OpenSearch")
         except Exception as error:
-            error_msg = f"Unable to init SQL Chain. Unable to validate connection with OpenSearch. Error: {error}"
+            error_msg = f"Unable to init OpenSearch Chain. Unable to validate connection with OpenSearch. Error: {error}"
             log.error(error_msg)
             raise RuntimeError(error_msg)
         return opensearch_service

@@ -76,7 +76,6 @@ INPUT_TEMPLATE = f"""# USER REQUEST START #
 
 """
 
-
 class BasicExampleActorOutput(BaseModel):
     """
     This object represents the output of the actor.

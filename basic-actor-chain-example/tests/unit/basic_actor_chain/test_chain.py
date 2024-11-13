@@ -47,7 +47,9 @@ class TestBasicActorChain:
             {"user_request": "Hi! Nice to meet you! Where's the Queen of Hearts?"}
         )
 
-        assert "roses" in result.mad_hutter_riddle
+        assert USER_REQUEST_EXPLANATION == result.user_request_explanation
+        assert MAD_HUTTER_RIDDLE == result.mad_hutter_riddle
+        assert MESSAGE == result.message
 
 
 if __name__ == "__main__":

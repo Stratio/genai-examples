@@ -18,7 +18,11 @@ from langchain_core.messages import BaseMessage
 from langchain_core.prompts.chat import BaseMessagePromptTemplate
 from pydantic import BaseModel
 
-from ..constants.constants import *
+from ..constants.constants import (
+    SCENARIO_INPUT_MSG,
+    USER_REQUEST_EXPLANATION,
+    CHAIN_KEY_USER_NAME,
+)
 
 # This block represents the instructions for the given actor.
 # The context: the actor is a character from Alice in Wonderland, the Mad Hatter.

@@ -16,23 +16,26 @@ from genai_core.server.server import GenAiServer
 def main():
     """
     Starts a stand-alone GenAI-api-like server with the chain loaded so that in can be easily executed locally.
-    Note that the chain will need access to a Genai-Gateway server, which could be provided from your
+    Note that the chain will need access to a OpenSearch server, which should be provided from your
     local machine via the GenAI development proxy. An example of json body to send in invoke POST is
     ```json
-       {
-          "input": {
-             "user_request": "Hi! Nice to meet you! Where's the Queen of Hearts?"
-          },
+        {
+           "input": {
+              "search_value":"Scott",
+              "collection_name":"semantic_banking_customer_product360",
+              "table_value":"customer",
+              "column_value":"Full_Name"
+            },
           "config": {
             "metadata": {
               "__genai_state": {
                 "client_auth_type": "mtls",
-                "client_user_id": "Alice",
-                "client_tenant": "s000001"
+                "client_user_id": "your-user",
+                "client_tenant": "your-tenant"
               }
             }
           }
-       }
+        }
       ```
       The "config" -> "metadata" -> "__genai_state" is only needed to test while developing locally.
       In a real environment GenAI API adds automatically that fields from the auth info before
@@ -42,7 +45,8 @@ def main():
         module_name="opensearch_chain_example.chain",
         class_name="OpensourceChain",
         config={
-            # Change the endpoint according to the model you will use
+            # OPENSEARCH_URL environment variable need to be set
+            # with the OpenSearch service url (see README.me for more information):
             "opensearch_url": os.getenv("OPENSEARCH_URL"),
             "opensearch_min_score": 30,
         },
@@ -51,18 +55,6 @@ def main():
 
 
 if __name__ == "__main__":
-    """
-    Before running this script, you should configure the following environment variables:
-    variables needed to tell the VaulClient where to find the certificates so it does not need to
-    actually access any Vault. You can obtain your certificates from your profile in Gosec
-    VAULT_LOCAL_CLIENT_CERT=/path/to/cert.crt
-    VAULT_LOCAL_CLIENT_KEY=/path/to/private-key.key
-    VAULT_LOCAL_CA_CERTS=/path/to/ca-cert.crt
-
-    Opensearch service URL
-    OPENSEARCH_URL=https://opensearch.s000001-genai.k8s.fifteen.labs.stratio.com:9200
-
-    GenAI API service name
-    GENAI_API_SERVICE_NAME=genai-api-qa3.s000001-genai
-    """
+    # Before running this script, refer to the README.md file to know how to set up
+    # your environment correctly in order to communicate with the OpenSearch service
     main()

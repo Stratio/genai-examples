@@ -27,13 +27,11 @@ from opensearch_chain_example.constants.constants import (
 from opensearch_chain_example.services.opensearch_service import OpenSearchService
 
 
-# Here you define your chain, which inherits from the BaseGenAiChain, so you only need to implement
-# the `chain` method. Note that this chain is using a custom basic actor that needs to be instantiated with the gateway endpoint (the LLM model used).
-# the model need to be registered in the Stratio Gateway, and the gateway_endpoint variable is the id of the model in the gateway.
 class OpensourceChain(BaseGenAiChain, ABC):
-    # Internal chain
-    _chain: Optional[Runnable] = None
+    """
+    Example of a GenAI Chain that interacts with OpenSearch service to obtain and process the result of a search.
 
+    """
     def __init__(
         self, opensearch_url: Optional[str] = None, opensearch_min_score: int = 5
     ):
@@ -43,6 +41,15 @@ class OpensourceChain(BaseGenAiChain, ABC):
         log.info("OpenSearch Example chain ready!")
 
     def _init_opensearch(self, opensearch_url: str) -> OpenSearchService:
+        """
+        This method initializes the OpenSearch service to interact with an OpenSearch service instance through the GenAI development proxy.
+
+        The following environment variable need to be set before calling the constructor method (see README.me for more information):
+        OPENSEARCH_URL
+        OPENSEARCH_CLIENT_CERT
+        OPENSEARCH_CLIENT_KEY
+        OPENSEARCH_CA_CERTS
+        """
         # get certificates
         # get the needed certificates to connect to OpenSearch
         cert, key, ca = self._init_credentials()
@@ -64,12 +71,6 @@ class OpensourceChain(BaseGenAiChain, ABC):
         return opensearch_service
 
     def chain(self) -> Runnable:
-        # In order to be able to impersonate the nominal user (the one that has invoked the chain)
-        # we need to know its uid. GenAI API adds extra auth metadata to the body received in the
-        # invoke request before passing it to the chain. From these metadata is possible to extract
-        # the uid of the nominal user, and GenAI Core provides some Runnables to add this info
-        # to the chain data. When developing locally, you should add this metadata manually to the
-        # invoke request body.
         """
         Returns a Langchain Runnable with an invoke method. When invoking the chain,
         the body of the request will be passed to the invoke method.
@@ -81,6 +82,7 @@ class OpensourceChain(BaseGenAiChain, ABC):
         def _ask_opensearch(chain_data: dict) -> dict:
             """
             This method queries the OpenSearch service with the user request and returns the response.
+            The response is stored in the chain_data dictionary with the key 'opensearch_response'.
             """
             try:
                 search_value = chain_data[OPENSEARCH_SEARCH_VALUE_KEY]

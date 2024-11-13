@@ -14,9 +14,10 @@ from typing import Optional, Dict, Any
 from opensearchpy import OpenSearch
 
 
-# TODO: move to genai_core
 class OpenSearchService:
-    """OpenSearch service to search values for parametric SQL generation"""
+    """
+    OpenSearch service to interact with an OpenSearch service instance.
+    """
 
     def __init__(
         self,
@@ -26,6 +27,16 @@ class OpenSearchService:
         client_key: Optional[str] = None,
         **kwargs,
     ):
+        """
+        Initialize the OpenSearchService.
+
+        Args:
+            opensearch_url (str): The URL of the OpenSearch instance.
+            ca_certs (Optional[str], optional): Path to CA certificates. Defaults to None.
+            client_cert (Optional[str], optional): Path to client certificate. Defaults to None.
+            client_key (Optional[str], optional): Path to client key. Defaults to None.
+            **kwargs: Additional keyword arguments for the OpenSearch client.
+        """
         self.client = OpenSearch(
             hosts=[opensearch_url],
             ca_certs=ca_certs,
@@ -36,6 +47,15 @@ class OpenSearchService:
 
     @staticmethod
     def transform_index(index):
+        """
+        Transform the index name to lowercase.
+
+        Args:
+            index (str): The index name to transform.
+
+        Returns:
+            str: The transformed index name.
+        """
         return index.lower()
 
     def search_filter_values(
@@ -47,7 +67,20 @@ class OpenSearchService:
         size=1,
         min_score=2,
     ) -> Optional[Dict[str, Any]]:
-        """Search values on index for a given table and column"""
+        """
+        Search values on index for a given table and column.
+
+        Args:
+            index (str): The index to search.
+            table_value (str): The table value to search.
+            column_value (str): The column value to search.
+            search_value (str): The search value to filter.
+            size (int, optional): The number of results to return. Defaults to 1.
+            min_score (int, optional): The minimum score for results. Defaults to 2.
+
+        Returns:
+            Optional[Dict[str, Any]]: The search results, or raises an exception if an error occurs.
+        """
         try:
             transformed_index = self.transform_index(index)
             query = {

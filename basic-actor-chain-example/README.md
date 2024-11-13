@@ -28,8 +28,8 @@ An example of request body for the invoke POST is the following:
     "metadata": {
       "__genai_state": {
         "client_auth_type": "mtls",
-        "client_user_id": "Alice",
-        "client_tenant": "s000001"
+        "client_user_id": "your-user",
+        "client_tenant": "your-tenant"
       }
     }
   }

@@ -25,8 +25,8 @@ def main():
             "metadata": {
               "__genai_state": {
                 "client_auth_type": "mtls",
-                "client_user_id": "Alice",
-                "client_tenant": "s000001"
+                "client_user_id": "your-user",
+                "client_tenant": "your-tenant"
               }
             }
           }
@@ -49,5 +49,6 @@ def main():
 
 
 if __name__ == "__main__":
-    # Before running this script, refer to the README.md file to know how to set up your environment correctly in order to communicate with the Stratio GenAI Gateway
+    # Before running this script, refer to the README.md file to know how to set up
+    # your environment correctly in order to communicate with the Stratio GenAI Gateway
     main()

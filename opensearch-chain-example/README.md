@@ -11,7 +11,16 @@ The OpenSearch service is exposed with the GenAI developer proxy, so the chain c
 The Operator that configured the GenAI Developer Proxy should have configured correctly the OpenSearch service and your user should have the correct permissions to access it.
 If you have any issue with the connection, please contact the Operator that configured the GenAI Developer Proxy.
 
+Please check that after running the `create_env_file.py` script (see [Readme](../README.md)), the `.env` created contains the following variables:
+```
+OPENSEARCH_URL
+OPENSEARCH_CLIENT_CERT
+OPENSEARCH_CLIENT_KEY
+OPENSEARCH_CA_CERTS
+```
+
 Finally, you can now run the chain locally by calling the `main.py` script in the poetry environment
+
 ```
 $ poetry run python opensearch_chain_example/main.py
 ```
@@ -36,13 +45,16 @@ An example of request body for the invoke POST is the following:
     "metadata": {
       "__genai_state": {
         "client_auth_type": "mtls",
-        "client_user_id": "s000001-user",
-        "client_tenant": "s000001"
+        "client_user_id": "your-user",
+        "client_tenant": "your-tenant"
       }
     }
   }
 }
 ```
+
+Note that the values in the example provided should be adapted to the data present in the OpenSearch service and the user should have the correct permissions to access it.
+
 The `"config"` key with the extra metadata is normally added by GenAI API before passing the input to the chain,
 but while developing locally you should add it by hand.
 

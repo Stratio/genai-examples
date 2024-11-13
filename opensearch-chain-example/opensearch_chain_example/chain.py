@@ -43,9 +43,11 @@ class OpensourceChain(BaseGenAiChain, ABC):
 
     def _init_opensearch(self, opensearch_url: str) -> OpenSearchService:
         """
-        This method initializes the OpenSearch service to interact with an OpenSearch service instance through the GenAI development proxy.
+        This method initializes the OpenSearch service to interact with an OpenSearch
+         service instance through the GenAI development proxy.
 
-        The following environment variable need to be set before calling the constructor method (see README.me for more information):
+        The following environment variable need to be set before calling
+        the constructor method (see README.me for more information):
         OPENSEARCH_URL
         OPENSEARCH_CLIENT_CERT
         OPENSEARCH_CLIENT_KEY
@@ -104,12 +106,12 @@ class OpensourceChain(BaseGenAiChain, ABC):
                 )
                 if len(search_result["hits"]["hits"]) == 0:
                     log.info(
-                        f"No parametric filter found.",
+                        "No parametric filter found.",
                         chain_data,
                     )
                     chain_data[
                         OPENSEARCH_EXPLANATION_KEY
-                    ] = f"No parametric filter found."
+                    ] = "No parametric filter found."
                 else:
                     first_value = search_result["hits"]["hits"][0]["_source"]["value"]
                     chain_data[

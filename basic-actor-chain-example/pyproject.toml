@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "basic-actor-chain-example"
-version = "0.1.0a0"
+version = "0.3.1a0"
 description = "A simple chain to show how to define and use an actor in a chain"
 authors = []
 include = ["requirements.txt"]

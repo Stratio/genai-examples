@@ -38,14 +38,11 @@ class OpensourceChain(BaseGenAiChain, ABC):
         self, opensearch_url: Optional[str] = None, opensearch_min_score: int = 5
     ):
         log.info("Preparing OpenSearch Example chain")
-        self.opensearch_service = self._init_opensearch(
-            opensearch_url, opensearch_min_score
-        )
+        self.opensearch_min_score = opensearch_min_score
+        self.opensearch_service = self._init_opensearch(opensearch_url)
         log.info("OpenSearch Example chain ready!")
 
-    def _init_opensearch(
-        self, opensearch_url: str, opensearch_min_score: int
-    ) -> OpenSearchService:
+    def _init_opensearch(self, opensearch_url: str) -> OpenSearchService:
         # get certificates
         # get the needed certificates to connect to OpenSearch
         cert, key, ca = self._init_credentials()
@@ -62,7 +59,6 @@ class OpensourceChain(BaseGenAiChain, ABC):
                     client_key=key,
                 )
                 assert opensearch_service.client.indices.get_alias("*")
-                self.opensearch_min_score = opensearch_min_score
                 log.info(f"Connected with OpenSearch")
             else:
                 opensearch_service = None

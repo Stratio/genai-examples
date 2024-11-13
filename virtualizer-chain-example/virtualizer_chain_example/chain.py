@@ -22,6 +22,7 @@ from langchain_core.runnables import Runnable, RunnableLambda
 # that will be used in the chain itself.
 class VirtualizerChain(BaseGenAiChain):
     "Example chain showing how to use GenAI Core's Virtualizer Service to run queries in Virtualizer"
+
     # Note that, when registering the chain in GenAI API, the keys in the following sub-json of the
     # request body, "chain_config" -> "chain_params" -> {json with several keys} are the parameters
     # that will be passed here to the constructor. For local development, these parameters are
@@ -104,7 +105,7 @@ class VirtualizerChain(BaseGenAiChain):
 
         return VirtualizerServiceHelper.get_service()
 
-    def _init_credentials(self) -> Tuple[str, str, str] :
+    def _init_credentials(self) -> Tuple[str, str, str]:
         "This method obtains the certificates needed to access Virtualizer as a 3-tuple (cert, key, ca)."
         # In production, the certificates are obtained from Vault, but for local development, you can
         # define the following environment variables and the VaultClient will use those to obtain the

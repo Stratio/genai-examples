@@ -14,10 +14,8 @@ from typing import Optional, cast
 from genai_core.chain.base import BaseGenAiChain
 from genai_core.helpers.chain_helpers import extract_uid
 from genai_core.logger.logger import log
-from langchain_core.runnables import Runnable, RunnableLambda
-from genai_core.runnables.common_runnables import runnable_extract_genai_auth
+from langchain_core.runnables import Runnable, RunnableLambda, chain
 from .actors.basic_actor import BasicExampleActor
-from .constants.constants import CHAIN_KEY_USER_NAME
 
 
 # Here you define your chain, which inherits from the BaseGenAiChain, so you only need to implement
@@ -26,9 +24,6 @@ from .constants.constants import CHAIN_KEY_USER_NAME
 class BasicActorChain(BaseGenAiChain, ABC):
     # Actor instance of BasicExampleActor, which will be used in the chain
     basic_actor: BasicExampleActor
-
-    # Internal chain
-    _chain: Optional[Runnable] = None
 
     def __init__(self, gateway_endpoint: str, llm_timeout: int = 30):
         """
@@ -47,49 +42,40 @@ class BasicActorChain(BaseGenAiChain, ABC):
     # This should return a Langchain Runnable with an invoke method. When invoking the chain,
     # the body of the request will be passed to the invoke method
     def chain(self) -> Runnable:
-        # In order to be able to impersonate the nominal user (the one that has invoked the chain)
-        # we need to know its uid. GenAI API adds extra auth metadata to the body received in the
-        # invoke request before passing it to the chain. From these metadata is possible to extract
-        # the uid of the nominal user, and GenAI Core provides some Runnables to add this info
-        # to the chain data. When developing locally, you should add this metadata manually to the
-        # invoke request body.
         """
         Returns a Langchain Runnable with an invoke method. When invoking the chain,
         the body of the request will be passed to the invoke method.
 
         :return: A Runnable instance representing the chain.
         """
-        return (
-            runnable_extract_genai_auth()
-            | RunnableLambda(self._extract_username)
-            | RunnableLambda(self._invoke_actor)
-        )
 
-    @staticmethod
-    def _extract_username(chain_data: dict):
-        # Note that you should always impersonate the nominal user so that they can only see data for which
-        # they have permissions. Previous steps in the chain must have added the user info to the chain_data
-        # from extra metadata that GenAI API adds to the invoke body, and we can use GenAI Core helper
-        # methods to extract the userID from that extra info in the chain_data
-        """
-        Extracts the user ID from the chain data and adds it to the chain data.
+        @chain
+        def _invoke_actor(chain_data: dict):
+            """
+            Invokes the actor with the given chain data.
 
-        :param chain_data: The data passed through the chain.
-        :return: Updated chain data with the extracted user ID.
-        """
-        chain_data[CHAIN_KEY_USER_NAME] = extract_uid(chain_data)
+            :param chain_data: The data passed through the chain.
+            :return: The result of the actor's invocation.
+            """
+            return self.basic_actor.get_chain().invoke(chain_data)
 
-        return chain_data
+        @chain
+        def _extract_user_name(chain_data: dict):
+            """
+            Extracts the username from the chain data.
 
-    def _invoke_actor(self, chain_data: dict):
-        # Note that you should always impersonate the nominal user so that they can only see data for which
-        # they have permissions. Previous steps in the chain must have added the user info to the chain_data
-        # from extra metadata that GenAI API adds to the invoke body, and we can use GenAI Core helper
-        # methods to extract the userID from that extra info in the chain_data
-        """
-        Invokes the actor with the given chain data.
+            :param chain_data: The data passed through the chain.
+            :return: The username extracted from the chain data.
+            """
+            # The actor replies differently in case the username is Alice.
+            # GenAI API adds extra auth metadata to the body received in the
+            # invoke request before passing it to the chain. From these metadata is
+            # possible to extract the uid of the nominal user.
+            # When developing locally, you should add this metadata manually
+            # to the invoke request body as part of the config section of the body (see README.md).
+            chain_data[CHAIN_KEY_USER_NAME] = extract_uid(chain_data)
+            return chain_data
 
-        :param chain_data: The data passed through the chain.
-        :return: The result of the actor's invocation.
-        """
-        return self.basic_actor.get_chain().invoke(chain_data)
+        # The chain is composed of two runnables steps:
+        # _extract_user_name and _invoke_actor.
+        return _extract_user_name | _invoke_actor

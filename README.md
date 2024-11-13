@@ -5,7 +5,7 @@ This repository is intended to developers who want to create GenAI chains.
 This repository provides some simple examples of GenAI chains focused on a specific task.
 There are four basic chains that you can use as a starting point to create your own chains:
  # TODO: Add the links to the chains once merged
-* [Basic Actor Chain](./README.md): Examples of a chain where the user implementas a basic actor and invoke it.
+* [Basic Actor Chain](basic-actor-chain-example/README.md): Examples of a chain where the user implementas a basic actor and invoke it.
 * [Stratio Virtualizer Chain](./README.md): Example of a GenAI chain that connects to the Stratio Virtualizer service to perform a query.
 * [Opensearch Chain](./README.md): Example of a GenAI chain that connects to Opensearch service and processes the result of a search.
 * [Memory Chain](./README.md): Example of a GenAI chain that persist the user's conversation in order to remember the context.
@@ -63,7 +63,7 @@ Execute the following commands to configure the environment variables:
 ```bash
 cd genai-examples/scripts
 python create_env_file.py \
---certs_path /home/username/certs\
+--certs_path /path/to/certs\
 --proxy_url https://genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080
 ```
 

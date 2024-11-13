@@ -4,48 +4,20 @@ This is an example chain to show how to define a simple actor and use it in a ch
 
 ## Local deployment
 
-Verify that you have a dependencies source in your `pyproject.toml` with the url of the pypi server in genai-api
-providing the needed stratio packages, like genai-core. Note that the URL below is just an example, and you
-should add the correct URL for your case.
-```toml
-[[tool.poetry.source]]
-name = "genai-api-pypi"
-url = "https://genai-api-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080/v1/pypi/simple/"
-priority = "supplemental"
-```
-If using an SSL server, you should configure poetry to use the CA of the cluster to verify the certificate of the
-above configured repository (the CA of the cluster can be found in the zip you obtain from Gosec with your
-certificates)
-
-```
-$ poetry config certificates.genai-api-pypi.cert /path/to/ca-cert.crt 
-```
-
-Then install the poetry environment
-```
-$ poetry install
-```
-
-Set up the needed environment variables. You can create a file `env.sh` like the following:
-```bash
-# 1. Variables needed to access the Genai-Gateway (here we show an example with):
-export GENAI_GATEWAY_URL=https://genai-developer-proxy-qa1-loadbalancer.s000001-genai.k8s.oscar.labs.stratio.com:8080/service/genai-gateway
-export GENAI_GATEWAY_CLIENT_CERT=/path/to/user-cert.crt
-export GENAI_GATEWAY_CLIENT_KEY=/path/to/user_private.key
-export GENAI_GATEWAY_CA_CERTS=/path/to/ca-cert.crt
-```
-and then source it (or add to PyCharm)
-```
-$ source env.sh
-```
+The first step in order to execute the chain in you local environment is to obtain the GenAI Developer Proxy URL and your user certificate.
+After you have obtained the necessary information, please refer to the main [README.md](../README.md) for instructions on how to set up the development environment.
 
 Finally, you can now run the chain locally by calling the `main.py` script in the poetry environment
 ```
 $ poetry run python basic_actor_chain_example/main.py
 ```
-In case you want to run the chain in debug mode, you can run it in PyCharm.
+
+In case you want to debug the chain, you can run it in PyCharm as explained in the main [README.md](../README.md) file.
+
+Once started, the chain will expose a swagger UI in the following URL: `http://0.0.0.0:8080/`.
 
 You can test your chain either via the swagger UI exposed by the local chain server, or with curl.
+
 An example of request body for the invoke POST is the following:
 ```json
 {
@@ -63,6 +35,7 @@ An example of request body for the invoke POST is the following:
   }
 }
 ```
+
 The `"config"` key with the extra metadata is normally added by GenAI API before passing the input to the chain,
 but while developing locally you should add it by hand.
 

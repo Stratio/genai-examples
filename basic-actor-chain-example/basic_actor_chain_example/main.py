@@ -49,10 +49,5 @@ def main():
 
 
 if __name__ == "__main__":
-    # Before running this script, you should configure the following environment variables:
-    # 1. Variables needed to access the Genai-Gateway (here we show an example with):
-    # GENAI_GATEWAY_URL=https://genai-developer-proxy-qa1-loadbalancer.s000001-genai.k8s.oscar.labs.stratio.com:8080/service/genai-gateway
-    # GENAI_GATEWAY_CLIENT_CERT=/path/to/user-cert.crt
-    # GENAI_GATEWAY_CLIENT_KEY=/path/to/user_private.key
-    # GENAI_GATEWAY_CA_CERTS=/path/to/ca-cert.crt
+    # Before running this script, refer to the README.md file to know how to set up your environment correctly in order to communicate with the Stratio GenAI Gateway
     main()

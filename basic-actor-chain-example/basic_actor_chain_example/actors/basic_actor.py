@@ -76,10 +76,11 @@ INPUT_TEMPLATE = f"""# USER REQUEST START #
 
 """
 
-
 class BasicExampleActorOutput(BaseModel):
     """
-    Model representing the output of the BasicExampleActor.
+    This object represents the output of the actor.
+    The actor should return a riddle that answers the user's request.
+    an explanation of the user's request and a message explaining the riddle.
 
     Attributes:
         user_request_explanation (str): Explanation of the user's request.
@@ -102,7 +103,8 @@ class BasicExampleActorOutput(BaseModel):
 
 class BasicExampleActorInput(ActorInput):
     """
-    Model representing the input for the BasicExampleActor.
+    This object represents the input of the actor.
+    The actor should receive the user's request, and the user's name.
 
     Attributes:
         template (str): The input template for the actor.
@@ -110,12 +112,15 @@ class BasicExampleActorInput(ActorInput):
     """
 
     template = INPUT_TEMPLATE
-    input_variables = [CHAIN_KEY_USER_REQUEST, CHAIN_KEY_LANGUAGE, CHAIN_KEY_USER_NAME]
+    input_variables = [CHAIN_KEY_USER_REQUEST, CHAIN_KEY_USER_NAME]
 
 
 class BasicExampleActor(GatewayActor):
     """
-    Actor class for the BasicExampleActor.
+    This object represents the actor.
+    This object extends the GatewayActor class which requires to
+    define the unique actor's key identifier, the input type, the output model,
+    the instructions, the examples, and some post prompts processing.
 
     Attributes:
         actor_key (str): The key identifying the actor.

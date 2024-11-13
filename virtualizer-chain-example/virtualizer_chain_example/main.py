@@ -7,7 +7,7 @@ def main():
     """
     Starts a stand-alone GenAI-api-like server with the chain loaded so that in can be easily executed locally.
     Note that the it still needs access to a Virtualizer server, which could be provided from your
-    local machine via the GenAI development proxy. An example of json body to send in invoke POST is
+    local machine via the GenAI developer proxy. An example of json body to send in invoke POST is
     ```json
       {
           "input": {
@@ -53,6 +53,6 @@ if __name__ == "__main__":
     # # Virtualier data
     # os.environ["VIRTUALIZER_HOST"] = "genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com"
     # os.environ["VIRTUALIZER_PORT"] = "8080"
-    # # this is needed if accessing virtualizer via the genai-development proxy, but it is not used in the chain
+    # # this is needed if accessing virtualizer via the genai-developer-proxy, but it is not used in the chain
     # os.environ["VIRTUALIZER_BASE_PATH"] = "/service/virtualizer"
     main()

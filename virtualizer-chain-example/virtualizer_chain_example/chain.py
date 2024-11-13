@@ -1,4 +1,5 @@
 import os
+from typing import Tuple
 
 from genai_core.chain.base import BaseGenAiChain
 from genai_core.logger.logger import log
@@ -20,10 +21,7 @@ from langchain_core.runnables import Runnable, RunnableLambda
 # chain is going to call virtualizer, so you will need also to create a virtualizer service
 # that will be used in the chain itself.
 class VirtualizerChain(BaseGenAiChain):
-    """
-    Example chain showing how to use GenAI Core's Virtualizer Service to run queries in Virtualizer
-    """
-
+    "Example chain showing how to use GenAI Core's Virtualizer Service to run queries in Virtualizer"
     # Note that, when registering the chain in GenAI API, the keys in the following sub-json of the
     # request body, "chain_config" -> "chain_params" -> {json with several keys} are the parameters
     # that will be passed here to the constructor. For local development, these parameters are
@@ -34,7 +32,7 @@ class VirtualizerChain(BaseGenAiChain):
         log.info("chain ready")
 
     # This should return a Langchain Runnable with an invoke method. When invoking the chain,
-    # the body of the request will be passed to the invoke method
+    # the "input" field of the request body will be passed to the invoke method of this Runnable
     def chain(self) -> Runnable:
         # In order to be able to impersonate the nominal user (the one that has invoked the chain)
         # we need to know its uid. GenAI API adds extra auth metadata to the body received in the
@@ -44,7 +42,7 @@ class VirtualizerChain(BaseGenAiChain):
         # invoke request body.
         return runnable_extract_genai_auth() | RunnableLambda(self._execute_query)
 
-    def _execute_query(self, chain_data: dict):
+    def _execute_query(self, chain_data: dict) -> dict:
         # Note that you should always impersonate the nominal user so that they can only see data for which
         # they have permissions. Previous steps in the chain must have added the user info to the chain_data
         # from extra metadata that GenAI API adds to the invoke body, and we can use GenAI Core helper
@@ -66,10 +64,7 @@ class VirtualizerChain(BaseGenAiChain):
     def _init_virtualizer(
         self, virtualizer_host: str, virtualizer_port: int
     ) -> VirtualizerService:
-        """
-        Creates an instance of the Virtualizer service provided by GenAI Core that is used later to send
-        queries to Virtualizer. Sets the field `self.virtualizer` with the created instance.
-        """
+        "Creates an instance of the Virtualizer service provided by GenAI Core"
         # get the needed certificates to connect to virtualizer
         cert, key, ca = self._init_credentials()
 
@@ -109,19 +104,17 @@ class VirtualizerChain(BaseGenAiChain):
 
         return VirtualizerServiceHelper.get_service()
 
-    def _init_credentials(self):
-        """
-        This method obtains and sets the certificates needed to access Virtualizer.
-        In production, the certificates are obtained from Vault, but for local development, you can
-        define the following environment variables and the VaultClient will use those to obtain the
-        certificates instead of trying to access Vault:
-           VAULT_LOCAL_CLIENT_CERT
-           VAULT_LOCAL_CLIENT_KEY
-           VAULT_LOCAL_CA_CERTS
-        For the production case, where the chain is executed inside GenAI API, you don't need to
-        explicitily pass the Vault connection details (hot, port and token) since these fields are
-        inferred from environment variables that are automatically set by GenAI API
-        """
+    def _init_credentials(self) -> Tuple[str, str, str] :
+        "This method obtains the certificates needed to access Virtualizer as a 3-tuple (cert, key, ca)."
+        # In production, the certificates are obtained from Vault, but for local development, you can
+        # define the following environment variables and the VaultClient will use those to obtain the
+        # certificates instead of trying to access Vault:
+        #    VAULT_LOCAL_CLIENT_CERT
+        #    VAULT_LOCAL_CLIENT_KEY
+        #    VAULT_LOCAL_CA_CERTS
+        # For the production case, where the chain is executed inside GenAI API, you don't need to
+        # explicitily pass the Vault connection details (hot, port and token) since these fields are
+        # inferred from environment variables that are automatically set by GenAI API
         try:
             vault = VaultClient()
             cert, key = vault.get_service_certificate_pem_paths()

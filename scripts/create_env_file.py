@@ -87,7 +87,7 @@ def get_proxy_url(proxy_url, certs):
     for key, value in data_json["services"].items():
         if value["enabled"]:
             enabled_services.append(key)
-    print(f"=> Enabled services: {", ".join(enabled_services)}")
+    print(f"=> Enabled services: {', '.join(enabled_services)}")
     # eg: https://genai-api.s000001-genai:8080
     genai_api_host = urlparse(
         data_json["services"]["genai-api"]["internal_url"]

@@ -85,12 +85,9 @@ Install the dependencies with Poetry:
 
 ```bash
 poetry config certificates.stratio-releases.cert false
-poetry config virtualenvs.in-project true
 poetry lock --no-update
 poetry install
 ```
-
-Poetry will install the dependencies in a virtual environment in the project folder called `.venv`.
 
 ### Configure the IDE (PyCharm)
 

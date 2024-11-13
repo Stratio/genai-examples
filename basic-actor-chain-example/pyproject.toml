@@ -1,0 +1,93 @@
+[tool.poetry]
+name = "basic-actor-chain-example"
+version = "0.1.0a0"
+description = "A simple chain to show how to define and use an actor in a chain"
+authors = []
+include = ["requirements.txt"]
+
+# TODO: check what dependencies we really need
+[tool.poetry.dependencies]
+python = "^3.9"
+genai-core = "0.3.1"
+# already included in genai-core but we set a fixed version
+langchain = "0.2.16"
+langchain-community = "0.2.16"
+langchain-openai = "0.1.23"
+langchain-aws = "0.1.18"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+pytest-asyncio = "^0.23.2"
+pytest-mock = "^3.12.0"
+pytest-cov = "^4.1.0"
+pylint = "^3.0.3"
+pylintfileheader = "^1.0.0"
+black = "^23.12.0"
+mypy = "^1.8.0"
+
+[tool.poetry.group.experiments]
+optional = true
+
+[tool.poetry.group.experiments.dependencies]
+jupyter = "*"
+mlflow = "*"
+pandas = "*"
+python-dotenv = "*"
+
+[tool.pytest.ini_options]
+markers = ["manual: to mark tests as manual"]
+addopts = "-m 'not manual'"
+
+[[tool.poetry.source]]
+name = "stratio-releases"
+# here you should replace the existing Url, with the genai-api-development-proxy url.
+# See also basic-actor-chain-example/README.md
+#url = "https://genai.s000001.k8s.oscar.labs.stratio.com/genai-developer-proxy-qa3:8080"
+url = "http://qa.int.stratio.com/repository/python-releases/simple/"
+priority = "supplemental"
+
+[tool.coverage.run]
+omit = [
+    "tests/*",
+    "scripts/*",
+]
+
+[tool.pylint.main]
+py-version = "3.9"
+ignore-patterns = ["^\\.#"]
+ignore-paths = [
+    "^tests$",
+    "^tests/.*$",
+    "^scripts/.*$",
+]
+load-plugins = ["pylintfileheader"]
+file-header = "[\\S\\n\\t\\v ]+© 2024 Stratio Big Data Inc."
+file-header-ignore-empty-files = true
+
+[tool.pylint.basic]
+no-docstring-rgx = "^_"
+
+[tool.pylint."messages control"]
+disable = [
+    "raw-checker-failed",
+    "bad-inline-option",
+    "locally-disabled",
+    "file-ignored",
+    "suppressed-message",
+    "useless-suppression",
+    "deprecated-pragma",
+    "use-implicit-booleaness-not-comparison-to-string",
+    "use-implicit-booleaness-not-comparison-to-zero",
+    "use-symbolic-message-instead",
+    "too-few-public-methods"
+]
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.variables]
+ignored-argument-names = "_.*|^ignored_|^unused_"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

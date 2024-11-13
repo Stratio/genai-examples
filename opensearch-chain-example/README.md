@@ -1,58 +1,29 @@
-# Example chain to show how to create a simple Actor and invoke it from the chain
+# Example chain that connects to Opensearch service exposed with the GenAI developer proxy
 
-This is an example chain to show how to define a simple actor and use it in a chain
+This is an example of a GenAI chain that connects to Opensearch service and processes the result of a search.
 
 ## Local deployment
 
-Verify that you have a dependencies source in your `pyproject.toml` with the url of the pypi server in genai-api
-providing the needed stratio packages, like genai-core. Note that the URL below is just an example, and you
-should add the correct URL for your case.
-```toml
-[[tool.poetry.source]]
-name = "genai-api-pypi"
-url = "https://genai-api-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080/v1/pypi/simple/"
-priority = "supplemental"
-```
-If using an SSL server, you should configure poetry to use the CA of the cluster to verify the certificate of the
-above configured repository (the CA of the cluster can be found in the zip you obtain from Gosec with your
-certificates)
+The first step in order to execute the chain in you local environment is to obtain the GenAI Developer Proxy URL and your user certificate.
+After you have obtained the necessary information, please refer to the main [README.md](../README.md) for instructions on how to set up the development environment.
 
-```
-$ poetry config certificates.genai-api-pypi.cert /path/to/ca-cert.crt 
-```
-
-Then install the poetry environment
-```
-$ poetry install
-```
-
-Set up the needed environment variables. You can create a file `env.sh` like the following:
-```bash
-# variables needed to tell the VaulClient where to find the certificates so it does not need to 
-# actually access any Vault. You can obtain your certificates from your profile in Gosec
-export VAULT_LOCAL_CLIENT_CERT=/path/to/cert.crt
-export VAULT_LOCAL_CLIENT_KEY=/path/to/private-key.key
-export VAULT_LOCAL_CA_CERTS=/path/to/ca-cert.crt
-
-# Opensearch service URL
-export OPENSEARCH_URL=https://opensearch.s000001-genai.k8s.fifteen.labs.stratio.com:9200
-
-# GenAI API service name
-export GENAI_API_SERVICE_NAME=genai-api-qa3.s000001-genai
-```
-and then source it (or add to PyCharm)
-```
-$ source env.sh
-```
+The OpenSearch service is exposed with the GenAI developer proxy, so the chain can connect to it using the GenAI API.
+The Operator that configured the GenAI Developer Proxy should have configured correctly the OpenSearch service and your user should have the correct permissions to access it.
+If you have any issue with the connection, please contact the Operator that configured the GenAI Developer Proxy.
 
 Finally, you can now run the chain locally by calling the `main.py` script in the poetry environment
 ```
 $ poetry run python basic_actor_chain_example/main.py
 ```
-In case you want to run the chain in debug mode, you can run it in PyCharm.
+
+In case you want to debug the chain, you can run it in PyCharm as explained in the main [README.md](../README.md) file.
+
+Once started, the chain will expose a swagger UI in the following URL: `http://0.0.0.0:8080/`.
 
 You can test your chain either via the swagger UI exposed by the local chain server, or with curl.
+
 An example of request body for the invoke POST is the following:
+
 ```json
 {
    "input": {

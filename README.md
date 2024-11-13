@@ -7,7 +7,7 @@ There are four basic chains that you can use as a starting point to create your 
  # TODO: Add the links to the chains once merged
 * [Basic Actor Chain](basic-actor-chain-example/README.md): Examples of a chain that implements a basic actor and invokes it.
 * [Stratio Virtualizer Chain](./virtualizer-chain-example/README.md): Example of a GenAI chain that connects to the Stratio Virtualizer service to perform a query.
-* [Opensearch Chain](./README.md): Example of a GenAI chain that connects to Opensearch service and processes the result of a search.
+* [Opensearch Chain](opensearch-chain-example/README.md): Example of a GenAI chain that connects to Opensearch service and processes the result of a search.
 * [Memory Chain](./README.md): Example of a GenAI chain that persist the user's conversation in order to remember the context.
 
 Please check the readme of each chain for more information.

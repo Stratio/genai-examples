@@ -25,12 +25,11 @@ hose {
                 "sonar.exclusions": "*/tests/**,*/scripts/**,*/pytest-coverage.xml",
                 "sonar.tests": ".",
                 "sonar.test.inclusions": "*/tests/**",
-                "sonar.python.coverage.reportPaths": "basic-actor-chain-example/pytest-coverage.xml",
-                "sonar.python.pylint.reportPaths": "basic-actor-chain-example/pylint-report.txt",
-                "sonar.python.coverage.reportPaths": "virtualizer-chain-example/pytest-coverage.xml",
-                "sonar.python.pylint.reportPaths": "virtualizer-chain-example/pylint-report.txt",
+                "sonar.python.coverage.reportPaths": "basic-actor-chain-example/pytest-coverage.xml,virtualizer-chain-example/pytest-coverage.xml",
+                "sonar.python.pylint.reportPaths": "basic-actor-chain-example/pylint-report.txt,virtualizer-chain-example/pylint-report.txt",
                 "sonar.scm.disabled": "true"
-            ])
+            ]
+        )
         doPackage(config)
         doDeploy(config)
     }

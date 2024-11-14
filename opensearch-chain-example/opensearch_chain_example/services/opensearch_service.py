@@ -45,19 +45,6 @@ class OpenSearchService:
             **kwargs,
         )
 
-    @staticmethod
-    def transform_index(index):
-        """
-        Transform the index name to lowercase.
-
-        Args:
-            index (str): The index name to transform.
-
-        Returns:
-            str: The transformed index name.
-        """
-        return index.lower()
-
     def search_filter_values(
         self,
         index: str,
@@ -69,6 +56,8 @@ class OpenSearchService:
     ) -> Optional[Dict[str, Any]]:
         """
         Search values on index for a given table and column.
+
+        This service should be adapted to the specific needs of your use case and the data indexed in the OpenSearch instance.
 
         Args:
             index (str): The index to search.
@@ -82,7 +71,13 @@ class OpenSearchService:
             Optional[Dict[str, Any]]: The search results, or raises an exception if an error occurs.
         """
         try:
-            transformed_index = self.transform_index(index)
+            # Here you should adapt the query to your specific needs
+            # In ths example, we assume that an external process created the index using the name of the database
+            # and added documents by analyzing the data in the database and indexing the required columns with the following fields:
+            # "table": the table name,
+            # "column": the column name,
+            # "value": the value of the column.
+            # the query returns the first documents that matches the search value in a specific table and column
             query = {
                 "size": size,
                 "min_score": min_score,
@@ -105,6 +100,6 @@ class OpenSearchService:
                     }
                 },
             }
-            return self.client.search(index=transformed_index, body=query)
+            return self.client.search(index=index, body=query)
         except Exception as e:
             raise e

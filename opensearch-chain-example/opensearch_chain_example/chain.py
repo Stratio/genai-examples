@@ -22,7 +22,7 @@ from opensearch_chain_example.constants.constants import (
     OPENSEARCH_COLLECTION_NAME_KEY,
     OPENSEARCH_TABLE_VALUE_KEY,
     OPENSEARCH_COLUMN_VALUE_KEY,
-    OPENSEARCH_EXPLANATION_KEY,
+    OPENSEARCH_RESULT_KEY,
 )
 from opensearch_chain_example.services.opensearch_service import OpenSearchService
 
@@ -43,15 +43,13 @@ class OpensourceChain(BaseGenAiChain, ABC):
 
     def _init_opensearch(self, opensearch_url: str) -> OpenSearchService:
         """
-        This method initializes the OpenSearch service to interact with an OpenSearch
-         service instance through the GenAI development proxy.
+        This method initializes the OpenSearch service client to interact with an OpenSearch
+         service.
 
         The following environment variable need to be set before calling
         the constructor method (see README.me for more information):
-        OPENSEARCH_URL
-        OPENSEARCH_CLIENT_CERT
-        OPENSEARCH_CLIENT_KEY
-        OPENSEARCH_CA_CERTS
+        OPENSEARCH_URL: The URL of the OpenSearch instance.
+
         """
         # get certificates
         # get the needed certificates to connect to OpenSearch
@@ -94,7 +92,7 @@ class OpensourceChain(BaseGenAiChain, ABC):
                 column_value = chain_data[OPENSEARCH_COLUMN_VALUE_KEY]
 
                 log.info(
-                    f"Searching parametric filter value '{search_value}' for {collection_name},{table_value},{column_value}",
+                    f"Searching for value '{search_value}' in {collection_name},{table_value},{column_value}",
                     chain_data,
                 )
                 search_result = self.opensearch_service.search_filter_values(
@@ -106,26 +104,26 @@ class OpensourceChain(BaseGenAiChain, ABC):
                 )
                 if len(search_result["hits"]["hits"]) == 0:
                     log.info(
-                        "No parametric filter found.",
+                        "No results found.",
                         chain_data,
                     )
                     chain_data[
-                        OPENSEARCH_EXPLANATION_KEY
-                    ] = "No parametric filter found."
+                        OPENSEARCH_RESULT_KEY
+                    ] = "No results found."
                 else:
                     first_value = search_result["hits"]["hits"][0]["_source"]["value"]
                     chain_data[
-                        OPENSEARCH_EXPLANATION_KEY
-                    ] = f"To obtain the requested value '{search_value}' in the column '{column_value}' of the table  '{table_value}', the exact value to filter is '{first_value}'."
+                        OPENSEARCH_RESULT_KEY
+                    ] = f"For the requested search value '{search_value}' in the column '{column_value}' of the table  '{table_value}', the first result is '{first_value}'."
 
             except Exception as e:
                 log.error(
-                    f"Unable to extract filter instructions. Exception: {e}",
+                    f"Unable to search index. Exception: {e}",
                     chain_data,
                 )
                 chain_data[
-                    OPENSEARCH_EXPLANATION_KEY
-                ] = f"Unable to extract filter instructions. Exception: {e}"
+                    OPENSEARCH_RESULT_KEY
+                ] = f"Unable to search index. Exception: {e}"
             return chain_data
 
         return runnable_extract_genai_auth() | _ask_opensearch

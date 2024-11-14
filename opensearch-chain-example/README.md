@@ -1,22 +1,27 @@
-# Example chain that connects to Opensearch service exposed with the GenAI developer proxy
+# Example chain that connects to Opensearch service
 
 This is an example of a GenAI chain that connects to Opensearch service and processes the result of a search.
 
+For the specific case of this example chain, we developed an OpenSearch utility service that connects to an OpenSearch service and performs a search on a specific index and table.
+
+In ths example, we assume that an external process created the index using the name of the database
+and added documents by analyzing the data in the tables and indexing the selected columns with all their possible values, 
+creating document with the following fields:
+
+* _table_: the table name,
+* _column_: the column name,
+* _value_: the value of the column.
+
+the query coded in the service, returns the first documents that matches the search value in a specific table and column.
+The chain will present the first of these value as the result of the chain if a result is found.
+
 ## Local deployment
 
-The first step in order to execute the chain in you local environment is to obtain the GenAI Developer Proxy URL and your user certificate.
-After you have obtained the necessary information, please refer to the main [README.md](../README.md) for instructions on how to set up the development environment.
-
-The OpenSearch service is exposed with the GenAI developer proxy, so the chain can connect to it using the GenAI API.
-The Operator that configured the GenAI Developer Proxy should have configured correctly the OpenSearch service and your user should have the correct permissions to access it.
-If you have any issue with the connection, please contact the Operator that configured the GenAI Developer Proxy.
+Please refer to the main [README.md](../README.md) for instructions on how to set up the development environment.
 
 Please check that after running the `create_env_file.py` script (see [Readme](../README.md)), the `.env` created contains the following variables:
 ```
 OPENSEARCH_URL
-OPENSEARCH_CLIENT_CERT
-OPENSEARCH_CLIENT_KEY
-OPENSEARCH_CA_CERTS
 ```
 
 Finally, you can now run the chain locally by calling the `main.py` script in the poetry environment
@@ -36,10 +41,10 @@ An example of request body for the invoke POST is the following:
 ```json
 {
    "input": {
-      "search_value":"Scott",
-      "collection_name":"semantic_banking_customer_product360",
-      "table_value":"customer",
-      "column_value":"Full_Name"
+      "search_value":"value_to_search",
+      "collection_name":"index_name",
+      "table_value":"table_name",
+      "column_value":"column_name"
     },
   "config": {
     "metadata": {
@@ -53,7 +58,7 @@ An example of request body for the invoke POST is the following:
 }
 ```
 
-Note that the values in the example provided should be adapted to the data present in the OpenSearch service and the user should have the correct permissions to access it.
+Note that the values in the example provided should be adapted to the data present in the OpenSearch service.
 
 The `"config"` key with the extra metadata is normally added by GenAI API before passing the input to the chain,
 but while developing locally you should add it by hand.

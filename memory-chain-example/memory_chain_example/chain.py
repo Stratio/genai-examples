@@ -36,17 +36,23 @@ from genai_core.runnables.common_runnables import (
 )
 
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.runnables import Runnable, RunnableLambda, ConfigurableFieldSpec, chain
+from langchain_core.runnables import (
+    Runnable,
+    RunnableLambda,
+    ConfigurableFieldSpec,
+    chain,
+)
 from pydantic import BaseModel
 
 
 class MemoryExampleMessageInput(BaseModel):
     """Class to store the input for the chat model in Conversation API."""
+
     input: str
     destination: str
 
-class MemoryChain(BaseGenAiChain, ABC):
 
+class MemoryChain(BaseGenAiChain, ABC):
     # => Conversation Cache
     chat_memory: StratioConversationMemory
 
@@ -83,9 +89,11 @@ class MemoryChain(BaseGenAiChain, ABC):
                     "system",
                     "You are a travel guide about {destination}. \
                 Your mission is to guide user in planning a trip to {destination}. \
-                Be effective, short, clear, and try to adapt to user type of traveller, tastes and range of age."
+                Be effective, short, clear, and try to adapt to user type of traveller, tastes and range of age.",
                 ),
-                MessagesPlaceholder(variable_name=CHAIN_MEMORY_KEY_CHAT_HISTORY, optional=True),
+                MessagesPlaceholder(
+                    variable_name=CHAIN_MEMORY_KEY_CHAT_HISTORY, optional=True
+                ),
                 ("human", "{input}"),
             ]
         )
@@ -109,7 +117,7 @@ class MemoryChain(BaseGenAiChain, ABC):
             endpoint=self.gateway_endpoint,
             temperature=self.chat_temperature,
             n=self.n,
-            request_timeout=self.request_timeout
+            request_timeout=self.request_timeout,
         )
 
     @staticmethod
@@ -188,19 +196,21 @@ class MemoryChain(BaseGenAiChain, ABC):
         )
 
     def chain(self) -> Runnable:
-
         @chain
         def _plan_trip_to_destination(chain_data: dict) -> dict:
             """Ask a question to the model"""
-            chain_data[CHAIN_KEY_CONVERSATION_INPUT] = MemoryExampleMessageInput.model_validate(chain_data)
+            chain_data[
+                CHAIN_KEY_CONVERSATION_INPUT
+            ] = MemoryExampleMessageInput.model_validate(chain_data)
             topic_chain = self.prompt | self.model
             chain_output = {}
             chain_output.update(
                 {
                     "content_type": ContentType.MESSAGE,
                     "content": topic_chain.invoke(chain_data).content,
-                })
-            chain_data[CHAIN_KEY_CONVERSATION_OUTPUT]  = chain_output
+                }
+            )
+            chain_data[CHAIN_KEY_CONVERSATION_OUTPUT] = chain_output
             return chain_data
 
         memory_chain = (

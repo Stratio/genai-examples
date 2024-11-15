@@ -9,7 +9,10 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 import pytest
 from genai_core.chat_models.stratio_chat import StratioGenAIGatewayChat
-from genai_core.constants.constants import CHAIN_MEMORY_KEY_CHAT_HISTORY, CHAIN_KEY_CHAT_ID
+from genai_core.constants.constants import (
+    CHAIN_MEMORY_KEY_CHAT_HISTORY,
+    CHAIN_KEY_CHAT_ID,
+)
 from genai_core.memory.stratio_conversation_memory import StratioConversationMemory
 from genai_core.test.mock_helper import mock_init_stratio_gateway, mock_gateway_chat
 from langchain_core.messages import AIMessage, HumanMessage
@@ -54,6 +57,7 @@ def mock_chat(mocker):
         endpoint=GATEWAY_ENDPOINT, target_uri="http://127.0.0.1:1080", use_ssl=False
     )
 
+
 @pytest.fixture
 def mock_memory(mocker: MockerFixture, mock_chat):
     return StratioConversationMemory(
@@ -62,6 +66,7 @@ def mock_memory(mocker: MockerFixture, mock_chat):
         target_uri="http://127.0.0.1:8080",
         use_ssl=False,
     )
+
 
 def mock_load_save_conversation_memory(mocker) -> None:
     mocker.patch(
@@ -72,9 +77,14 @@ def mock_load_save_conversation_memory(mocker) -> None:
         "genai_core.memory.stratio_conversation_memory.StratioConversationMemory.load_memory",
         return_value=[
             AIMessage(content=MOCK_MODEL_RESPONSE),
-            HumanMessage(content=[{"input": INPUT_MOCK_FIRST_QUESTION, "destination": TOPIC_MOCK}]),
+            HumanMessage(
+                content=[
+                    {"input": INPUT_MOCK_FIRST_QUESTION, "destination": TOPIC_MOCK}
+                ]
+            ),
         ],
     )
+
 
 class TestOpensearchChain:
     """
@@ -99,13 +109,19 @@ class TestOpensearchChain:
             {"input": INPUT_MOCK_FIRST_QUESTION, "destination": TOPIC_MOCK}
         )
 
-        assert (result_first_interaction[CHAIN_KEY_CHAT_ID])
+        assert result_first_interaction[CHAIN_KEY_CHAT_ID]
 
         mock_gateway_chat(mocker, MOCK_MODEL_MEMORY_RESPONSE)
 
-        result_second_interaction = chain.invoke({CHAIN_KEY_CHAT_ID: result_first_interaction[CHAIN_KEY_CHAT_ID], "input": INPUT_MOCK_FIRST_QUESTION, "destination": TOPIC_MOCK})
+        result_second_interaction = chain.invoke(
+            {
+                CHAIN_KEY_CHAT_ID: result_first_interaction[CHAIN_KEY_CHAT_ID],
+                "input": INPUT_MOCK_FIRST_QUESTION,
+                "destination": TOPIC_MOCK,
+            }
+        )
 
-        assert(len(result_second_interaction[CHAIN_MEMORY_KEY_CHAT_HISTORY]) == 2)
+        assert len(result_second_interaction[CHAIN_MEMORY_KEY_CHAT_HISTORY]) == 2
 
 
 if __name__ == "__main__":

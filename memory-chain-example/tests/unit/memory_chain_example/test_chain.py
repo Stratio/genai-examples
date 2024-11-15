@@ -26,11 +26,26 @@ GATEWAY_ENDPOINT = "openai-chat"
 # Mock values for testing
 DESTINATION_MOCK = "Sicily"
 INPUT_MOCK_FIRST_QUESTION = "when to go?"
+MOCK_MODEL_RESPONSE = (
+    "The best time to visit Sicily is during the spring (April to June) and fall (September to October)."
+    " \n\n- **Spring**: Mild temperatures, blooming landscapes, and fewer tourists. Ideal for outdoor activities and exploring historical sites."
+    "\n- **Fall**: Warm weather, grape harvest season, and vibrant local festivals. Great for wine lovers and enjoying the beach before it gets too cool."
+    "\n\nSummer (July to August) can be hot and crowded, especially in coastal areas, while winter (November to March) is cooler and quieter, "
+    "but some attractions may have limited hours. \n\nChoose based on your preferences for weather and crowd levels!"
+)
 INPUT_MOCK_SECOND_QUESTION = "I prefer another time of the year"
-MOCK_CHAT_ID = "mock_chat_id"
-
-MOCK_MODEL_RESPONSE = "The best time to visit Sicily is during the spring (April to June) and fall (September to October). \n\n- **Spring**: Mild temperatures, blooming landscapes, and fewer tourists. Ideal for outdoor activities and exploring historical sites.\n- **Fall**: Warm weather, grape harvest season, and vibrant local festivals. Great for wine lovers and enjoying the beach before it gets too cool.\n\nSummer (July to August) can be hot and crowded, especially in coastal areas, while winter (November to March) is cooler and quieter, but some attractions may have limited hours. \n\nChoose based on your preferences for weather and crowd levels!"
-MOCK_MODEL_MEMORY_RESPONSE = "If you prefer to visit Sicily during the winter months (November to March), here are some highlights:\n\n- **Mild Weather**: While it can be cooler, especially in January and February, temperatures are generally mild compared to many other European destinations.\n- **Fewer Crowds**: Enjoy popular sites like the Valley of the Temples or Mount Etna without the usual tourist crowds.\n- **Cultural Experiences**: Experience local festivals, such as the Feast of Santa Lucia in December or Carnival celebrations in February, which showcase Sicilian traditions.\n- **Culinary Delights**: Winter is a great time to enjoy hearty Sicilian cuisine, including seasonal dishes and local wines.\n\nJust be prepared for some attractions to have reduced hours or be closed, especially in more remote areas. If you enjoy a quieter, more authentic experience, winter can be a lovely time to explore Sicily!"
+MOCK_MODEL_MEMORY_RESPONSE = (
+    "If you prefer to visit Sicily during the winter months (November to March), here are some highlights:"
+    "\n\n- **Mild Weather**: While it can be cooler, especially in January and February, "
+    "temperatures are generally mild compared to many other European destinations."
+    "\n- **Fewer Crowds**: Enjoy popular sites like the Valley of the Temples or Mount Etna without the usual tourist crowds."
+    "\n- **Cultural Experiences**: Experience local festivals, such as the Feast of Santa Lucia in December "
+    "or Carnival celebrations in February, which showcase Sicilian traditions."
+    "\n- **Culinary Delights**: Winter is a great time to enjoy hearty Sicilian cuisine, "
+    "including seasonal dishes and local wines.\n\nJust be prepared for some attractions to have reduced hours or be closed,"
+    " especially in more remote areas. If you enjoy a quieter, more authentic experience, "
+    "winter can be a lovely time to explore Sicily!"
+)
 
 
 @pytest.fixture

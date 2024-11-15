@@ -229,6 +229,7 @@ class MemoryChain(BaseGenAiChain, ABC):
 
         :return: A Runnable instance representing the chain.
         """
+
         @chain
         def _plan_trip_to_destination(chain_data: dict) -> dict:
             """

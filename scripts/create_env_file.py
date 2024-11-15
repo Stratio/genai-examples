@@ -104,7 +104,9 @@ def create_env_file(proxy_url, certs, genai_api_host):
     proxy_port = urlparse(proxy_url).port
     client_cert, client_key, ca_cert = certs
     genai_api_tenant = genai_api_host.split(".")[1].split("-")[0]
-    env_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "genai.env"))
+    env_file_path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "genai.env")
+    )
     with open(env_file_path, "w") as f:
         f.write(f"GENAI_API_SERVICE_NAME={genai_api_host}\n")
         f.write(f"GENAI_API_TENANT={genai_api_tenant}\n")

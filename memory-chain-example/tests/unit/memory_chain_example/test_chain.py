@@ -24,7 +24,7 @@ from memory_chain_example.chain import MemoryChain
 GATEWAY_ENDPOINT = "openai-chat"
 
 # Mock values for testing
-TOPIC_MOCK = "Sicily"
+DESTINATION_MOCK = "Sicily"
 INPUT_MOCK_FIRST_QUESTION = "when to go?"
 INPUT_MOCK_SECOND_QUESTION = "I prefer another time of the year"
 MOCK_CHAT_ID = "mock_chat_id"
@@ -79,7 +79,10 @@ def mock_load_save_conversation_memory(mocker) -> None:
             AIMessage(content=MOCK_MODEL_RESPONSE),
             HumanMessage(
                 content=[
-                    {"input": INPUT_MOCK_FIRST_QUESTION, "destination": TOPIC_MOCK}
+                    {
+                        "input": INPUT_MOCK_FIRST_QUESTION,
+                        "destination": DESTINATION_MOCK,
+                    }
                 ]
             ),
         ],
@@ -106,7 +109,7 @@ class TestOpensearchChain:
 
         chain = MemoryChain(gateway_endpoint=GATEWAY_ENDPOINT).chain()
         result_first_interaction = chain.invoke(
-            {"input": INPUT_MOCK_FIRST_QUESTION, "destination": TOPIC_MOCK}
+            {"input": INPUT_MOCK_FIRST_QUESTION, "destination": DESTINATION_MOCK}
         )
 
         assert result_first_interaction[CHAIN_KEY_CHAT_ID]
@@ -117,7 +120,7 @@ class TestOpensearchChain:
             {
                 CHAIN_KEY_CHAT_ID: result_first_interaction[CHAIN_KEY_CHAT_ID],
                 "input": INPUT_MOCK_FIRST_QUESTION,
-                "destination": TOPIC_MOCK,
+                "destination": DESTINATION_MOCK,
             }
         )
 

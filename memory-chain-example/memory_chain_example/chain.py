@@ -29,17 +29,12 @@ from genai_core.chain.base import BaseGenAiChain, GenAiChainParams
 
 from genai_core.logger.logger import log
 from genai_core.memory.stratio_conversation_memory import StratioConversationMemory
-from genai_core.model.sql_chain_models import ContentType, MessageContent
-from genai_core.runnables.common_runnables import (
-    runnable_extract_genai_headers,
-    runnable_extract_genai_auth,
-)
-
+from genai_core.model.sql_chain_models import ContentType
+from genai_core.runnables.common_runnables import runnable_extract_genai_auth
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import (
     Runnable,
     RunnableLambda,
-    ConfigurableFieldSpec,
     chain,
 )
 from pydantic import BaseModel
@@ -53,23 +48,36 @@ class MemoryExampleMessageInput(BaseModel):
 
 
 class MemoryChain(BaseGenAiChain, ABC):
+    """
+    Example of a MemoryChain class that operates as a travel agent to help the user in planning a trip to a destination.
+    The history of the chat is stored in a StratioConversationMemory instance.
+    The chat_id is used to identify a conversation in the chat history of the StratioConversationMemory instance.
+    """
+
     # => Conversation Cache
     chat_memory: StratioConversationMemory
 
-    # => Model Gateway endpoint
-    # model and prompt
-    # the endpoint defined should correspond to the model registered in the Stratio GenAi Gateway
-    # the gateway endpoint need to be accessible through the GenAI development proxy (see README.md)
+    # => Model and prompt for the travel agent chat
     model = StratioGenAIGatewayChat
     prompt = ChatPromptTemplate
 
     def __init__(
         self,
-        gateway_endpoint: str = "openai-chat",
+        gateway_endpoint: str,
         chat_temperature: float = 0,
         request_timeout: int = 30,
         n: int = 1,
     ):
+        """
+        Initialize the MemoryChain instance.
+
+        :param gateway_endpoint: The endpoint for the model gateway.
+        The endpoint defined should correspond to the model registered in the Stratio GenAi Gateway,
+        and the gateway endpoint need to be accessible through the GenAI development proxy (see README.md)
+        :param chat_temperature: The temperature setting for the chat model.
+        :param request_timeout: The request timeout for the chat model.
+        :param n: The number of responses to generate.
+        """
         log.info("Preparing Memory persistence Example chain")
         self.gateway_endpoint = gateway_endpoint
         self.chat_temperature = chat_temperature
@@ -100,7 +108,13 @@ class MemoryChain(BaseGenAiChain, ABC):
         log.info("Memory Chain ready!")
 
     def _init_stratio_memory(self):
-        # create an instance of the StratioConversationMemory that will be used to persist the chat history
+        """
+        Initialize the StratioConversationMemory instance.
+         create an instance of the StratioConversationMemory that will be used to persist the chat history
+
+        :return: An instance of StratioConversationMemory.
+        """
+
         return StratioConversationMemory(
             max_token_limit=16000,
             chat_model=StratioGenAIGatewayChat(
@@ -111,8 +125,11 @@ class MemoryChain(BaseGenAiChain, ABC):
         )
 
     def _init_model(self):
-        # create model gateway
-        # Gateway target URI is configured from environment variable
+        """
+        Initialize the model gateway.
+        Gateway target URI need to be configured from environment variable GENAI_GATEWAY_URL
+        :return: An instance of StratioGenAIGatewayChat.
+        """
         return StratioGenAIGatewayChat(
             endpoint=self.gateway_endpoint,
             temperature=self.chat_temperature,
@@ -122,11 +139,26 @@ class MemoryChain(BaseGenAiChain, ABC):
 
     @staticmethod
     def create_short_memory_id(chain_data: dict) -> dict:
-        """Creates a short memory id for actors that require chat_id to store memory"""
+        """
+        Creates a short memory id for chains that require chat_id to store memory.
+
+        :param chain_data: The chain data dictionary.
+        :return: The updated chain data dictionary with a new memory id.
+        """
         chain_data[CHAIN_KEY_MEMORY_ID] = str(uuid.uuid4())
         return chain_data
 
     def load_and_include_chat_history(self, chain_data: dict) -> dict:
+        """
+        Load and include chat history in the chain data.
+        This data will be returned to the user as part of the response.
+        The conversation is identified by the chat_id.
+        If the request does not contain a chat_id, the chat history will not be loaded,
+         and it will be treated as a new conversation.
+
+        :param chain_data: The chain data dictionary.
+        :return: The updated chain data dictionary with chat history included.
+        """
         ChainLogger.debug("Loading chat memory", chain_data)
         if CHAIN_KEY_CHAT_ID in chain_data:
             try:
@@ -149,7 +181,13 @@ class MemoryChain(BaseGenAiChain, ABC):
         return chain_data
 
     def save_and_include_chat_history(self, chain_data: dict) -> dict:
-        """Save chat history based on the intent. Best effort"""
+        """
+        Save chat in the history of the conversation.
+        The conversation is identified by the chat_id.
+
+        :param chain_data: The chain data dictionary.
+        :return: The updated chain data dictionary with chat history saved.
+        """
         try:
             ChainLogger.debug("Saving chat history...", chain_data)
 
@@ -185,20 +223,20 @@ class MemoryChain(BaseGenAiChain, ABC):
             )
         return chain_data
 
-    @property
-    def chain_step_prepare_chain_and_load_memory(self) -> Runnable:
-        """This step extracts headers and assigns a valid chat id to the conversation"""
-        return (
-            runnable_extract_genai_auth()
-            | runnable_extract_genai_headers()
-            | RunnableLambda(self.create_short_memory_id)
-            | RunnableLambda(self.load_and_include_chat_history)
-        )
-
     def chain(self) -> Runnable:
+        """
+        Define the chain for a conversation with the travel agent.
+
+        :return: A Runnable instance representing the chain.
+        """
         @chain
         def _plan_trip_to_destination(chain_data: dict) -> dict:
-            """Ask a question to the model"""
+            """
+            Ask a question to the travel agent.
+
+            :param chain_data: The chain data dictionary.
+            :return: The updated chain data dictionary with the model's response.
+            """
             chain_data[
                 CHAIN_KEY_CONVERSATION_INPUT
             ] = MemoryExampleMessageInput.model_validate(chain_data)
@@ -214,7 +252,10 @@ class MemoryChain(BaseGenAiChain, ABC):
             return chain_data
 
         memory_chain = (
-            self.chain_step_prepare_chain_and_load_memory
+            # the runnable_extract_genai_auth is used to extract the auth information from the metadata which is used by the load_memory method
+            runnable_extract_genai_auth()
+            | RunnableLambda(self.create_short_memory_id)
+            | RunnableLambda(self.load_and_include_chat_history)
             | _plan_trip_to_destination
             | self.save_and_include_chat_history
         )

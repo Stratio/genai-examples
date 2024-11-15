@@ -12,41 +12,92 @@ import uuid
 from abc import ABC
 
 from genai_core.chat_models.stratio_chat import StratioGenAIGatewayChat
-from genai_core.constants.constants import CHAIN_KEY_MEMORY_ID, CHAIN_KEY_CHAT_ID, CHAIN_MEMORY_KEY_CHAT_HISTORY, \
-    CHAIN_KEY_INPUT_QUESTION, CHAIN_KEY_CONVERSATION_INPUT, CHAIN_KEY_CONVERSATION_OUTPUT, CHAIN_KEY_INPUT_COLLECTION
+from genai_core.constants.constants import (
+    CHAIN_KEY_MEMORY_ID,
+    CHAIN_KEY_CHAT_ID,
+    CHAIN_MEMORY_KEY_CHAT_HISTORY,
+    CHAIN_KEY_INPUT_QUESTION,
+    CHAIN_KEY_CONVERSATION_INPUT,
+    CHAIN_KEY_CONVERSATION_OUTPUT,
+    CHAIN_KEY_INPUT_COLLECTION,
+)
 from genai_core.errors.error_code import ErrorCode
 from genai_core.helpers.chain_helpers import extract_uid, update_data_with_error
 from genai_core.logger.chain_logger import ChainLogger
-from genai_core.memory.chat_message_histories.wide_column import (
-    WideColumnChatMessageHistory,
-)
+
 from genai_core.chain.base import BaseGenAiChain, GenAiChainParams
 
 from genai_core.logger.logger import log
-from genai_core.runnables.common_runnables import runnable_extract_genai_headers, runnable_extract_genai_auth
+from genai_core.memory.stratio_conversation_memory import StratioConversationMemory
+from genai_core.runnables.common_runnables import (
+    runnable_extract_genai_headers,
+    runnable_extract_genai_auth,
+)
 
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.runnables import Runnable, RunnableLambda, ConfigurableFieldSpec
-from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_core.runnables import Runnable, RunnableLambda, ConfigurableFieldSpec, chain
 
 
 class MemoryChain(BaseGenAiChain, ABC):
+    # => Conversation Cache
+    chat_memory: StratioConversationMemory
+
+    # => Model Gateway endpoint
+    # model and prompt
+    # the endpoint defined should correspond to the model registered in the Stratio GenAi Gateway
+    # the gateway endpoint need to be accessible through the GenAI development proxy (see README.md)
+    model = StratioGenAIGatewayChat
+    prompt = ChatPromptTemplate
+
+
     def __init__(
         self,
         gateway_endpoint: str = "openai-chat",
         chat_temperature: float = 0,
         request_timeout: int = 30,
         n: int = 1,
-        memory_path: str = "memory_chain_storage",
     ):
+        log.info("Preparing Memory persistence Example chain")
         self.gateway_endpoint = gateway_endpoint
         self.chat_temperature = chat_temperature
-        self.memory_path = memory_path
         self.request_timeout = request_timeout
         self.n = n
+        # create an instance of the StratioConversationMemory that will be used to persist the chat history
+        self.chat_memory = StratioConversationMemory(
+            max_token_limit=16000,
+            chat_model=StratioGenAIGatewayChat(
+                endpoint=gateway_endpoint,
+                temperature=0,
+                request_timeout=request_timeout,
+            ),
+        )
+        # create model gateway
+        # Gateway target URI is configured from environment variable
+        self.model = StratioGenAIGatewayChat(
+            endpoint=self.gateway_endpoint,
+            temperature=self.chat_temperature,
+            n=self.n,
+            request_timeout=self.request_timeout,
+        )
+
+        self.prompt = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    "You are an assistant about {topic}. \
+                Your mission is to guide users from zero knowledge to understanding the fundamentals of {topic}. \
+                Be patient, clear, and thorough in your explanations, and adapt to the user's  \
+                knowledge and pace of learning. \
+                Do not use synonyms to refer the {topic}",
+                ),
+                MessagesPlaceholder(variable_name="history", optional=True),
+                ("human", "{input}"),
+            ]
+        )
         log.info("Memory Chain ready!")
 
-    def create_short_memory_id(self, chain_data: dict) -> dict:
+    @staticmethod
+    def create_short_memory_id(chain_data: dict) -> dict:
         """Creates a short memory id for actors that require chat_id to store memory"""
         chain_data[CHAIN_KEY_MEMORY_ID] = str(uuid.uuid4())
         return chain_data
@@ -83,30 +134,8 @@ class MemoryChain(BaseGenAiChain, ABC):
             output_data = "No response."
 
             # Extract the output data based on the intent
-            if self.is_sql_intent(chain_data):
-                # If SQL intent, try to extract SQLActor response
-                if SqlActor.actor_key in chain_data:
-                    sql_actor: SqlActorOutput = chain_data.get(SqlActor.actor_key)
-                    output_data = f"{sql_actor.message}\n{sql_actor.spark_sql_query}"
-                elif ContextActor.actor_key in chain_data:
-                    # If chain doesn't contain SQLActor, that means ContextActor stopped the execution
-                    context_actor: ContextActorOutput = chain_data.get(
-                        ContextActor.actor_key
-                    )
-                    output_data = context_actor.clarifications
-            elif self.is_data_wrangler_intent(chain_data):
-                # If Data Wrangler intent, try to extract DataWranglerActor response
-                if DataWranglerActor.actor_key in chain_data:
-                    data_wrangler_actor = chain_data.get(DataWranglerActor.actor_key)
-                    output_data = f"{data_wrangler_actor.message}\n{data_wrangler_actor.spark_sql_query or ''}"
-            elif self.is_schema_intent(chain_data):
-                # If schema intent, extract SchemaActor response
-                output_data = chain_data.get(SchemaActor.actor_key)
-            elif CHAIN_KEY_INTENT in chain_data:
-                # Other intents, extract the IntentActor user message
-                intent_actor: IntentActorOutput = chain_data.get(IntentActor.actor_key)
-                if intent_actor is not None:
-                    output_data = intent_actor.user_message
+            if CHAIN_KEY_CONVERSATION_OUTPUT in chain_data:
+                output_data = chain_data[CHAIN_KEY_CONVERSATION_OUTPUT].get_message()
 
             chat_id = self.chat_memory.save_memory(
                 user_id=extract_uid(chain_data),
@@ -134,7 +163,6 @@ class MemoryChain(BaseGenAiChain, ABC):
             )
         return chain_data
 
-
     @property
     def chain_step_prepare_chain_and_load_memory(self) -> Runnable:
         """This step extracts headers and assigns a valid chat id to the conversation"""
@@ -145,33 +173,21 @@ class MemoryChain(BaseGenAiChain, ABC):
             | RunnableLambda(self.load_and_include_chat_history)
         )
 
-
-
     def chain(self) -> Runnable:
-        # Gateway target URI is configured from environment variable
-        model = StratioGenAIGatewayChat(
-            endpoint=self.gateway_endpoint,
-            temperature=self.chat_temperature,
-            n=self.n,
-            request_timeout=self.request_timeout
-        )
 
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                (
-                    "system",
-                    "You are an assistant about {topic}. \
-                Your mission is to guide users from zero knowledge to understanding the fundamentals of {topic}. \
-                Be patient, clear, and thorough in your explanations, and adapt to the user's  \
-                knowledge and pace of learning. \
-                Do not use synonyms to refer the {topic}",
-                ),
-                MessagesPlaceholder(variable_name="history", optional=True),
-                ("human", "{question}"),
-            ]
+        @chain
+        def _ask_question_about_topic(chain_data: dict) -> dict:
+            """Ask a question to the model"""
+            | prompt
+            | model
+            return {CHAIN_KEY_INPUT_QUESTION: chain_data.get(CHAIN_KEY_INPUT_QUESTION)}
+
+        memory_chain = (
+            self.chain_step_prepare_chain_and_load_memory
+            | _ask_question_about_topic
+            | self.save_and_include_chat_history
         )
-        chain = self.chain_step_prepare_chain_and_load_memory | RunnableLambda(self.load_and_include_chat_history) | prompt | model | self.save_and_include_chat_history
-        return chain
+        return memory_chain
 
     def chain_params(self) -> GenAiChainParams:
         return GenAiChainParams(audit_input_fields=["*"], audit_output_fields=["*"])

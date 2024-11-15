@@ -10,6 +10,10 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 import pytest
 
 from opensearch_chain_example.chain import OpensourceChain
+from opensearch_chain_example.constants.constants import (
+    OPENSEARCH_RESULT_KEY,
+    OPENSEARCH_NO_RESULTS,
+)
 
 # Mock values for testing
 SEARCH_VALUE_TEST_MOCK = "Scott"
@@ -110,8 +114,8 @@ class TestOpensearchChain:
             }
         )
         assert (
-            f"To obtain the requested value '{SEARCH_VALUE_TEST_MOCK}' in the column '{COLUMN_VALUE_TEST_MOCK}' of the table  '{TABLE_VALUE_TEST_MOCK}', the exact value to filter is '{SEARCH_FILTER_TEST_MOCK}'."
-            == result["opensearch_explanation"]
+            f"For the requested search value '{SEARCH_VALUE_TEST_MOCK}' in the column '{COLUMN_VALUE_TEST_MOCK}' of the table  '{TABLE_VALUE_TEST_MOCK}', the first result is '{SEARCH_FILTER_TEST_MOCK}'."
+            == result[OPENSEARCH_RESULT_KEY]
         )
 
     def test_chain_no_filters(self, mocker):
@@ -141,7 +145,7 @@ class TestOpensearchChain:
                 "column_value": COLUMN_VALUE_TEST_MOCK,
             }
         )
-        assert f"No parametric filter found." == result["opensearch_explanation"]
+        assert OPENSEARCH_NO_RESULTS == result[OPENSEARCH_RESULT_KEY]
 
 
 if __name__ == "__main__":

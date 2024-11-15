@@ -23,6 +23,7 @@ from opensearch_chain_example.constants.constants import (
     OPENSEARCH_TABLE_VALUE_KEY,
     OPENSEARCH_COLUMN_VALUE_KEY,
     OPENSEARCH_RESULT_KEY,
+    OPENSEARCH_NO_RESULTS,
 )
 from opensearch_chain_example.services.opensearch_service import OpenSearchService
 
@@ -104,12 +105,10 @@ class OpensourceChain(BaseGenAiChain, ABC):
                 )
                 if len(search_result["hits"]["hits"]) == 0:
                     log.info(
-                        "No results found.",
+                        OPENSEARCH_NO_RESULTS,
                         chain_data,
                     )
-                    chain_data[
-                        OPENSEARCH_RESULT_KEY
-                    ] = "No results found."
+                    chain_data[OPENSEARCH_RESULT_KEY] = OPENSEARCH_NO_RESULTS
                 else:
                     first_value = search_result["hits"]["hits"][0]["_source"]["value"]
                     chain_data[

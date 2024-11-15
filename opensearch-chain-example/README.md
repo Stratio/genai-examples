@@ -19,9 +19,15 @@ The chain will present the first of these value as the result of the chain if a 
 
 Please refer to the main [README.md](../README.md) for instructions on how to set up the development environment.
 
-Please check that after running the `create_env_file.py` script (see [Readme](../README.md)), the `.env` created contains the following variables:
+You need to specify the Opensearch that the chain will connect to. This is normally specified in the deployment configuration of the chain when registering it in *Stratio GenAI API*. While developing locally, you run your chain in a standalone server which is started by running the the `main.py` script. This scripts obtains the Opensearch URL from the `OPENSEARCH_URL` environment variable, so you should set it with correct value before starting the chain. If accesssing Opensearch through the *Stratio GenAI Developer Proxy*, it would be something like:
 ```
-OPENSEARCH_URL
+$ export OPENSEARCH_URL="https://genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080/service/opensearch"
+```
+Also, make sure that you have set the environment variables with your certificates so that the Vault client does not try to connect to Vault:
+```
+$ export VAULT_LOCAL_CLIENT_CERT="/path/to/cert.crt"
+$ export VAULT_LOCAL_CLIENT_KEY="/path/to/private-key.key"
+$ export VAULT_LOCAL_CA_CERTS="/path/to/ca-cert.crt"
 ```
 
 Finally, you can now run the chain locally by calling the `main.py` script in the poetry environment

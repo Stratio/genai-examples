@@ -25,8 +25,8 @@ hose {
                 "sonar.exclusions": "*/tests/**,*/scripts/**,*/pytest-coverage.xml",
                 "sonar.tests": ".",
                 "sonar.test.inclusions": "*/tests/**",
-                "sonar.python.coverage.reportPaths": "basic-actor-chain-example/pytest-coverage.xml,opensearch-chain-example/pytest-coverage.xml",
-                "sonar.python.pylint.reportPaths": "basic-actor-chain-example/pylint-report.txt,opensearch-chain-example/pylint-report.txt",
+                "sonar.python.coverage.reportPaths": "basic-actor-chain-example/pytest-coverage.xml,virtualizer-chain-example/pytest-coverage.xml,opensearch-chain-example/pytest-coverage.xml,memory-chain-example/pytest-coverage.xml",
+                "sonar.python.pylint.reportPaths": "basic-actor-chain-example/pylint-report.txt,virtualizer-chain-example/pylint-report.txt,opensearch-chain-example/pylint-report.txt,memory-chain-example/pylint-report.txt",
                 "sonar.scm.disabled": "true"
             ]
         )

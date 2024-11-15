@@ -41,7 +41,7 @@ addopts = "-m 'not manual'"
 
 [[tool.poetry.source]]
 name = "stratio-releases"
-# here you should add the genai-api-development-proxy url. See also basic-actor-chain-example/README.md
+# here you should add the genai-api-development-proxy url. See also opensearch-chain-example/README.md
 #url = "https://genai.s000001.k8s.oscar.labs.stratio.com/genai-developer-proxy-qa3:8080"
 url = "http://qa.int.stratio.com/repository/python-releases/simple/"
 priority = "supplemental"

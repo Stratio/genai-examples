@@ -35,12 +35,10 @@ An example of request body for the invoke POST is the following:
 
 ```json
 {
-   "input": {
-      "search_value":"Scott",
-      "collection_name":"semantic_banking_customer_product360",
-      "table_value":"customer",
-      "column_value":"Full_Name"
-    },
+  "input": {
+    "topic": "sicily",
+    "question": "what to see?"
+  },
   "config": {
     "metadata": {
       "__genai_state": {
@@ -48,6 +46,9 @@ An example of request body for the invoke POST is the following:
         "client_user_id": "your-user",
         "client_tenant": "your-tenant"
       }
+    },
+    "configurable": {
+      "session_id": ""
     }
   }
 }

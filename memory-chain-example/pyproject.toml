@@ -14,6 +14,7 @@ langchain = "0.2.16"
 langchain-community = "0.2.16"
 langchain-openai = "0.1.23"
 langchain-aws = "0.1.18"
+lmdb = "^1.5.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
@@ -40,7 +41,7 @@ addopts = "-m 'not manual'"
 
 [[tool.poetry.source]]
 name = "stratio-releases"
-# here you should add the genai-api-development-proxy url. See also basic-actor-chain-example/README.md
+# here you should add the genai-api-development-proxy url. See also memory-chain-example/README.md
 #url = "https://genai.s000001.k8s.oscar.labs.stratio.com/genai-developer-proxy-qa3:8080"
 url = "http://qa.int.stratio.com/repository/python-releases/simple/"
 priority = "supplemental"

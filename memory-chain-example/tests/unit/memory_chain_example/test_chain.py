@@ -22,12 +22,12 @@ GATEWAY_ENDPOINT = "openai-chat"
 
 # Mock values for testing
 TOPIC_MOCK = "Sicily"
-INPUT_MOCK_FIRST_QUESTION = "capital"
-INPUT_MOCK_SECOND_QUESTION = "can you repeat?"
+INPUT_MOCK_FIRST_QUESTION = "when to go?"
+INPUT_MOCK_SECOND_QUESTION = "I prefer another time of the year"
 MOCK_CHAT_ID = "mock_chat_id"
 
-MOCK_MODEL_RESPONSE = "The capital city of Sicily is Palermo!"
-MOCK_MODEL_MEMORY_RESPONSE = "Yes, I repeat!! The capital city of Sicily is Palermo!"
+MOCK_MODEL_RESPONSE = "The best time to visit Sicily is during the spring (April to June) and fall (September to October). \n\n- **Spring**: Mild temperatures, blooming landscapes, and fewer tourists. Ideal for outdoor activities and exploring historical sites.\n- **Fall**: Warm weather, grape harvest season, and vibrant local festivals. Great for wine lovers and enjoying the beach before it gets too cool.\n\nSummer (July to August) can be hot and crowded, especially in coastal areas, while winter (November to March) is cooler and quieter, but some attractions may have limited hours. \n\nChoose based on your preferences for weather and crowd levels!"
+MOCK_MODEL_MEMORY_RESPONSE = "If you prefer to visit Sicily during the winter months (November to March), here are some highlights:\n\n- **Mild Weather**: While it can be cooler, especially in January and February, temperatures are generally mild compared to many other European destinations.\n- **Fewer Crowds**: Enjoy popular sites like the Valley of the Temples or Mount Etna without the usual tourist crowds.\n- **Cultural Experiences**: Experience local festivals, such as the Feast of Santa Lucia in December or Carnival celebrations in February, which showcase Sicilian traditions.\n- **Culinary Delights**: Winter is a great time to enjoy hearty Sicilian cuisine, including seasonal dishes and local wines.\n\nJust be prepared for some attractions to have reduced hours or be closed, especially in more remote areas. If you enjoy a quieter, more authentic experience, winter can be a lovely time to explore Sicily!"
 
 
 @pytest.fixture
@@ -72,13 +72,13 @@ def mock_load_save_conversation_memory(mocker) -> None:
         "genai_core.memory.stratio_conversation_memory.StratioConversationMemory.load_memory",
         return_value=[
             AIMessage(content=MOCK_MODEL_RESPONSE),
-            HumanMessage(content=[{"input": INPUT_MOCK_FIRST_QUESTION, "topic": TOPIC_MOCK}]),
+            HumanMessage(content=[{"input": INPUT_MOCK_FIRST_QUESTION, "destination": TOPIC_MOCK}]),
         ],
     )
 
 class TestOpensearchChain:
     """
-    Test suite for the OpensourceChain class.
+    Test suite for the MemoryChain class.
     """
 
     def test_memory_chain(self, mocker, mock_chat, mock_memory):
@@ -96,14 +96,14 @@ class TestOpensearchChain:
 
         chain = MemoryChain(gateway_endpoint=GATEWAY_ENDPOINT).chain()
         result_first_interaction = chain.invoke(
-            {"input": INPUT_MOCK_FIRST_QUESTION, "topic": TOPIC_MOCK}
+            {"input": INPUT_MOCK_FIRST_QUESTION, "destination": TOPIC_MOCK}
         )
 
         assert (result_first_interaction[CHAIN_KEY_CHAT_ID])
 
         mock_gateway_chat(mocker, MOCK_MODEL_MEMORY_RESPONSE)
 
-        result_second_interaction = chain.invoke({CHAIN_KEY_CHAT_ID: result_first_interaction[CHAIN_KEY_CHAT_ID], "input": INPUT_MOCK_FIRST_QUESTION, "topic": TOPIC_MOCK})
+        result_second_interaction = chain.invoke({CHAIN_KEY_CHAT_ID: result_first_interaction[CHAIN_KEY_CHAT_ID], "input": INPUT_MOCK_FIRST_QUESTION, "destination": TOPIC_MOCK})
 
         assert(len(result_second_interaction[CHAIN_MEMORY_KEY_CHAT_HISTORY]) == 2)
 

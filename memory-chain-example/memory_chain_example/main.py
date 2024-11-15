@@ -16,10 +16,12 @@ def main():
     Starts a stand-alone GenAI-api-like server with the chain loaded so that in can be easily executed locally.
     Note that the chain will need access to a Genai-Gateway server, which could be provided from your
     local machine via the GenAI development proxy. An example of json body to send in invoke POST is
+    Start a conversation
     ```json
-       {
+        {
           "input": {
-             "user_request": "Hi! Nice to meet you! Where's the Queen of Hearts?"
+            "topic": "Sicily",
+            "input": "when to go?"
           },
           "config": {
             "metadata": {
@@ -30,9 +32,29 @@ def main():
               }
             }
           }
-       }
-      ```
-      The "config" -> "metadata" -> "__genai_state" is only needed to test while developing locally.
+        }
+    ```
+    Continue a conversation
+    ```json
+        {
+          "input": {
+            "topic": "Sicily",
+            "input": "can you repeat it?",
+            "chat_id": "<chat_id_returned_by_memory_chat_service>"
+          },
+          "config": {
+            "metadata": {
+              "__genai_state": {
+                "client_auth_type": "mtls",
+                "client_user_id": "your-user",
+                "client_tenant": "your-tenant"
+              }
+            },
+          }
+        }
+    ```
+
+    The "config" -> "metadata" -> "__genai_state" is only needed to test while developing locally.
       In a real environment GenAI API adds automatically that fields from the auth info before
       passing the data to the chain
     """
@@ -49,5 +71,5 @@ def main():
 
 if __name__ == "__main__":
     # Before running this script, refer to the README.md file to know how to set up
-    # your environment correctly in order to communicate with the Stratio GenAI Gateway
+    # your environment correctly in order to communicate with the Stratio GenAI Gateway.
     main()

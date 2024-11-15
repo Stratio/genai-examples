@@ -10,7 +10,6 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 import uuid
 from abc import ABC
-from typing import Optional
 
 from genai_core.chat_models.stratio_chat import StratioGenAIGatewayChat
 from genai_core.constants.constants import (
@@ -44,9 +43,10 @@ from pydantic import BaseModel
 class MemoryExampleMessageInput(BaseModel):
     """Class to store the input for the chat model in Conversation API."""
     input: str
-    topic: str
+    destination: str
 
 class MemoryChain(BaseGenAiChain, ABC):
+
     # => Conversation Cache
     chat_memory: StratioConversationMemory
 
@@ -56,7 +56,6 @@ class MemoryChain(BaseGenAiChain, ABC):
     # the gateway endpoint need to be accessible through the GenAI development proxy (see README.md)
     model = StratioGenAIGatewayChat
     prompt = ChatPromptTemplate
-
 
     def __init__(
         self,
@@ -76,16 +75,15 @@ class MemoryChain(BaseGenAiChain, ABC):
         # Gateway target URI is configured from environment variable
         self.model = self._init_model()
 
-
+        # Create a test prompt for the chat model
+        # the model is an assistant that helps users prepare a trip to a user provided destination
         self.prompt = ChatPromptTemplate.from_messages(
             [
                 (
                     "system",
-                    "You are an assistant about {topic}. \
-                Your mission is to guide users from zero knowledge to understanding the fundamentals of {topic}. \
-                Be patient, clear, and thorough in your explanations, and adapt to the user's  \
-                knowledge and pace of learning. \
-                Do not use synonyms to refer the {topic}",
+                    "You are a travel guide about {destination}. \
+                Your mission is to guide user in planning a trip to {destination}. \
+                Be effective, short, clear, and try to adapt to user type of traveller, tastes and range of age."
                 ),
                 MessagesPlaceholder(variable_name=CHAIN_MEMORY_KEY_CHAT_HISTORY, optional=True),
                 ("human", "{input}"),
@@ -153,7 +151,7 @@ class MemoryChain(BaseGenAiChain, ABC):
 
             # Extract the output data based on the intent
             if CHAIN_KEY_CONVERSATION_OUTPUT in chain_data:
-                output_data = chain_data[CHAIN_KEY_CONVERSATION_OUTPUT]
+                output_data = chain_data[CHAIN_KEY_CONVERSATION_OUTPUT]["content"]
 
             chat_id = self.chat_memory.save_memory(
                 user_id=extract_uid(chain_data),
@@ -192,7 +190,7 @@ class MemoryChain(BaseGenAiChain, ABC):
     def chain(self) -> Runnable:
 
         @chain
-        def _ask_question_about_topic(chain_data: dict) -> dict:
+        def _plan_trip_to_destination(chain_data: dict) -> dict:
             """Ask a question to the model"""
             chain_data[CHAIN_KEY_CONVERSATION_INPUT] = MemoryExampleMessageInput.model_validate(chain_data)
             topic_chain = self.prompt | self.model
@@ -207,7 +205,7 @@ class MemoryChain(BaseGenAiChain, ABC):
 
         memory_chain = (
             self.chain_step_prepare_chain_and_load_memory
-            | _ask_question_about_topic
+            | _plan_trip_to_destination
             | self.save_and_include_chat_history
         )
         return memory_chain

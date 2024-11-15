@@ -71,22 +71,10 @@ class MemoryChain(BaseGenAiChain, ABC):
         self.request_timeout = request_timeout
         self.n = n
         # create an instance of the StratioConversationMemory that will be used to persist the chat history
-        self.chat_memory = StratioConversationMemory(
-            max_token_limit=16000,
-            chat_model=StratioGenAIGatewayChat(
-                endpoint=gateway_endpoint,
-                temperature=0,
-                request_timeout=request_timeout,
-            ),
-        )
+        self.chat_memory = self._init_stratio_memory()
         # create model gateway
         # Gateway target URI is configured from environment variable
-        self.model = StratioGenAIGatewayChat(
-            endpoint=self.gateway_endpoint,
-            temperature=self.chat_temperature,
-            n=self.n,
-            request_timeout=self.request_timeout
-        )
+        self.model = self._init_model()
 
 
         self.prompt = ChatPromptTemplate.from_messages(
@@ -104,6 +92,27 @@ class MemoryChain(BaseGenAiChain, ABC):
             ]
         )
         log.info("Memory Chain ready!")
+
+    def _init_stratio_memory(self):
+        # create an instance of the StratioConversationMemory that will be used to persist the chat history
+        return StratioConversationMemory(
+            max_token_limit=16000,
+            chat_model=StratioGenAIGatewayChat(
+                endpoint=self.gateway_endpoint,
+                temperature=0,
+                request_timeout=self.request_timeout,
+            ),
+        )
+
+    def _init_model(self):
+        # create model gateway
+        # Gateway target URI is configured from environment variable
+        return StratioGenAIGatewayChat(
+            endpoint=self.gateway_endpoint,
+            temperature=self.chat_temperature,
+            n=self.n,
+            request_timeout=self.request_timeout
+        )
 
     @staticmethod
     def create_short_memory_id(chain_data: dict) -> dict:

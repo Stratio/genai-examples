@@ -8,140 +8,104 @@ nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 import pytest
+from genai_core.chat_models.stratio_chat import StratioGenAIGatewayChat
+from genai_core.constants.constants import CHAIN_MEMORY_KEY_CHAT_HISTORY, CHAIN_KEY_CHAT_ID
+from genai_core.memory.stratio_conversation_memory import StratioConversationMemory
+from genai_core.test.mock_helper import mock_init_stratio_gateway, mock_gateway_chat
+from langchain_core.messages import AIMessage, HumanMessage
+from pytest_mock import MockerFixture
 
-from opensearch_chain_example.chain import OpensourceChain
+from memory_chain_example.chain import MemoryChain
+
+
+GATEWAY_ENDPOINT = "openai-chat"
 
 # Mock values for testing
-SEARCH_VALUE_TEST_MOCK = "Scott"
-TABLE_VALUE_TEST_MOCK = "customer"
-COLUMN_VALUE_TEST_MOCK = "Full_Name"
-COLLECTION_VALUE_TEST_MOCK = "semantic_banking_customer_product360"
-SEARCH_FILTER_TEST_MOCK = "Scott Pillgrim"
+TOPIC_MOCK = "Sicily"
+INPUT_MOCK_FIRST_QUESTION = "capital"
+INPUT_MOCK_SECOND_QUESTION = "can you repeat?"
+MOCK_CHAT_ID = "mock_chat_id"
+
+MOCK_MODEL_RESPONSE = "The capital city of Sicily is Palermo!"
+MOCK_MODEL_MEMORY_RESPONSE = "Yes, I repeat!! The capital city of Sicily is Palermo!"
 
 
-def mock_init_opensearch_service(mocker):
-    """
-    Mock initialization of the OpenSearch service.
-
-    Args:
-        mocker: The mocker object used to patch methods.
-    """
+@pytest.fixture
+def mock_chat(mocker):
+    mock_init_stratio_gateway(mocker)
     mocker.patch(
-        "opensearchpy.client.indices.IndicesClient.get_alias",
-        return_value={"index": "alias"},
+        "genai_core.chat_models.stratio_chat.GatewayClient.get_endpoint_config",
+        return_value={
+            "id": GATEWAY_ENDPOINT,
+            "endpoint_type": "llm/v2/chat",
+            "model": {
+                "provider": "openai",
+                "name": "gpt-4o-mini-2024-07-18",
+                "input_cost_1k_tokens": 0.00015,
+                "output_cost_1k_tokens": 0.0006,
+                "token_limit": 128000,
+                "config": {
+                    "stratio_credential": "openai-token",
+                },
+            },
+        },
+    )
+    return StratioGenAIGatewayChat(
+        endpoint=GATEWAY_ENDPOINT, target_uri="http://127.0.0.1:1080", use_ssl=False
     )
 
+@pytest.fixture
+def mock_memory(mocker: MockerFixture, mock_chat):
+    return StratioConversationMemory(
+        max_token_limit=1000,
+        chat_model=mock_chat,
+        target_uri="http://127.0.0.1:8080",
+        use_ssl=False,
+    )
 
-class OpenSearchServiceMock:
-    """
-    Mock of OpenSearch service with `search_filter_values` method that returns a mock search result.
-    """
-
-    def search_filter_values(
-        self,
-        index: str,
-        table_value: str,
-        column_value: str,
-        search_value: str,
-        size=1,
-        min_score=2,
-    ):
-        """
-        Mock method to simulate search filter values in OpenSearch.
-
-        SEARCH_FILTER_TEST_MOCK is returned if the search value is SEARCH_VALUE_TEST_MOCK.
-        An empty list is returned otherwise.
-
-        Args:
-            index (str): The index to search.
-            table_value (str): The table value to search.
-            column_value (str): The column value to search.
-            search_value (str): The search value to filter.
-            size (int, optional): The number of results to return. Defaults to 1.
-            min_score (int, optional): The minimum score for results. Defaults to 2.
-
-        Returns:
-            dict: A mock search result.
-        """
-        result = (
-            {
-                "hits": {
-                    "hits": [
-                        {"_source": {"value": SEARCH_FILTER_TEST_MOCK}},
-                    ]
-                }
-            }
-            if search_value == SEARCH_VALUE_TEST_MOCK
-            else {"hits": {"hits": []}}
-        )
-        return result
-
+def mock_load_save_conversation_memory(mocker) -> None:
+    mocker.patch(
+        "genai_core.memory.stratio_conversation_memory.StratioConversationMemory.save_memory",
+        return_value="id",
+    )
+    mocker.patch(
+        "genai_core.memory.stratio_conversation_memory.StratioConversationMemory.load_memory",
+        return_value=[
+            AIMessage(content=MOCK_MODEL_RESPONSE),
+            HumanMessage(content=[{"input": INPUT_MOCK_FIRST_QUESTION, "topic": TOPIC_MOCK}]),
+        ],
+    )
 
 class TestOpensearchChain:
     """
     Test suite for the OpensourceChain class.
     """
 
-    def test_chain(self, mocker):
-        """
-        Test the chain method with a search value that returns a value.
-
-        Args:
-            mocker: The mocker object used to patch methods.
-        """
-        # we patch our chain so that it uses our OpenSearch mock service that just returns the query
+    def test_memory_chain(self, mocker, mock_chat, mock_memory):
         mocker.patch(
-            "opensearch_chain_example.chain.OpensourceChain._init_opensearch",
-            return_value=OpenSearchServiceMock(),
+            "memory_chain_example.chain.MemoryChain._init_model",
+            return_value=mock_chat,
         )
-
-        chain = OpensourceChain(
-            opensearch_url="mock",
-            opensearch_min_score=30,
-        )
-
-        chain_dag = chain.chain()
-        result = chain_dag.invoke(
-            {
-                "search_value": SEARCH_VALUE_TEST_MOCK,
-                "collection_name": COLLECTION_VALUE_TEST_MOCK,
-                "table_value": TABLE_VALUE_TEST_MOCK,
-                "column_value": COLUMN_VALUE_TEST_MOCK,
-            }
-        )
-        assert (
-            f"To obtain the requested value '{SEARCH_VALUE_TEST_MOCK}' in the column '{COLUMN_VALUE_TEST_MOCK}' of the table  '{TABLE_VALUE_TEST_MOCK}', the exact value to filter is '{SEARCH_FILTER_TEST_MOCK}'."
-            == result["opensearch_explanation"]
-        )
-
-    def test_chain_no_filters(self, mocker):
-        """
-        Test the chain method with a search value that returns no results.
-
-        Args:
-            mocker: The mocker object used to patch methods.
-        """
-        # we patch our chain so that it uses our OpenSearch mock service that just returns the query
         mocker.patch(
-            "opensearch_chain_example.chain.OpensourceChain._init_opensearch",
-            return_value=OpenSearchServiceMock(),
+            "memory_chain_example.chain.MemoryChain._init_stratio_memory",
+            return_value=mock_memory,
         )
 
-        chain = OpensourceChain(
-            opensearch_url="mock",
-            opensearch_min_score=30,
+        mock_load_save_conversation_memory(mocker)
+        mock_gateway_chat(mocker, MOCK_MODEL_RESPONSE)
+
+        chain = MemoryChain(gateway_endpoint=GATEWAY_ENDPOINT).chain()
+        result_first_interaction = chain.invoke(
+            {"input": INPUT_MOCK_FIRST_QUESTION, "topic": TOPIC_MOCK}
         )
 
-        chain_dag = chain.chain()
-        result = chain_dag.invoke(
-            {
-                "search_value": f"Not{SEARCH_VALUE_TEST_MOCK}",
-                "collection_name": COLLECTION_VALUE_TEST_MOCK,
-                "table_value": TABLE_VALUE_TEST_MOCK,
-                "column_value": COLUMN_VALUE_TEST_MOCK,
-            }
-        )
-        assert f"No parametric filter found." == result["opensearch_explanation"]
+        assert (result_first_interaction[CHAIN_KEY_CHAT_ID])
+
+        mock_gateway_chat(mocker, MOCK_MODEL_MEMORY_RESPONSE)
+
+        result_second_interaction = chain.invoke({CHAIN_KEY_CHAT_ID: result_first_interaction[CHAIN_KEY_CHAT_ID], "input": INPUT_MOCK_FIRST_QUESTION, "topic": TOPIC_MOCK})
+
+        assert(len(result_second_interaction[CHAIN_MEMORY_KEY_CHAT_HISTORY]) == 2)
 
 
 if __name__ == "__main__":

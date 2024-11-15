@@ -33,11 +33,32 @@ You can test your chain either via the swagger UI exposed by the local chain ser
 
 An example of request body for the invoke POST is the following:
 
+Start a conversation
 ```json
 {
   "input": {
     "topic": "sicily",
-    "question": "what to see?"
+    "input": "what to see?"
+  },
+  "config": {
+    "metadata": {
+      "__genai_state": {
+        "client_auth_type": "mtls",
+        "client_user_id": "your-user",
+        "client_tenant": "your-tenant"
+      }
+    }
+  }
+}
+```
+
+Continue a conversation
+
+```json
+{
+  "input": {
+    "topic": "sicily",
+    "input": "can you repeat it?"
   },
   "config": {
     "metadata": {
@@ -47,9 +68,7 @@ An example of request body for the invoke POST is the following:
         "client_tenant": "your-tenant"
       }
     },
-    "configurable": {
-      "session_id": ""
-    }
+    "chat_id": "<chat_id_returned_by_memory_chat_service>"
   }
 }
 ```

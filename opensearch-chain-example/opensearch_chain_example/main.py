@@ -16,8 +16,11 @@ from genai_core.server.server import GenAiServer
 def main():
     """
     Starts a stand-alone GenAI-api-like server with the chain loaded so that in can be easily executed locally.
-    Note that the chain will need access to a OpenSearch server, which should be provided from your
-    local machine via the GenAI development proxy. An example of json body to send in invoke POST is
+    Note that the chain will need access to a OpenSearch server, which should be accessible from your local machine.
+    The OpenSearchService class provided in this example is a simple service to interact with an OpenSearch instance
+     and should be adapted to your specific use case.
+    The url of the OpenSearch instance should be provided in the OPENSEARCH_URL environment variable (see README.md for more information).
+    An example of json body that work with our sample chain, to send in invoke POST is
     ```json
         {
            "input": {

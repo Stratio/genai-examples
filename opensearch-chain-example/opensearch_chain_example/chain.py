@@ -47,9 +47,11 @@ class OpensourceChain(BaseGenAiChain, ABC):
         This method initializes the OpenSearch service client to interact with an OpenSearch
          service.
 
-        The following environment variable need to be set before calling
-        the constructor method (see README.me for more information):
-        OPENSEARCH_URL: The URL of the OpenSearch instance.
+        Args:
+            opensearch_url (str): The URL of the OpenSearch instance.
+
+        Returns:
+            OpenSearchService: The OpenSearch service client instance.
 
         """
         # get certificates
@@ -85,6 +87,12 @@ class OpensourceChain(BaseGenAiChain, ABC):
             """
             This method queries the OpenSearch service with the user request and returns the response.
             The response is stored in the chain_data dictionary with the key 'opensearch_response'.
+
+            Args:
+                chain_data (dict): The input data for the chain.
+
+            Returns:
+                dict: The chain data with the response from the OpenSearch service.
             """
             try:
                 search_value = chain_data[OPENSEARCH_SEARCH_VALUE_KEY]

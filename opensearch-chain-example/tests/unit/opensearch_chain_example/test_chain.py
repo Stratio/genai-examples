@@ -9,7 +9,7 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 import pytest
 
-from opensearch_chain_example.chain import OpensourceChain
+from opensearch_chain_example.chain import OpenSearchChain
 from opensearch_chain_example.constants.constants import (
     OPENSEARCH_RESULT_KEY,
     OPENSEARCH_NO_RESULTS,
@@ -83,7 +83,7 @@ class OpenSearchServiceMock:
 
 class TestOpensearchChain:
     """
-    Test suite for the OpensourceChain class.
+    Test suite for the OpenSearchChain class.
     """
 
     def test_chain(self, mocker):
@@ -95,11 +95,11 @@ class TestOpensearchChain:
         """
         # we patch our chain so that it uses our OpenSearch mock service that just returns the query
         mocker.patch(
-            "opensearch_chain_example.chain.OpensourceChain._init_opensearch",
+            "opensearch_chain_example.chain.OpenSearchChain._init_opensearch",
             return_value=OpenSearchServiceMock(),
         )
 
-        chain = OpensourceChain(
+        chain = OpenSearchChain(
             opensearch_url="mock",
             opensearch_min_score=30,
         )
@@ -127,11 +127,11 @@ class TestOpensearchChain:
         """
         # we patch our chain so that it uses our OpenSearch mock service that just returns the query
         mocker.patch(
-            "opensearch_chain_example.chain.OpensourceChain._init_opensearch",
+            "opensearch_chain_example.chain.OpenSearchChain._init_opensearch",
             return_value=OpenSearchServiceMock(),
         )
 
-        chain = OpensourceChain(
+        chain = OpenSearchChain(
             opensearch_url="mock",
             opensearch_min_score=30,
         )

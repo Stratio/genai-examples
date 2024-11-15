@@ -28,7 +28,7 @@ from opensearch_chain_example.constants.constants import (
 from opensearch_chain_example.services.opensearch_service import OpenSearchService
 
 
-class OpensourceChain(BaseGenAiChain, ABC):
+class OpenSearchChain(BaseGenAiChain, ABC):
     """
     Example of a GenAI Chain that interacts with OpenSearch service to obtain and process the result of a search.
 

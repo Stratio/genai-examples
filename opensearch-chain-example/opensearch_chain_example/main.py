@@ -46,7 +46,7 @@ def main():
     """
     app = GenAiServer(
         module_name="opensearch_chain_example.chain",
-        class_name="OpensourceChain",
+        class_name="OpenSearchChain",
         config={
             # OPENSEARCH_URL environment variable need to be set
             # with the OpenSearch service url (see README.me for more information):

@@ -82,7 +82,7 @@ You can see the logs in the terminal. You can also open the web interface of the
 
 ## Local development
 
-Stratio GenAI chains are intended to run inside *Stratio GenAI API*. In order to try out your chain from your local machine while developing, *Stratio GenAI Core* provides a GenAI-API-like standalone server that can be started in your computer to serve your chain just as if it was deployed in *Stratio GenAI API*, exposing the `invoke` endpoint and a Swagger UI. All the examples in this repository contain a `main.py` file, used to run the chain locally, where you can see how to start this standalone server. The constructor of this standalone server receives as an argument the same configuration that would be passed in the request body when registering the chain in *Stratio GenAI API*. However, you will need some extra setup to be able to run chains in your local computer. The two main problems are:
+Stratio GenAI chains are intended to run inside *Stratio GenAI API*. In order to try out your chain from your local machine while developing, *Stratio GenAI Core* provides a GenAI-API-like standalone server that can be started in your computer to serve your chain just as if it was deployed in *Stratio GenAI API*, exposing the `invoke` endpoint and a Swagger UI. All the examples in this repository contain a `main.py` file, used to run the chain locally, where you can see how to start this standalone server. The constructor of this standalone server receives as an argument the same configuration that would be passed in the request body when registering the chain in *Stratio GenAI API*. However, you will need some extra setup to be able to run chains in your local computer. The main problems are:
 
 1. Since the chains run inside *Stratio GenAI API*, they can connect to several services, like *Stratio GenAI Gateway*, *Stratio Virtualizer*, Opensearch or *Stratio GenAI API*. Moreover, they will be able to use the *Stratio GenAI API* credentials to connect to them. The problem is that these services are not usually exposed outside the cluster, and if they were, you would need the correct *Stratio GenAI API* credentials, which may be not available to you.
 
@@ -92,9 +92,9 @@ Stratio GenAI chains are intended to run inside *Stratio GenAI API*. In order to
 
 4. *Stratio GenAI* chains use the *Stratio GenAI Core* framework as a dependency. However, this package is not public, so you will need access to a repository that can provide that dependency.
 
-### Stratio GenAI Developer Proxy
+### *Stratio GenAI Developer Proxy*
 
-The first and last problems above are solved by the *Stratio GenAI Developer Proxy*, which can be deployed in the development cluster to provide access to the services running inside the cluster, as well as to provide access to the Pep's server inside *Stratio GenAI API* containing the *Stratio GenAI Core* dependency.
+The first and last problems above are solved by the *Stratio GenAI Developer Proxy*, which can be deployed in the development cluster to provide access to the services running inside the cluster, as well as to provide access to the PyPi server inside *Stratio GenAI API* containing the *Stratio GenAI Core* dependency.
 
 Once the service in installed on your development cluster, it should be reachable through a URL like this: `https://genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080`. Then, under different paths on that server, you can access the different services. For instance, the *Stratio GenAI Gateway* would be accessed from your local machine through  `https://genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080/service/genai-gateway`. All the available services, with their path in *Stratio GenAI Developer Proxy* are listed in the following table:
 | service                 | Developer proxy path                |
@@ -159,20 +159,18 @@ You can obtain your user certificates from *Stratio GoSec*:
 
 Some clients provided in *Stratio GenAI Core*, like the *Stratio GenAI Gateway* client or the *Stratio GenAI API* client, obtain their certificates by reading some environment variables instead of accessing Vault. Also, they expect some other environment variables to be defined. In a "normal" chain execution inside *Stratio GenAI API*, these variables are already set in the *Stratio GenAI API* container. If your chain uses these clients, you should set the corresponding environment variables to run it locally.
 
-For your convenience, we provide a script that generates an `.env` or `.sh` file (depending on the `format` flag chosen), that you can then add to PyCharm or source in your terminal, with all the needed variables by just giving it the path to your certificates folder and the host of the *Stratio GenAI Developer Proxy*.
+For your convenience, we provide a script that generates an `.env` or `.sh` file (depending on the `format` flag chosen) with all the needed variables by just giving it the path to your certificates folder and the host of the *Stratio GenAI Developer Proxy*. Then, you can add it to PyCharm or source it in your terminal,
 
-Execute the following commands to configure the environment variables:
+Execute the following command to configure the environment variables:
 
 ```
-$ cd genai-examples/scripts
-
-$ python create_env_file.py      \
+$ python scripts/create_env_file.py \
     --certs_path /path/to/certs  \
-    --proxy_url https://genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080
-    --format env
+    --proxy_url https://genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080 \
+    --format env # or bash
 ```
 
-You will find a `genai-env.env` or `genai-env.sh` file in the `genai-examples/scripts` folder with the environment variables.
+You will find a `genai-env.env` or `genai-env.sh` file (depending on the format chosen) in the `genai-examples/scripts` folder with the environment variables.
 
 ### *Stratio GenAI Core* dependency
 
@@ -181,14 +179,14 @@ The dependencies of your chain are declared in the `pyproject.toml` file of your
 You should edit the `pyproject.toml` file and add a block like the following (changing the url with the actual URL of your *Stratio GenAI Developer Proxy*):
 ```toml
 [[tool.poetry.source]]
-name = "genai-api-pypi"
+name = "stratio-releases"
 url = "https://genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080/service/genai-api/v1/pypi/simple/"
 priority = "supplemental"
 ```
 
 Also, in order to make Poetry trust this server, you need to configure it to use the CA of the cluster (the one included in the `zip` file with [your certificates](#user-certificates-and-vault-client-development-mode)):
 ```
-$ poetry config certificates.genai-api-pypi.cert /path/to/ca-cert.crt 
+$ poetry config certificates.stratio-releases.cert /path/to/ca-cert.crt 
 ```
 
 Now you can install the dependencies in the Poetry environment:

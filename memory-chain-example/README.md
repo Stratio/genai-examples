@@ -46,7 +46,7 @@ Start a conversation
 ```json
 {
   "input": {
-    "topic": "Sicily",
+    "destination": "Sicily",
     "input": "when to go?"
   },
   "config": {
@@ -66,7 +66,7 @@ Continue a conversation
 ```json
 {
   "input": {
-    "topic": "Sicily",
+    "destination": "Sicily",
     "input": "I prefer another time of the year",
     "chat_id": "<chat_id_returned_in_the_response>"
   },

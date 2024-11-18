@@ -20,7 +20,7 @@ def main(chain_config):
     ```json
         {
           "input": {
-            "topic": "Sicily",
+            "destination": "Sicily",
             "input": "when to go?"
           },
           "config": {
@@ -38,7 +38,7 @@ def main(chain_config):
     ```json
         {
           "input": {
-            "topic": "Sicily",
+            "destination": "Sicily",
             "input": "can you repeat it?",
             "chat_id": "<chat_id_returned_by_memory_chat_service>"
           },

@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "memory-chain"
+name = "chat-memory-chain"
 version = "0.3.1a0"
 description = "A simple chain that permits to store and retrieve conversationsin memory"
 authors = []

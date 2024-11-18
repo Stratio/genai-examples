@@ -38,7 +38,7 @@ markers = ["manual: to mark tests as manual"]
 addopts = "-m 'not manual'"
 
 [[tool.poetry.source]]
-name = "genai-api-pypi"
+name = "stratio-releases"
 # here you should add the genai-api-developer-proxy url /v1/pypi/simple/
 url = "http://qa.int.stratio.com/repository/python-releases/simple/"
 priority = "supplemental"

@@ -3,7 +3,7 @@ import os
 from genai_core.server.server import GenAiServer
 
 
-def main():
+def main(chain_config):
     """
     Starts a stand-alone GenAI-api-like server with the chain loaded so that in can be easily executed locally.
     Note that the it still needs access to a Virtualizer server, which could be provided from your
@@ -31,16 +31,13 @@ def main():
     app = GenAiServer(
         module_name="virtualizer_chain_example.chain",
         class_name="VirtualizerChain",
-        config={
-            "virtualizer_host": os.environ["VIRTUALIZER_HOST"],
-            "virtualizer_port": int(os.environ["VIRTUALIZER_PORT"]),
-        },
+        config=chain_config,
     )
     app.start_server()
 
 
 if __name__ == "__main__":
-    # # Note that you should configure the following environment variables:
+    # # Note that you should configure the following environment variables
     #
     # # this varialbe is normally already defined inside GenAI api. To try locally we must include it manually
     # os.environ["GENAI_API_SERVICE_NAME"] = "genai-api-test.s000001-genai"
@@ -50,9 +47,13 @@ if __name__ == "__main__":
     # os.environ["VAULT_LOCAL_CLIENT_KEY"] = "/path/to/private.key"
     # os.environ["VAULT_LOCAL_CA_CERTS"] = "/path/to/ca-cert.crt"
     #
-    # # Virtualier data
+    # # Virtualier data (chain config)
     # os.environ["VIRTUALIZER_HOST"] = "genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com"
     # os.environ["VIRTUALIZER_PORT"] = "8080"
     # # this is needed if accessing virtualizer via the genai-developer-proxy, but it is not used in the chain
     # os.environ["VIRTUALIZER_BASE_PATH"] = "/service/virtualizer"
-    main()
+    chain_config = {
+        "virtualizer_host": os.environ["VIRTUALIZER_HOST"],
+        "virtualizer_port": int(os.environ["VIRTUALIZER_PORT"]),
+    }
+    main(chain_config)

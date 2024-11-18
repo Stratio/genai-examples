@@ -16,7 +16,7 @@ Note that the URL below is just an example and you should add the correct URL fo
 ```toml
 [[tool.poetry.source]]
 name = "stratio-releases"
-url = "https://genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080/v1/pypi/simple/"
+url = "https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/v1/pypi/simple/"
 priority = "supplemental"
 ```
 You should also configure Poetry to use the CA of the cluster to verify the certificate of the
@@ -36,7 +36,7 @@ Set up the needed environment variables. You can create a file `env.sh` like the
 ```bash
 # Variables needed to access Virtualizer (here we show an example where we access Virtualizer through 
 # the genai-developer-proxy):
-export VIRTUALIZER_HOST="genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com"
+export VIRTUALIZER_HOST="genai-developer-proxy-loadbalancer.your-tenant-genai.k8s.yourdonain.com"
 export VIRTUALIZER_PORT=8080
 # this variable is only needed if accessing Virtualizer via the GenAI developer proxy
 export VIRTUALIZER_BASE_PATH=/service/virtualizer

@@ -59,7 +59,7 @@ def main(chain_config):
       passing the data to the chain
     """
     app = GenAiServer(
-        module_name="memory_chain.chain",
+        module_name="chat_memory_chain.chain",
         class_name="MemoryChain",
         config=chain_config,
     )

@@ -4,37 +4,59 @@ This is an example of a GenAI chain that allows to remember the previous convers
 
 ## Local deployment
 
-The first step in order to execute the chain in you local environment is to obtain the GenAI Developer Proxy URL and your user certificate.
-After you have obtained the necessary information, please refer to the main [README.md](../README.md) for instructions on how to set up the development environment.
-
-The OpenSearch service is exposed with the GenAI developer proxy, so the chain can connect to it using the GenAI API.
-The Operator that configured the GenAI Developer Proxy should have configured correctly the OpenSearch service and your user should have the correct permissions to access it.
-If you have any issue with the connection, please contact the Operator that configured the GenAI Developer Proxy.
-
-Please check that after running the `create_env_file.py` script (see [Readme](../README.md)), the `.env` created contains also the following variables:
+We assume that you already have poetry installed. If not, you can install it wit:
+```bash
+curl -sSL https://install.python-poetry.org | python3 -
+poetry --version
 ```
-GENAI_API_SERVICE_NAME=genai-api-service-name.your-tenant-genai
-GENAI_API_TENANT=your-tenant
-GENAI_API_REST_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-api
-GENAI_API_REST_USE_SSL=true
-GENAI_API_REST_CLIENT_CERT=/path/to/certs/user.crt
-GENAI_API_REST_CLIENT_KEY=/path/to/certs/user_private.key
-GENAI_API_REST_CA_CERTS=/path/to/certs/ca-cert.crt
 
-GENAI_GATEWAY_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-gateway
-GENAI_GATEWAY_USE_SSL=true
-GENAI_GATEWAY_CLIENT_CERT=/path/to/certs/user.crt
-GENAI_GATEWAY_CLIENT_KEY=/path/to/certs/user_private.key
-GENAI_GATEWAY_CA_CERTS=/path/to/certs/ca-cert.crt
+Verify that you have a dependencies source in your `pyproject.toml` with the URL of the PyPi server in 
+genai-developer-proxy (or the one in gena-api) providing the needed stratio packages, like genai-core. 
+Note that the URL below is just an example and you should add the correct URL for your case.
+```toml
+[[tool.poetry.source]]
+name = "stratio-releases"
+url = "https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/v1/pypi/simple/"
+priority = "supplemental"
+```
+You should also configure Poetry to use the CA of the cluster to verify the certificate of the
+above configured repository (the CA of the cluster can be found in the zip you obtain from Gosec with your
+certificates).
+
+```
+$ poetry config certificates.stratio-releases.cert /path/to/ca-cert.crt 
+```
+
+Then install the poetry environment:
+```
+$ poetry install
+```
+
+Set up the needed environment variables. You can create a file `env.sh` like the following:
+
+```bash
+# Memory chain need to access to the GenAI API in order to persist the conversation
+export GENAI_API_SERVICE_NAME=genai-api-service-name.your-tenant-genai
+export GENAI_API_TENANT=your-tenant
+export GENAI_API_REST_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-api
+export GENAI_API_REST_USE_SSL=true
+export GENAI_API_REST_CLIENT_CERT=/path/to/certs/user.crt
+export GENAI_API_REST_CLIENT_KEY=/path/to/certs/user_private.key
+export GENAI_API_REST_CA_CERTS=/path/to/certs/ca-cert.crt
+
+# This example needs to connect to the GenAI Gateway in order to access the LLM model through the Gateway API
+export GENAI_GATEWAY_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-gateway
+export GENAI_GATEWAY_USE_SSL=true
+export GENAI_GATEWAY_CLIENT_CERT=/path/to/certs/user.crt
+export GENAI_GATEWAY_CLIENT_KEY=/path/to/certs/user_private.key
+export GENAI_GATEWAY_CA_CERTS=/path/to/certs/ca-cert.crt
 ```
 
 Finally, you can now run the chain locally by calling the `main.py` script in the poetry environment
 
 ```
-$ poetry run python opensearch_chain/main.py
+$ poetry run python chat_memory_chain/main.py
 ```
-
-In case you want to debug the chain, you can run it in PyCharm as explained in the main [README.md](../README.md) file.
 
 Once started, the chain will expose a swagger UI in the following URL: `http://0.0.0.0:8080/`.
 
@@ -82,27 +104,7 @@ Continue a conversation
 }
 ```
 
-Note that the values in the example provided should be adapted to the data present in the OpenSearch service and the user should have the correct permissions to access it.
+In case you want to debug the chain, you can run it in PyCharm as explained in the main [README.md](../README.md) file.
 
 The `"config"` key with the extra metadata is normally added by GenAI API before passing the input to the chain,
 but while developing locally you should add it by hand.
-
-### Run tests
-
-Run in PyCharm:
-
-* Execute the /tests folder. It works in debug mode too.
-
-Run in the terminal:
-
-* Execute `poetry run pytest`
-* Only unit test: `poetry run pytest tests/unit`
-* Only integration test: `poetry run pytest tests/integration`.
-
-### Code quality
-
-Run in the terminal:
-
-* To format the code execute `poetry run black ./`
-* To lint the code execute `poetry run pylint './**/'`
-* To check the types execute `poetry run mypy ./`

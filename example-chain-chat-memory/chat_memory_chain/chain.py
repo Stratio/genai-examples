@@ -249,7 +249,7 @@ class MemoryChain(BaseGenAiChain, ABC):
             chain_data[CHAIN_KEY_CONVERSATION_OUTPUT] = chain_output
             return chain_data
 
-        memory_chain = (
+        chat_memory_chain = (
             # the runnable_extract_genai_auth is used to extract the auth
             # information from the metadata which is used by the load_memory method
             runnable_extract_genai_auth()
@@ -258,7 +258,7 @@ class MemoryChain(BaseGenAiChain, ABC):
             | _plan_trip_to_destination
             | self.save_and_include_chat_history
         )
-        return memory_chain
+        return chat_memory_chain
 
     def chain_params(self) -> GenAiChainParams:
         return GenAiChainParams(audit_input_fields=["*"], audit_output_fields=["*"])

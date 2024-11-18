@@ -18,7 +18,7 @@ from genai_core.test.mock_helper import mock_init_stratio_gateway, mock_gateway_
 from langchain_core.messages import AIMessage, HumanMessage
 from pytest_mock import MockerFixture
 
-from memory_chain.chain import MemoryChain
+from chat_memory_chain.chain import MemoryChain
 
 
 GATEWAY_ENDPOINT = "openai-chat"
@@ -109,13 +109,13 @@ class TestOpensearchChain:
     Test suite for the MemoryChain class.
     """
 
-    def test_memory_chain(self, mocker, mock_chat, mock_memory):
+    def test_chat_memory_chain(self, mocker, mock_chat, mock_memory):
         mocker.patch(
-            "memory_chain.chain.MemoryChain._init_model",
+            "chat_memory_chain.chain.MemoryChain._init_model",
             return_value=mock_chat,
         )
         mocker.patch(
-            "memory_chain.chain.MemoryChain._init_stratio_memory",
+            "chat_memory_chain.chain.MemoryChain._init_stratio_memory",
             return_value=mock_memory,
         )
 

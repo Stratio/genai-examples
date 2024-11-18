@@ -40,7 +40,7 @@ if __name__ == "__main__":
     # # Note that you should configure the following environment variables
     #
     # # this varialbe is normally already defined inside GenAI api. To try locally we must include it manually
-    # os.environ["GENAI_API_SERVICE_NAME"] = "genai-api-test.s000001-genai"
+    # os.environ["GENAI_API_SERVICE_NAME"] = "genai-api-test.your-tenant-genai"
     #
     # # to "bypass" the need of accesing Vault
     # os.environ["VAULT_LOCAL_CLIENT_CERT"] = "path/to/cert.crt"
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     # os.environ["VAULT_LOCAL_CA_CERTS"] = "/path/to/ca-cert.crt"
     #
     # # Virtualier data (chain config)
-    # os.environ["VIRTUALIZER_HOST"] = "genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com"
+    # os.environ["VIRTUALIZER_HOST"] = "genai-developer-proxy-loadbalancer.your-tenant-genai.k8s.yourdomain.com"
     # os.environ["VIRTUALIZER_PORT"] = "8080"
     # # this is needed if accessing virtualizer via the genai-developer-proxy, but it is not used in the chain
     # os.environ["VIRTUALIZER_BASE_PATH"] = "/service/virtualizer"

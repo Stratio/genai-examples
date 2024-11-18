@@ -15,7 +15,7 @@ genai-developer-proxy (or the one in gena-api) providing the needed stratio pack
 Note that the URL below is just an example and you should add the correct URL for your case.
 ```toml
 [[tool.poetry.source]]
-name = "genai-api-pypi"
+name = "stratio-releases"
 url = "https://genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080/v1/pypi/simple/"
 priority = "supplemental"
 ```
@@ -24,7 +24,7 @@ above configured repository (the CA of the cluster can be found in the zip you o
 certificates).
 
 ```
-$ poetry config certificates.genai-api-pypi.cert /path/to/ca-cert.crt 
+$ poetry config certificates.stratio-releases.cert /path/to/ca-cert.crt 
 ```
 
 Then install the poetry environment:

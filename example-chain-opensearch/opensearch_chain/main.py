@@ -57,7 +57,7 @@ if __name__ == "__main__":
     # your environment correctly in order to communicate with the OpenSearch service
 
     # # Opensearch data (chain config)
-    chain_config={
+    chain_config = {
         # OPENSEARCH_URL environment variable need to be set
         # with the OpenSearch service url (see README.me for more information):
         "opensearch_url": os.getenv("OPENSEARCH_URL"),

@@ -241,19 +241,17 @@ class MemoryChain(BaseGenAiChain, ABC):
             chain_data[
                 CHAIN_KEY_CONVERSATION_INPUT
             ] = MemoryExampleMessageInput.model_validate(chain_data)
-            topic_chain = self.prompt | self.model
-            chain_output = {}
-            chain_output.update(
-                {
-                    "content_type": ContentType.MESSAGE,
-                    "content": topic_chain.invoke(chain_data).content,
-                }
-            )
+            travel_agent_chain = self.prompt | self.model
+            chain_output = {
+                "content_type": ContentType.MESSAGE,
+                "content": travel_agent_chain.invoke(chain_data).content,
+            }
             chain_data[CHAIN_KEY_CONVERSATION_OUTPUT] = chain_output
             return chain_data
 
         memory_chain = (
-            # the runnable_extract_genai_auth is used to extract the auth information from the metadata which is used by the load_memory method
+            # the runnable_extract_genai_auth is used to extract the auth
+            # information from the metadata which is used by the load_memory method
             runnable_extract_genai_auth()
             | RunnableLambda(self.create_short_memory_id)
             | RunnableLambda(self.load_and_include_chat_history)

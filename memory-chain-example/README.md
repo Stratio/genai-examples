@@ -11,21 +11,21 @@ The OpenSearch service is exposed with the GenAI developer proxy, so the chain c
 The Operator that configured the GenAI Developer Proxy should have configured correctly the OpenSearch service and your user should have the correct permissions to access it.
 If you have any issue with the connection, please contact the Operator that configured the GenAI Developer Proxy.
 
-Please check that after running the `create_env_file.py` script (see [Readme](../README.md)), the `.env` created contains the following variables:
+Please check that after running the `create_env_file.py` script (see [Readme](../README.md)), the `.env` created contains also the following variables:
 ```
-GENAI_API_SERVICE_NAME=genai-api-qa3.s000001-genai
-GENAI_API_TENANT=s000001
-GENAI_API_REST_URL=https://genai-developer-proxy-qa3-loadbalancer.s000001-genai.k8s.oscar.labs.stratio.com:8080/service/genai-api
+GENAI_API_SERVICE_NAME=genai-api-service-name.your-tenant-genai
+GENAI_API_TENANT=your-tenant
+GENAI_API_REST_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-api
 GENAI_API_REST_USE_SSL=true
-GENAI_API_REST_CLIENT_CERT=/home/mleida/Descargas/s000001-user-certs/s000001-user.crt
-GENAI_API_REST_CLIENT_KEY=/home/mleida/Descargas/s000001-user-certs/s000001-user_private.key
-GENAI_API_REST_CA_CERTS=/home/mleida/Descargas/s000001-user-certs/ca-cert.crt
+GENAI_API_REST_CLIENT_CERT=/path/to/certs/user.crt
+GENAI_API_REST_CLIENT_KEY=/path/to/certs/user_private.key
+GENAI_API_REST_CA_CERTS=/path/to/certs/ca-cert.crt
 
-GENAI_GATEWAY_URL=https://genai-developer-proxy-qa3-loadbalancer.s000001-genai.k8s.oscar.labs.stratio.com:8080/service/genai-gateway
+GENAI_GATEWAY_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-gateway
 GENAI_GATEWAY_USE_SSL=true
-GENAI_GATEWAY_CLIENT_CERT=/home/mleida/Descargas/s000001-user-certs/s000001-user.crt
-GENAI_GATEWAY_CLIENT_KEY=/home/mleida/Descargas/s000001-user-certs/s000001-user_private.key
-GENAI_GATEWAY_CA_CERTS=/home/mleida/Descargas/s000001-user-certs/ca-cert.crt
+GENAI_GATEWAY_CLIENT_CERT=/path/to/certs/user.crt
+GENAI_GATEWAY_CLIENT_KEY=/path/to/certs/user_private.key
+GENAI_GATEWAY_CA_CERTS=/path/to/certs/ca-cert.crt
 ```
 
 Finally, you can now run the chain locally by calling the `main.py` script in the poetry environment
@@ -67,8 +67,8 @@ Continue a conversation
 {
   "input": {
     "topic": "Sicily",
-    "input": "can you repeat it?",
-    "chat_id": "<chat_id_returned_by_memory_chat_service>"
+    "input": "I prefer another time of the year",
+    "chat_id": "<chat_id_returned_in_the_response>"
   },
   "config": {
     "metadata": {
@@ -77,7 +77,7 @@ Continue a conversation
         "client_user_id": "your-user",
         "client_tenant": "your-tenant"
       }
-    },
+    }
   }
 }
 ```

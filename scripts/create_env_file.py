@@ -98,49 +98,32 @@ def get_proxy_url(proxy_url, certs):
     return url, genai_api_host
 
 
-def create_env_file(proxy_url, certs, genai_api_host):
+def create_env_file(proxy_url, certs, genai_api_host, format):
     print(f"Creating genai.env file")
     proxy_host = urlparse(proxy_url).hostname
     proxy_port = urlparse(proxy_url).port
     client_cert, client_key, ca_cert = certs
     genai_api_tenant = genai_api_host.split(".")[1].split("-")[0]
-    env_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "genai.env"))
+    (maybe_export, maybe_quote, ext) = ("export ", '"' ,"sh") if format == 'bash' else ("", "", "env")
+    env_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), f"genai-env.{ext}"))
     with open(env_file_path, "w") as f:
-        f.write(f"GENAI_API_SERVICE_NAME={genai_api_host}\n")
-        f.write(f"GENAI_API_TENANT={genai_api_tenant}\n")
-        f.write(f"GENAI_API_REST_URL={proxy_url}/service/genai-api\n")
-        f.write(f"GENAI_API_REST_USE_SSL=true\n")
-        f.write(f"GENAI_API_REST_CLIENT_CERT={client_cert}\n")
-        f.write(f"GENAI_API_REST_CLIENT_KEY={client_key}\n")
-        f.write(f"GENAI_API_REST_CA_CERTS={ca_cert}\n")
+        f.write(f"{maybe_export}GENAI_API_SERVICE_NAME={maybe_quote}{genai_api_host}{maybe_quote}\n")
+        f.write(f"{maybe_export}GENAI_API_TENANT={maybe_quote}{genai_api_tenant}{maybe_quote}\n")
+        f.write(f"{maybe_export}GENAI_API_REST_URL={maybe_quote}{proxy_url}{maybe_quote}/service/genai-api\n")
+        f.write(f"{maybe_export}GENAI_API_REST_USE_SSL=true\n")
+        f.write(f"{maybe_export}GENAI_API_REST_CLIENT_CERT={maybe_quote}{client_cert}{maybe_quote}\n")
+        f.write(f"{maybe_export}GENAI_API_REST_CLIENT_KEY={maybe_quote}{client_key}{maybe_quote}\n")
+        f.write(f"{maybe_export}GENAI_API_REST_CA_CERTS={maybe_quote}{ca_cert}{maybe_quote}\n")
         f.write(f"\n")
-        f.write(f"GENAI_GATEWAY_URL={proxy_url}/service/genai-gateway\n")
-        f.write(f"GENAI_GATEWAY_USE_SSL=true\n")
-        f.write(f"GENAI_GATEWAY_CLIENT_CERT={client_cert}\n")
-        f.write(f"GENAI_GATEWAY_CLIENT_KEY={client_key}\n")
-        f.write(f"GENAI_GATEWAY_CA_CERTS={ca_cert}\n")
+        f.write(f"{maybe_export}GENAI_GATEWAY_URL={maybe_quote}{proxy_url}/service/genai-gateway{maybe_quote}\n")
+        f.write(f"{maybe_export}GENAI_GATEWAY_USE_SSL=true\n")
+        f.write(f"{maybe_export}GENAI_GATEWAY_CLIENT_CERT={maybe_quote}{client_cert}{maybe_quote}\n")
+        f.write(f"{maybe_export}GENAI_GATEWAY_CLIENT_KEY={maybe_quote}{client_key}{maybe_quote}\n")
+        f.write(f"{maybe_export}GENAI_GATEWAY_CA_CERTS={maybe_quote}{ca_cert}{maybe_quote}\n")
         f.write(f"\n")
-        f.write(f"VIRTUALIZER_HOST={proxy_host}\n")
-        f.write(f"VIRTUALIZER_PORT={proxy_port}\n")
-        f.write(f"VIRTUALIZER_BASE_PATH=/service/virtualizer\n")
-        f.write(f"VIRTUALIZER_USERNAME={genai_api_host}\n")
-        f.write(f"VIRTUALIZER_CLIENT_CERT={client_cert}\n")
-        f.write(f"VIRTUALIZER_CLIENT_KEY={client_key}\n")
-        f.write(f"VIRTUALIZER_CA_CERTS={ca_cert}\n")
-        f.write(f"\n")
-        f.write(f"OPENSEARCH_URL={proxy_url}/service/opensearch\n")
-        f.write(f"OPENSEARCH_CLIENT_CERT={client_cert}\n")
-        f.write(f"OPENSEARCH_CLIENT_KEY={client_key}\n")
-        f.write(f"OPENSEARCH_CA_CERTS={ca_cert}\n")
-        f.write(f"\n")
-        f.write(f"GOVERNANCE_URL={proxy_url}/service/governance\n")
-        f.write(f"GOVERNANCE_CLIENT_CERT={client_cert}\n")
-        f.write(f"GOVERNANCE_CLIENT_KEY={client_key}\n")
-        f.write(f"GOVERNANCE_CA_CERTS={ca_cert}\n")
-        f.write(f"\n")
-        f.write(f"VAULT_LOCAL_CLIENT_CERT={client_cert}\n")
-        f.write(f"VAULT_LOCAL_CLIENT_KEY={client_key}\n")
-        f.write(f"VAULT_LOCAL_CA_CERTS={ca_cert}\n")
+        f.write(f"{maybe_export}VAULT_LOCAL_CLIENT_CERT={maybe_quote}{client_cert}{maybe_quote}\n")
+        f.write(f"{maybe_export}VAULT_LOCAL_CLIENT_KEY={maybe_quote}{client_key}{maybe_quote}\n")
+        f.write(f"{maybe_export}VAULT_LOCAL_CA_CERTS={maybe_quote}{ca_cert}\n")
         f.write(f"\n")
     print(f"=> Created genai.env file in {env_file_path}")
 
@@ -156,11 +139,17 @@ def main():
         help="Stratio GenAI Developer Proxy URL.",
         required=True,
     )
+    parser.add_argument(
+        "--format",
+        type=str,
+        help="Output format. 'env' for .env files to add to PyCharm, or 'bash' for .sh files to source in your terminal.",
+        required=True
+    )
     args = parser.parse_args()
 
     certs = get_certificates(args.certs_path)
     proxy_url, genai_api_host = get_proxy_url(args.proxy_url, certs)
-    create_env_file(proxy_url, certs, genai_api_host)
+    create_env_file(proxy_url, certs, genai_api_host, args.format)
 
 
 if __name__ == "__main__":

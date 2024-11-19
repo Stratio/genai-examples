@@ -17,19 +17,15 @@ The chain will present the first of these value as the result of the chain if a 
 
 ## Local deployment
 
-We assume that you already have poetry installed. If not, you can install it wit:
-```bash
-curl -sSL https://install.python-poetry.org | python3 -
-poetry --version
-```
+We assume that you already have poetry installed. If not, you can install it from [here](https://python-poetry.org/docs/#installation).
 
-Verify that you have a dependencies source in your `pyproject.toml` with the URL of the PyPi server in 
-genai-developer-proxy (or the one in gena-api) providing the needed stratio packages, like genai-core. 
+Verify that you have a dependencies source in your `pyproject.toml` with the URL of a PyPi server providing the *Stratio GenAI Core* dependency, like the one in *Stratio GenAI Developer Proxy*.
 Note that the URL below is just an example and you should add the correct URL for your case.
+
 ```toml
 [[tool.poetry.source]]
 name = "stratio-releases"
-url = "https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/v1/pypi/simple/"
+url = "https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-api/v1/pypi/simple/"
 priority = "supplemental"
 ```
 You should also configure Poetry to use the CA of the cluster to verify the certificate of the
@@ -45,7 +41,9 @@ Then install the poetry environment:
 $ poetry install
 ```
 
-Set up the needed environment variables. You can create a file `env.sh` like the following:
+Set up the needed environment variables. You need to specify the Opensearch that the chain will connect to. This is normally specified in the deployment configuration of the chain when registering it in *Stratio GenAI API*. While developing locally, you run your chain in a standalone server which is started by running the the `main.py` script. This scripts obtains the Opensearch URL from the `OPENSEARCH_URL` environment variable, so you should set it with correct value before starting the chain.
+
+You can create a file `env.sh` like the following (or use the [helper script](../README.md#extra-environment-variables)):
 
 ```bash
 # variables needed to tell the VaulClient where to find the certificates so it does not need to
@@ -54,20 +52,15 @@ export VAULT_LOCAL_CLIENT_CERT="/path/to/cert.crt"
 export VAULT_LOCAL_CLIENT_KEY="/path/to/private-key.key"
 export VAULT_LOCAL_CA_CERTS="/path/to/ca-cert.crt"
 
+# This variable is used in the main.py that launches the chain locally 
 export OPENSEARCH_URL="https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/opensearch"
 ```
-
-You need to specify the Opensearch that the chain will connect to. 
-This is normally specified in the deployment configuration of the chain when registering it in *Stratio GenAI API*. 
-While developing locally, you run your chain in a standalone server which is started by running the the `main.py` script. 
-This scripts obtains the Opensearch URL from the `OPENSEARCH_URL` environment variable, so you should set it with correct value before starting the chain. 
-If accessing Opensearch through the *Stratio GenAI Developer Proxy*, it would be something like:
-
+and then source it (or [add to PyCharm](../README.md#running-from-pycharm))
 ```
-$ OPENSEARCH_URL="https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/opensearch"
+$ source env.sh
 ```
 
-Finally, you can now run the chain locally by calling the `main.py` script in the poetry environment
+Finally, you can now run the chain locally by calling the `main.py` script in the poetry environment (or [run from PyCharm](../README.md#running-from-pycharm)):
 
 ```
 $ poetry run python opensearch_chain/main.py
@@ -81,12 +74,12 @@ An example of request body for the invoke POST is the following:
 
 ```json
 {
-   "input": {
-      "search_value":"value_to_search",
-      "collection_name":"index_name",
-      "table_value":"table_name",
-      "column_value":"column_name"
-    },
+  "input": {
+    "search_value":"value_to_search",
+    "collection_name":"index_name",
+    "table_value":"table_name",
+    "column_value":"column_name"
+  },
   "config": {
     "metadata": {
       "__genai_state": {
@@ -99,7 +92,4 @@ An example of request body for the invoke POST is the following:
 }
 ```
 
-In case you want to debug the chain, you can run it in PyCharm as explained in the main [README.md](../README.md) file.
-
-The `"config"` key with the extra metadata is normally added by GenAI API before passing the input to the chain,
-but while developing locally you should add it by hand.
+The `"config"` key with the extra metadata about the user that has invoked the chain is normally added by GenAI API before passing the input to the chain, but while developing locally you should add it by hand if your chain uses these metadata. Note that this example chain does not use it.

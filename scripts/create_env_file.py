@@ -123,8 +123,9 @@ def create_env_file(proxy_url, certs, genai_api_host, format):
         f.write(f"\n")
         f.write(f"{maybe_export}VAULT_LOCAL_CLIENT_CERT={maybe_quote}{client_cert}{maybe_quote}\n")
         f.write(f"{maybe_export}VAULT_LOCAL_CLIENT_KEY={maybe_quote}{client_key}{maybe_quote}\n")
-        f.write(f"{maybe_export}VAULT_LOCAL_CA_CERTS={maybe_quote}{ca_cert}\n")
+        f.write(f"{maybe_export}VAULT_LOCAL_CA_CERTS={maybe_quote}{ca_cert}{maybe_quote}\n")
         f.write(f"\n")
+        f.write(f"{maybe_export}VIRTUALIZER_BASE_PATH=/service/virtualizer={maybe_quote}/service/virtualizer{maybe_quote}\n")
     print(f"=> Created genai.env file in {env_file_path}")
 
 

@@ -4,19 +4,15 @@ This is an example of a GenAI chain that allows to remember the previous convers
 
 ## Local deployment
 
-We assume that you already have poetry installed. If not, you can install it wit:
-```bash
-curl -sSL https://install.python-poetry.org | python3 -
-poetry --version
-```
+We assume that you already have poetry installed. If not, you can install it from [here](https://python-poetry.org/docs/#installation).
 
-Verify that you have a dependencies source in your `pyproject.toml` with the URL of the PyPi server in 
-genai-developer-proxy (or the one in gena-api) providing the needed stratio packages, like genai-core. 
+Verify that you have a dependencies source in your `pyproject.toml` with the URL of a PyPi server providing the *Stratio GenAI Core* dependency, like the one in *Stratio GenAI Developer Proxy*.
 Note that the URL below is just an example and you should add the correct URL for your case.
+
 ```toml
 [[tool.poetry.source]]
 name = "stratio-releases"
-url = "https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/v1/pypi/simple/"
+url = "https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-api/v1/pypi/simple/"
 priority = "supplemental"
 ```
 You should also configure Poetry to use the CA of the cluster to verify the certificate of the
@@ -32,7 +28,7 @@ Then install the poetry environment:
 $ poetry install
 ```
 
-Set up the needed environment variables. You can create a file `env.sh` like the following:
+Set up the needed environment variables. You can create a file `env.sh` like the following (or use the [helper script](../README.md#extra-environment-variables)):
 
 ```bash
 # Memory chain need to access to the GenAI API in order to persist the conversation
@@ -53,7 +49,7 @@ export GENAI_GATEWAY_CA_CERTS=/path/to/certs/ca-cert.crt
 ```
 Ensure your user have the right permissions to register memory in the GenAI API.
 
-Finally, you can now run the chain locally by calling the `main.py` script in the poetry environment
+Finally, you can now run the chain locally by calling the `main.py` script in the poetry environment (or [run from PyCharm](../README.md#running-from-pycharm)):
 
 ```
 $ poetry run python chat_memory_chain/main.py
@@ -105,7 +101,4 @@ Continue a conversation
 }
 ```
 
-In case you want to debug the chain, you can run it in PyCharm as explained in the main [README.md](../README.md) file.
-
-The `"config"` key with the extra metadata is normally added by GenAI API before passing the input to the chain,
-but while developing locally you should add it by hand.
+The `"config"` key with the extra metadata about the user that has invoked the chain is normally added by GenAI API before passing the input to the chain, but while developing locally you should add it by hand.

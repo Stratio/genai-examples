@@ -1,3 +1,4 @@
-basic-actor-chain-example
-virtualizer-chain-example
-opensearch-chain-example
+example-chain-basic-actor
+example-chain-chat-memory
+example-chain-opensearch
+example-chain-virtualizer

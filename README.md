@@ -4,11 +4,11 @@ This repository is intended for developers who want to create GenAI chains using
 
 This repository provides some simple examples of GenAI chains focused on a specific task.
 There are four basic chains that you can use as a starting point to create your own chains:
- # TODO: Add the links to the chains once merged
-* [Basic Actor Chain](basic-actor-chain-example/README.md): Example of a GenAI chain that implements a basic actor and invokes it.
-* [Stratio Virtualizer Chain](./virtualizer-chain-example/README.md): Example of a GenAI chain that connects to the Stratio Virtualizer service to perform a query.
-* [Opensearch Chain](opensearch-chain-example/README.md): Example of a GenAI chain that connects to Opensearch service and processes the result of a search.
-* [Memory Chain](./README.md): Example of a GenAI chain that persist the user's conversation in order to remember the context.
+
+* [Basic Actor Chain](./example-chain-basic-actor/README.md): Example of a GenAI chain that implements a basic actor and invokes it.
+* [Memory Chain](./example-chain-chat-memory/README.md): Example of a GenAI chain that persist the user's conversation in order to remember the context.
+* [Opensearch Chain](./example-chain-opensearch/README.md): Example of a GenAI chain that connects to Opensearch service and processes the result of a search.
+* [Stratio Virtualizer Chain](./example-chain-virtualizer/README.md): Example of a GenAI chain that connects to the Stratio Virtualizer service to perform a query.
 
 Please check the readme of each chain for more information.
 
@@ -22,7 +22,7 @@ Stratio GenAI chains are built with [Poetry](https://python-poetry.org/docs/#ins
 
 #### *Stratio GenAI Developer Proxy*
 
-You need access to *Stratio GenAI Developer Proxy* service. This service allows you to install the *Stratio GenAI Core* dependency and to access to the services in the Development environment from your local machine. The service is installed by Operations team. They will provide you a URL like this `https://genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080`.
+You need access to *Stratio GenAI Developer Proxy* service. This service allows you to install the *Stratio GenAI Core* dependency and to access the services running in the Development environment from your local machine. The service is installed by Operations team. They will provide you a URL like this `https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080`.
 
 ####  User certificate
 
@@ -35,7 +35,7 @@ Execute the following commands to configure the environment variables:
 ```
 $ python scripts/create_env_file.py \
     --certs_path /path/to/certs \
-    --proxy_url https://genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080 \
+    --proxy_url https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080 \
     --format bash
 ```
 
@@ -58,7 +58,7 @@ Edit the `pyproject.toml` file and change the `url` value with the URL of the *S
 ```toml
 [[tool.poetry.source]]
 name = "stratio-releases"
-url = "https://genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080/service/genai-api/v1/pypi/simple"
+url = "https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-api/v1/pypi/simple"
 priority = "supplemental"
 ```
 
@@ -72,7 +72,7 @@ $ poetry install
 
 #### Run the chain
 
-Launch the `'main.py` script in the Poetry environment to run the chain locally:
+Launch the `main.py` script in the Poetry environment to run the chain locally:
 
 ```
 $ poetry run python basic_actor_chain_example/main.py
@@ -96,7 +96,7 @@ Stratio GenAI chains are intended to run inside *Stratio GenAI API*. In order to
 
 The first and last problems above are solved by the *Stratio GenAI Developer Proxy*, which can be deployed in the development cluster to provide access to the services running inside the cluster, as well as to provide access to the PyPi server inside *Stratio GenAI API* containing the *Stratio GenAI Core* dependency.
 
-Once the service in installed on your development cluster, it should be reachable through a URL like this: `https://genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080`. Then, under different paths on that server, you can access the different services. For instance, the *Stratio GenAI Gateway* would be accessed from your local machine through  `https://genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080/service/genai-gateway`. All the available services, with their path in *Stratio GenAI Developer Proxy* are listed in the following table:
+Once the service in installed on your development cluster, it should be reachable through a URL like this: `https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080`. Then, under different paths on that server, you can access the different services. For instance, the *Stratio GenAI Gateway* would be accessed from your local machine through  `https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-gateway`. All the available services, with their path in *Stratio GenAI Developer Proxy* are listed in the following table:
 | service                 | Developer proxy path                |
 |-------------------------|-------------------------------------|
 | *Stratio GenAI Gateway* | `/service/genai-gateway`            |
@@ -166,7 +166,7 @@ Execute the following command to configure the environment variables:
 ```
 $ python scripts/create_env_file.py \
     --certs_path /path/to/certs  \
-    --proxy_url https://genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080 \
+    --proxy_url https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080 \
     --format env # or bash
 ```
 
@@ -180,7 +180,7 @@ You should edit the `pyproject.toml` file and add a block like the following (ch
 ```toml
 [[tool.poetry.source]]
 name = "stratio-releases"
-url = "https://genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080/service/genai-api/v1/pypi/simple/"
+url = "https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-api/v1/pypi/simple/"
 priority = "supplemental"
 ```
 
@@ -277,6 +277,16 @@ and add it to the `main.py` run configuration in PyCharm:
 ![](./docs/pycharm_edit_configuration.png)
 
 Run the `main.py` file again. You will see the logs in the PyCharm console and you can open the web interface of the chain in the browser: http://127.0.0.1:8080. 
+
+### Building your chain
+
+Once you have finished developing your chain you can build it with
+
+```
+$ poetry build
+```
+
+and you will find a `tar.gz` in the `dist` folder that you can use to register the chain and associated pacakge in *Stratio GenAI API*. Note that the `"chain_params"` field in the chain registration request should containt the parameters that your chain class constructor expects.
 
 ### Useful commands
 

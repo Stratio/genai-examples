@@ -278,6 +278,16 @@ and add it to the `main.py` run configuration in PyCharm:
 
 Run the `main.py` file again. You will see the logs in the PyCharm console and you can open the web interface of the chain in the browser: http://127.0.0.1:8080. 
 
+### Building your chain
+
+Once you have finished developing your chain you can build it with
+
+```
+$ poetry build
+```
+
+and you will find a `tar.gz` in the `/dist` folder that you can use to register the chain and associated pacakge in *Stratio GenAI API*. Note that the `"chain_params"` field in the chain registration request should containt the parameters that your chain class constructor expects.
+
 ### Useful commands
 
 * Execute all the tests: `poetry run pytest`

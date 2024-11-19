@@ -4,7 +4,7 @@ This repository is intended for developers who want to create GenAI chains using
 
 This repository provides some simple examples of GenAI chains focused on a specific task.
 There are four basic chains that you can use as a starting point to create your own chains:
- # TODO: Add the links to the chains once merged
+
 * [Basic Actor Chain](./example-chain-basic-actor/README.md): Example of a GenAI chain that implements a basic actor and invokes it.
 * [Memory Chain](./example-chain-chat-memory)/README.md): Example of a GenAI chain that persist the user's conversation in order to remember the context.
 * [Opensearch Chain](./example-chain-opensearch/README.md): Example of a GenAI chain that connects to Opensearch service and processes the result of a search.

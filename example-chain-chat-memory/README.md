@@ -47,7 +47,6 @@ export GENAI_GATEWAY_CLIENT_CERT=/path/to/certs/user.crt
 export GENAI_GATEWAY_CLIENT_KEY=/path/to/certs/user_private.key
 export GENAI_GATEWAY_CA_CERTS=/path/to/certs/ca-cert.crt
 ```
-Ensure your user have the right permissions to register memory in the GenAI API.
 
 Finally, you can now run the chain locally by calling the `main.py` script in the poetry environment (or [run from PyCharm](../README.md#running-from-pycharm)):
 

@@ -28,7 +28,7 @@ Then install the poetry environment:
 $ poetry install
 ```
 
-Set up the needed environment variables. You need to specify the Virtualizer server that the chain will connect to. This is normally specified in the deployment configuration of the chain when registering it in *Stratio GenAI API*. While developing locally, you run your chain in a standalone server which is started by running the the `main.py` script. This scripts obtains the Virtualizer URL from the `VIRTUALIZER_HOST` and `VIRTUALIZER_PORT` environment variables, so you should set it with correct value before starting the chain. Also, when accessing Virtualizer through the *Stratio GenAI Developer Proxy*, an extra variables `VIRTUALIZER_BASE_PATH` is needed.
+Set up the needed environment variables. You need to specify the Virtualizer server that the chain will connect to. This is normally specified in the deployment configuration of the chain when registering it in *Stratio GenAI API*. While developing locally, you run your chain in a standalone server which is started by running the the `main.py` script. This scripts obtains the Virtualizer URL from the `VIRTUALIZER_HOST` and `VIRTUALIZER_PORT` environment variables, so you should set it with correct value before starting the chain. Also, when accessing Virtualizer through the *Stratio GenAI Developer Proxy*, an extra variable `VIRTUALIZER_BASE_PATH` is needed.
 
 You can create a file `env.sh` like the following (or use the [helper script](../README.md#extra-environment-variables)):
 

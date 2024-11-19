@@ -4,7 +4,7 @@ This is an example of a GenAI chain that connects to Opensearch service and proc
 
 For the specific case of this example chain, we developed an OpenSearch utility service that connects to an OpenSearch service and performs a search on a specific index and table.
 
-In ths example, we assume that an external process created the index using the name of the database
+In this example, we assume that an external process created the index using the name of the database
 and added documents by analyzing the data in the tables and indexing the selected columns with all their possible values, 
 creating document with the following fields:
 

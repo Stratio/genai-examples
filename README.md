@@ -6,7 +6,7 @@ This repository provides some simple examples of GenAI chains focused on a speci
 There are four basic chains that you can use as a starting point to create your own chains:
 
 * [Basic Actor Chain](./example-chain-basic-actor/README.md): Example of a GenAI chain that implements a basic actor and invokes it.
-* [Memory Chain](./example-chain-chat-memory)/README.md): Example of a GenAI chain that persist the user's conversation in order to remember the context.
+* [Memory Chain](./example-chain-chat-memory/README.md): Example of a GenAI chain that persist the user's conversation in order to remember the context.
 * [Opensearch Chain](./example-chain-opensearch/README.md): Example of a GenAI chain that connects to Opensearch service and processes the result of a search.
 * [Stratio Virtualizer Chain](./example-chain-virtualizer/README.md): Example of a GenAI chain that connects to the Stratio Virtualizer service to perform a query.
 
@@ -22,7 +22,7 @@ Stratio GenAI chains are built with [Poetry](https://python-poetry.org/docs/#ins
 
 #### *Stratio GenAI Developer Proxy*
 
-You need access to *Stratio GenAI Developer Proxy* service. This service allows you to install the *Stratio GenAI Core* dependency and to access to the services in the Development environment from your local machine. The service is installed by Operations team. They will provide you a URL like this `https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080`.
+You need access to *Stratio GenAI Developer Proxy* service. This service allows you to install the *Stratio GenAI Core* dependency and to access the services running in the Development environment from your local machine. The service is installed by Operations team. They will provide you a URL like this `https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080`.
 
 ####  User certificate
 
@@ -72,7 +72,7 @@ $ poetry install
 
 #### Run the chain
 
-Launch the `'main.py` script in the Poetry environment to run the chain locally:
+Launch the `main.py` script in the Poetry environment to run the chain locally:
 
 ```
 $ poetry run python basic_actor_chain_example/main.py
@@ -286,7 +286,7 @@ Once you have finished developing your chain you can build it with
 $ poetry build
 ```
 
-and you will find a `tar.gz` in the `/dist` folder that you can use to register the chain and associated pacakge in *Stratio GenAI API*. Note that the `"chain_params"` field in the chain registration request should containt the parameters that your chain class constructor expects.
+and you will find a `tar.gz` in the `dist` folder that you can use to register the chain and associated pacakge in *Stratio GenAI API*. Note that the `"chain_params"` field in the chain registration request should containt the parameters that your chain class constructor expects.
 
 ### Useful commands
 

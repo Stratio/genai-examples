@@ -5,7 +5,6 @@ description = "A simple chain to show how to define and use an actor in a chain"
 authors = []
 include = ["requirements.txt"]
 
-# TODO: check what dependencies we really need
 [tool.poetry.dependencies]
 python = "^3.9"
 genai-core = "0.3.1"
@@ -40,9 +39,9 @@ addopts = "-m 'not manual'"
 
 [[tool.poetry.source]]
 name = "stratio-releases"
-# here you should replace the existing Url, with the genai-api-development-proxy url.
+# Here you should replace the existing Url, with the genai-api-development-proxy url.
 # See also example-chain-basic-actor/README.md
-#url = "https://genai.s000001.k8s.oscar.labs.stratio.com/genai-developer-proxy-qa3:8080"
+#url = "https://genai-developer-proxy-loadbalancer.s000001-genai.k8s.fifteen.labs.stratio.com:8080/service/genai-api/v1/pypi/simple/"
 url = "http://qa.int.stratio.com/repository/python-releases/simple/"
 priority = "supplemental"
 

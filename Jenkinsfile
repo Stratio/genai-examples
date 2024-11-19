@@ -11,7 +11,7 @@ hose {
     PYTHON_MODULE = true
     GRYPE_TEST = false
     LABEL_CONTROL = true
-    DEPLOYONPRS = true
+    DEPLOYONPRS = false
 
     DEV = { config ->
         doCompile(config)
@@ -30,7 +30,5 @@ hose {
                 "sonar.scm.disabled": "true"
             ]
         )
-        doPackage(config)
-        doDeploy(config)
     }
 }

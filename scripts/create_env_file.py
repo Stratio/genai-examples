@@ -98,15 +98,14 @@ def get_proxy_url(proxy_url, certs):
     return url, genai_api_host
 
 
-def create_env_file(proxy_url, certs, genai_api_host, format):
-    print(f"Creating genai.env file")
-    proxy_host = urlparse(proxy_url).hostname
-    proxy_port = urlparse(proxy_url).port
+def create_env_file(proxy_url, certs, genai_api_host, file_format):
+    (maybe_export, maybe_quote, ext) = ("export ", '"' ,"sh") if file_format == 'bash' else ("", "", "env")
+    file_name = f"genai-env.{ext}"
+    file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), f"genai-env.{ext}"))
+    print(f"Creating {file_name} file")
     client_cert, client_key, ca_cert = certs
     genai_api_tenant = genai_api_host.split(".")[1].split("-")[0]
-    (maybe_export, maybe_quote, ext) = ("export ", '"' ,"sh") if format == 'bash' else ("", "", "env")
-    env_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), f"genai-env.{ext}"))
-    with open(env_file_path, "w") as f:
+    with open(file_path, "w") as f:
         f.write(f"{maybe_export}GENAI_API_SERVICE_NAME={maybe_quote}{genai_api_host}{maybe_quote}\n")
         f.write(f"{maybe_export}GENAI_API_TENANT={maybe_quote}{genai_api_tenant}{maybe_quote}\n")
         f.write(f"{maybe_export}GENAI_API_REST_URL={maybe_quote}{proxy_url}{maybe_quote}/service/genai-api\n")
@@ -125,8 +124,8 @@ def create_env_file(proxy_url, certs, genai_api_host, format):
         f.write(f"{maybe_export}VAULT_LOCAL_CLIENT_KEY={maybe_quote}{client_key}{maybe_quote}\n")
         f.write(f"{maybe_export}VAULT_LOCAL_CA_CERTS={maybe_quote}{ca_cert}{maybe_quote}\n")
         f.write(f"\n")
-        f.write(f"{maybe_export}VIRTUALIZER_BASE_PATH=/service/virtualizer={maybe_quote}/service/virtualizer{maybe_quote}\n")
-    print(f"=> Created genai.env file in {env_file_path}")
+        f.write(f"{maybe_export}VIRTUALIZER_BASE_PATH={maybe_quote}/service/virtualizer{maybe_quote}\n")
+    print(f"=> Created {file_name} file in {file_path}")
 
 
 def main():
@@ -140,17 +139,12 @@ def main():
         help="Stratio GenAI Developer Proxy URL.",
         required=True,
     )
-    parser.add_argument(
-        "--format",
-        type=str,
-        help="Output format. 'env' for .env files to add to PyCharm, or 'bash' for .sh files to source in your terminal.",
-        required=True
-    )
     args = parser.parse_args()
 
     certs = get_certificates(args.certs_path)
     proxy_url, genai_api_host = get_proxy_url(args.proxy_url, certs)
-    create_env_file(proxy_url, certs, genai_api_host, args.format)
+    create_env_file(proxy_url, certs, genai_api_host, "env")
+    create_env_file(proxy_url, certs, genai_api_host, "bash")
 
 
 if __name__ == "__main__":

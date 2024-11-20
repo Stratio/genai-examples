@@ -79,15 +79,6 @@ An example of request body for the invoke POST is the following:
     "collection_name":"index_name",
     "table_value":"table_name",
     "column_value":"column_name"
-  },
-  "config": {
-    "metadata": {
-      "__genai_state": {
-        "client_auth_type": "mtls",
-        "client_user_id": "your-user",
-        "client_tenant": "your-tenant"
-      }
-    }
   }
 }
 ```

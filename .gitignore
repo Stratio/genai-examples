@@ -2,7 +2,8 @@
 .idea
 .vscode
 .run
-*.env
+genai-env.env
+genai-env.sh
 
 # File-based project format:
 *.iml

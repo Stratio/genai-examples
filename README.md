@@ -18,39 +18,22 @@ Stratio GenAI chains are built with [Poetry](https://python-poetry.org/docs/#ins
 * [Poetry](https://python-poetry.org/docs/#installation)
 * A Python editor of you choice, like [PyCharm](https://www.jetbrains.com/pycharm/) or [Visual Studio Code](https://code.visualstudio.com/)
 
-### Quick start guide (TL;DR)
+### Quick start guide (TLDR)
 
 #### *Stratio GenAI Developer Proxy*
 
 You need access to *Stratio GenAI Developer Proxy* service. This service allows you to install the *Stratio GenAI Core* dependency and to access the services running in the Development environment from your local machine. The service is installed by Operations team. They will provide you a URL like this `https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080`.
 
-####  User certificate
+#### User certificate
 
 Download your [user certificates](#user-certificates) from *Stratio Gosec*.
 
-#### Configure the needed environment variables
-
-Execute the following commands to configure the environment variables:
-
-```
-$ python scripts/create_env_file.py \
-    --certs_path /path/to/certs \
-    --proxy_url https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080 \
-    --format bash
-```
-
-You will find a `.sh` file in the `genai-examples/scripts` folder with the environment variables. Source it:
-
-```
-$ source scripts/genai-env.sh
-```
-
 #### Install the dependencies
 
-Move to an example directory, for example the `basic-actor-chain-example`, which contains a basic chain example:
+Move to an example directory, for example the `example-chain-basic-actor`, which contains a basic chain example:
 
 ```
-$ cd genai-examples/basic-actor-chain-example
+$ cd genai-examples/example-chain-basic-actor
 ```
 
 Edit the `pyproject.toml` file and change the `url` value with the URL of the *Stratio GenAI Developer Proxy* service:
@@ -65,20 +48,56 @@ priority = "supplemental"
 Install the dependencies with Poetry (use the path to your certificates):
 
 ```
+$ poetry config virtualenvs.in-project true
 $ poetry config certificates.stratio-releases.cert /path/to/your/cert/folder/ca-cert.crt
-
+$ poetry lock --no-update
 $ poetry install
 ```
 
+#### Configure the needed environment variables
+
+Execute the following commands to configure the environment variables:
+
+```
+$ python ../scripts/create_env_file.py \
+    --certs_path /path/to/certs \
+    --proxy_url https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080
+```
+
+You will find the files `genai-env.env` and `genai-env.sh` in the `genai-examples/scripts` folder with the environment variables.
+
 #### Run the chain
 
-Launch the `main.py` script in the Poetry environment to run the chain locally:
+##### Pycharm
+
+If you use PyCharm, follow [those steps](#running-from-pycharm) to run the chain.
+
+##### Other editors
+
+Source the environment variables and launch the `main.py` script in the Poetry environment to run the chain locally:
 
 ```
-$ poetry run python basic_actor_chain_example/main.py
+$ source ../scripts/genai-env.sh
+$ poetry run python basic_actor_chain/main.py
 ```
 
-You can see the logs in the terminal. You can also open the web interface of the chain in the browser: http://127.0.0.1:8080 
+You can see the logs in the terminal. 
+
+#### Test the chain
+
+If the chain is running, you can open the web interface of the chain in the browser.
+
+* http://127.0.0.1:8080
+
+Use the endpoint `POST /invoke` to test the chain. An example of request body for the invoke POST is the following:
+
+```json
+{
+  "input": {
+     "user_request": "Hi! Nice to meet you! Where's the Queen of Hearts?"
+  }
+}
+```
 
 ## Local development
 
@@ -159,18 +178,17 @@ You can obtain your user certificates from *Stratio GoSec*:
 
 Some clients provided in *Stratio GenAI Core*, like the *Stratio GenAI Gateway* client or the *Stratio GenAI API* client, obtain their certificates by reading some environment variables instead of accessing Vault. Also, they expect some other environment variables to be defined. In a "normal" chain execution inside *Stratio GenAI API*, these variables are already set in the *Stratio GenAI API* container. If your chain uses these clients, you should set the corresponding environment variables to run it locally.
 
-For your convenience, we provide a script that generates an `.env` or `.sh` file (depending on the `format` flag chosen) with all the needed variables by just giving it the path to your certificates folder and the host of the *Stratio GenAI Developer Proxy*. Then, you can add it to PyCharm or source it in your terminal,
+For your convenience, we provide a script that generates two files with all the needed variables by just giving it the path to your certificates folder and the host of the *Stratio GenAI Developer Proxy*. Then, you can add it to PyCharm or source it in your terminal.
 
 Execute the following command to configure the environment variables:
 
 ```
 $ python scripts/create_env_file.py \
     --certs_path /path/to/certs  \
-    --proxy_url https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080 \
-    --format env # or bash
+    --proxy_url https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080
 ```
 
-You will find a `genai-env.env` or `genai-env.sh` file (depending on the format chosen) in the `genai-examples/scripts` folder with the environment variables.
+You will find the files `genai-env.env` and `genai-env.sh` in the `genai-examples/scripts` folder with the environment variables.
 
 ### *Stratio GenAI Core* dependency
 
@@ -186,11 +204,9 @@ priority = "supplemental"
 
 Also, in order to make Poetry trust this server, you need to configure it to use the CA of the cluster (the one included in the `zip` file with [your certificates](#user-certificates-and-vault-client-development-mode)):
 ```
-$ poetry config certificates.stratio-releases.cert /path/to/ca-cert.crt 
-```
-
-Now you can install the dependencies in the Poetry environment:
-```
+$ poetry config virtualenvs.in-project true
+$ poetry config certificates.stratio-releases.cert /path/to/your/cert/folder/ca-cert.crt
+$ poetry lock --no-update
 $ poetry install
 ```
 

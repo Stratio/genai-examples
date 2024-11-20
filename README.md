@@ -47,10 +47,10 @@ $ source scripts/genai-env.sh
 
 #### Install the dependencies
 
-Move to an example directory, for example the `basic-actor-chain-example`, which contains a basic chain example:
+Move to an example directory, for example the `example-chain-basic-actor`, which contains a basic chain example:
 
 ```
-$ cd genai-examples/basic-actor-chain-example
+$ cd genai-examples/example-chain-basic-actor
 ```
 
 Edit the `pyproject.toml` file and change the `url` value with the URL of the *Stratio GenAI Developer Proxy* service:

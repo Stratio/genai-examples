@@ -45,7 +45,7 @@ $ poetry install
 VAULT_LOCAL_CLIENT_CERT=/path/to/certs/user.crt
 VAULT_LOCAL_CLIENT_KEY=/path/to/certs/user_private.key
 VAULT_LOCAL_CA_CERTS=/path/to/certs/ca-cert.crt
-OPENSEARCH_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com):8080/service/opensearch
+OPENSEARCH_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/opensearch
 ```
 
 5. Run the chain `opensearch_chain/main.py`. You can do it in the terminal or in PyCharm. You can open the Swagger UI in the URL `http://127.0.0.1:8080/`.

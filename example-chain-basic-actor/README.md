@@ -29,7 +29,7 @@ $ poetry install
 4. Configure the environment variables executing the script `scripts/create_env_file.py`. You will find the environment variables in the files `genai-env.env` and `genai-env.sh` in the `genai-examples/scripts` folder. This chain uses the following environment variables:
 
 ```bash
-GENAI_GATEWAY_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com):8080/service/genai-gateway
+GENAI_GATEWAY_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-gateway
 GENAI_GATEWAY_USE_SSL=true
 GENAI_GATEWAY_CLIENT_CERT=/path/to/certs/user.crt
 GENAI_GATEWAY_CLIENT_KEY=/path/to/certs/user_private.key

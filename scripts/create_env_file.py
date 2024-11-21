@@ -108,7 +108,7 @@ def create_env_file(proxy_url, certs, genai_api_host, file_format):
     with open(file_path, "w") as f:
         f.write(f"{maybe_export}GENAI_API_SERVICE_NAME={maybe_quote}{genai_api_host}{maybe_quote}\n")
         f.write(f"{maybe_export}GENAI_API_TENANT={maybe_quote}{genai_api_tenant}{maybe_quote}\n")
-        f.write(f"{maybe_export}GENAI_API_REST_URL={maybe_quote}{proxy_url}{maybe_quote}/service/genai-api\n")
+        f.write(f"{maybe_export}GENAI_API_REST_URL={maybe_quote}{proxy_url}/service/genai-api{maybe_quote}\n")
         f.write(f"{maybe_export}GENAI_API_REST_USE_SSL=true\n")
         f.write(f"{maybe_export}GENAI_API_REST_CLIENT_CERT={maybe_quote}{client_cert}{maybe_quote}\n")
         f.write(f"{maybe_export}GENAI_API_REST_CLIENT_KEY={maybe_quote}{client_key}{maybe_quote}\n")

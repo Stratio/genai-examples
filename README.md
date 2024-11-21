@@ -15,20 +15,22 @@ Please check the readme of each chain for more information.
 Stratio GenAI chains are built with [Poetry](https://python-poetry.org/docs/#installation), so in order to develop a chain you need to make sure you have the following tools in your machine:
 
 * [Python](https://www.python.org/) >= 3.9
-* [Poetry](https://python-poetry.org/docs/#installation)
+* [Poetry](https://python-poetry.org/docs/#installing-with-the-official-installer). We recommend to use the "official installer method".
 * A Python editor of you choice, like [PyCharm](https://www.jetbrains.com/pycharm/) or [Visual Studio Code](https://code.visualstudio.com/)
 
-### Quick start guide (TLDR)
+## Quick start guide (TLDR)
 
-#### *Stratio GenAI Developer Proxy*
+### *Stratio GenAI Developer Proxy*
 
 You need access to *Stratio GenAI Developer Proxy* service. This service allows you to install the *Stratio GenAI Core* dependency and to access the services running in the Development environment from your local machine. The service is installed by Operations team. They will provide you a URL like this `https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080`.
 
-#### User certificate
+> **WARNING**: Make sure you use the Load Balancer URL, not the KEOS Ingress URL!
+
+### User certificate
 
 Download your [user certificates](#user-certificates) from *Stratio Gosec*.
 
-#### Install the dependencies
+### Install the dependencies
 
 Move to an example directory, for example the `example-chain-basic-actor`, which contains a basic chain example:
 
@@ -36,7 +38,7 @@ Move to an example directory, for example the `example-chain-basic-actor`, which
 $ cd genai-examples/example-chain-basic-actor
 ```
 
-Edit the `pyproject.toml` file and change the `url` value with the URL of the *Stratio GenAI Developer Proxy* service:
+Edit the `pyproject.toml` file and change the `url` value with the URL of the *Stratio GenAI Developer Proxy* Load Balancer:
 
 ```toml
 [[tool.poetry.source]]
@@ -54,7 +56,7 @@ $ poetry lock --no-update
 $ poetry install
 ```
 
-#### Configure the needed environment variables
+### Configure the needed environment variables
 
 Execute the following commands to configure the environment variables:
 
@@ -66,13 +68,13 @@ $ python ../scripts/create_env_file.py \
 
 You will find the files `genai-env.env` and `genai-env.sh` in the `genai-examples/scripts` folder with the environment variables.
 
-#### Run the chain
+### Run the chain
 
-##### Pycharm
+#### Pycharm
 
 If you use PyCharm, follow [those steps](#running-from-pycharm) to run the chain.
 
-##### Other editors
+#### Other editors
 
 Source the environment variables and launch the `main.py` script in the Poetry environment to run the chain locally:
 
@@ -83,7 +85,7 @@ $ poetry run python basic_actor_chain/main.py
 
 You can see the logs in the terminal. 
 
-#### Test the chain
+### Test the chain
 
 If the chain is running, you can open the web interface of the chain in the browser.
 
@@ -94,10 +96,14 @@ Use the endpoint `POST /invoke` to test the chain. An example of request body fo
 ```json
 {
   "input": {
-     "user_request": "Hi! Nice to meet you! Where's the Queen of Hearts?"
+     "user_request": "Hi! Nice to meet you! Where is the Queen of Hearts?"
   }
 }
 ```
+
+### Build and deploy the chain
+
+When your chain is ready, you can [build](#building-your-chain) and [deploy](#deploying-your-chain) it in *Stratio GenAI API*.
 
 ## Local development
 
@@ -259,7 +265,7 @@ source it
 ```
 $ source env.sh
 ```
-and run the script again. You will see the logs in the terminal and you can open the web interface of the chain in the browser: http://127.0.0.1:8080. 
+and run the script again. You will see the logs in the terminal, and you can open the web interface of the chain in the browser: http://127.0.0.1:8080. 
 
 #### Running from PyCharm
 
@@ -292,17 +298,66 @@ and add it to the `main.py` run configuration in PyCharm:
 
 ![](./docs/pycharm_edit_configuration.png)
 
-Run the `main.py` file again. You will see the logs in the PyCharm console and you can open the web interface of the chain in the browser: http://127.0.0.1:8080. 
+Run the `main.py` file again. You will see the logs in the PyCharm console, and you can open the web interface of the chain in the browser: http://127.0.0.1:8080. 
 
 ### Building your chain
 
-Once you have finished developing your chain you can build it with
+Once you have finished developing your chain you can build it with:
 
 ```
 $ poetry build
 ```
 
-and you will find a `tar.gz` in the `dist` folder that you can use to register the chain and associated pacakge in *Stratio GenAI API*. Note that the `"chain_params"` field in the chain registration request should containt the parameters that your chain class constructor expects.
+You will find a `tar.gz` in the `dist` folder that you can use deploy the package and register the chain in *Stratio GenAI API*.
+
+### Deploying your chain
+
+To deploy your chain in *Stratio GenAI API* you need to upload the chain package we built in the previous section to the API and register the chain.
+
+1. Upload the chain package to *Stratio GenAI API*:
+
+```bash
+curl -X 'POST' \
+  'https://<your-genai-api-url>/v1/packages' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: multipart/form-data' \
+  -F 'package=@<basic-actor-chain-package>.tar.gz;type=application/gzip'
+```
+
+2. Register the chain. Note that the `chain_params` field in the chain registration request should contain the parameters that your chain class constructor expects:
+
+```bash
+curl -X 'POST' \
+  'https://<your-genai-api-url>/v1/chains' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+      "chain_id": "basic_actor_chain",
+      "chain_config": {
+        "package_id": "basic_actor_chain-0.3.1a0",
+        "chain_module": "basic_actor_chain.chain",
+        "chain_class": "BasicActorChain",
+        "chain_params": {
+          "gateway_endpoint": "openai-chat",
+          "llm_timeout": 60
+        }
+      }
+}'
+```
+
+3. Invoke the chain:
+
+```bash
+curl -X 'POST' \
+  'https://<your-genai-api-url>/v1/chains/basic_actor_chain/invoke' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "input": {
+     "user_request": "Hi! Nice to meet you! Where is the Queen of Hearts?"
+  }
+}'
+```
 
 ### Useful commands
 

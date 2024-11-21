@@ -16,7 +16,6 @@ from genai_core.constants.constants import (
 from genai_core.memory.stratio_conversation_memory import StratioConversationMemory
 from genai_core.test.mock_helper import mock_init_stratio_gateway, mock_gateway_chat
 from langchain_core.messages import AIMessage, HumanMessage
-from pytest_mock import MockerFixture
 
 from chat_memory_chain.chain import MemoryChain
 
@@ -74,7 +73,7 @@ def mock_chat(mocker):
 
 
 @pytest.fixture
-def mock_memory(mocker: MockerFixture, mock_chat):
+def mock_memory(mock_chat):
     return StratioConversationMemory(
         max_token_limit=1000,
         chat_model=mock_chat,

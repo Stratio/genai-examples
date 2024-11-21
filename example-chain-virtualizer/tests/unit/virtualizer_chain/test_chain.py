@@ -1,3 +1,13 @@
+"""
+© 2024 Stratio Big Data Inc., Sucursal en España. All rights reserved.
+
+This software – including all its source code – contains proprietary
+information of Stratio Big Data Inc., Sucursal en España and
+may not be revealed, sold, transferred, modified, distributed or
+otherwise made available, licensed or sublicensed to third parties;
+nor reverse engineered, disassembled or decompiled, without express
+written authorization from Stratio Big Data Inc., Sucursal en España.
+"""
 from genai_core.services.virtualizer.virtualizer_service import VirtualizerData
 from langchain_core.runnables.config import RunnableConfig
 import pytest
@@ -13,15 +23,14 @@ def random_name() -> str:
 
 
 class VirtualizerMock:
-    "Mock of virtualizer serivce with `data_query` method that just echoes the query"
+    # Mock of virtualizer service with `data_query` method that just echoes the query
 
     def data_query(self, query: str):
-        return VirtualizerData(data=[query])
+        return VirtualizerData(data=[query], successful=True)
 
 
 def test_execute_query_impersonated(mocker: MockerFixture):
-    "This tests checks that the query sent to virtualizer is impersonated with the `EXECUTE AS`"
-
+    # This tests checks that the query sent to virtualizer is impersonated with the `EXECUTE AS`
     # we patch our chain so that it uses our Virtualizer mock service that just returns the query
     mocker.patch(
         "virtualizer_chain.chain.VirtualizerChain._init_virtualizer",

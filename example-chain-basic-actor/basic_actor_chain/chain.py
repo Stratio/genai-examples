@@ -9,9 +9,8 @@ nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 from abc import ABC
-from typing import Optional, cast
 
-from langchain_core.runnables import Runnable, RunnableLambda, chain
+from langchain_core.runnables import Runnable, chain
 from genai_core.chain.base import BaseGenAiChain
 from genai_core.helpers.chain_helpers import extract_uid
 from genai_core.logger.logger import log
@@ -71,7 +70,7 @@ class BasicActorChain(BaseGenAiChain, ABC):
             :return: The username extracted from the chain data.
             """
             # The actor replies differently in case the username is Alice.
-            # This steps extract the user name from the auth metadata extracted by the extract_genai_auth runnable.
+            # This step extracts the username from the auth metadata extracted by the extract_genai_auth runnable.
             chain_data[CHAIN_KEY_USER_NAME] = extract_uid(chain_data)
             return chain_data
 

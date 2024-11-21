@@ -12,7 +12,7 @@ from typing import Type, List, Union
 
 from genai_core.actors.base import ActorInput
 from genai_core.actors.gateway_actor import GatewayActor
-from genai_core.constants.constants import CHAIN_KEY_USER_REQUEST, CHAIN_KEY_LANGUAGE
+from genai_core.constants.constants import CHAIN_KEY_USER_REQUEST
 from langchain_core.messages import BaseMessage
 
 from langchain_core.prompts.chat import BaseMessagePromptTemplate

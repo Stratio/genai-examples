@@ -25,8 +25,8 @@ def main(chain_config):
             "metadata": {
               "__genai_state": {
                 "client_auth_type": "mtls",
-                "client_user_id": "your-user",
-                "client_tenant": "your-tenant"
+                "client_user_id": "<your-user>",
+                "client_tenant": "<your-tenant>"
               }
             }
           }

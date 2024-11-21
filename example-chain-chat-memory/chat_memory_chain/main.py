@@ -21,14 +21,14 @@ def main(chain_config):
         {
           "input": {
             "destination": "Sicily",
-            "input": "when to go?"
+            "input": "When to go?"
           },
           "config": {
             "metadata": {
               "__genai_state": {
                 "client_auth_type": "mtls",
-                "client_user_id": "your-user",
-                "client_tenant": "your-tenant"
+                "client_user_id": "<your-user>",
+                "client_tenant": "<your-tenant>"
               }
             }
           }

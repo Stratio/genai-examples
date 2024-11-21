@@ -1,3 +1,13 @@
+"""
+© 2024 Stratio Big Data Inc., Sucursal en España. All rights reserved.
+
+This software – including all its source code – contains proprietary
+information of Stratio Big Data Inc., Sucursal en España and
+may not be revealed, sold, transferred, modified, distributed or
+otherwise made available, licensed or sublicensed to third parties;
+nor reverse engineered, disassembled or decompiled, without express
+written authorization from Stratio Big Data Inc., Sucursal en España.
+"""
 import os
 from typing import Tuple
 
@@ -14,15 +24,14 @@ from genai_core.services.virtualizer.virtualizer_service_helper import (
 from langchain_core.runnables import Runnable, RunnableLambda
 
 
-# You should define your chains in a class ihheriting from the BaseGenAiChain.
+# You should define your chains in a class inheriting from the BaseGenAiChain.
 # By inheriting BaseGenAiChain you get the integration with Gen AI API, so that the chain can be
 # invoked through Gen AI API once it has been deployed there. You only need to implement the
-# `chain` method, which should return and "invokable" LangChain Runnable. In this expample the
+# `chain` method, which should return and "invokable" LangChain Runnable. In this example the
 # chain is going to call virtualizer, so you will need also to create a virtualizer service
 # that will be used in the chain itself.
 class VirtualizerChain(BaseGenAiChain):
-    "Example chain showing how to use GenAI Core's Virtualizer Service to run queries in Virtualizer"
-
+    # Example chain showing how to use GenAI Core's Virtualizer Service to run queries in Virtualizer
     # Note that, when registering the chain in GenAI API, the keys in the following sub-json of the
     # request body, "chain_config" -> "chain_params" -> {json with several keys} are the parameters
     # that will be passed here to the constructor. For local development, these parameters are
@@ -55,17 +64,19 @@ class VirtualizerChain(BaseGenAiChain):
         query = f"EXECUTE AS {user} {query}"
 
         # execute the query with the virtualizer service
-        query_result = self.virtualizer.data_query(query).data
-
-        # tipically each step in the chain just adds more keys to chain data
-        chain_data["query_result"] = query_result
-
+        query_data = self.virtualizer.data_query(query)
+        if query_data.successful:
+            # typically each step in the chain just adds more keys to chain data
+            chain_data["query_result"] = query_data.data
+        else:
+            # if the query fails, we can add an error message to the chain data
+            chain_data["error"] = query_data.exception
         return chain_data
 
     def _init_virtualizer(
         self, virtualizer_host: str, virtualizer_port: int
     ) -> VirtualizerService:
-        "Creates an instance of the Virtualizer service provided by GenAI Core"
+        # Creates an instance of the Virtualizer service provided by GenAI Core
         # get the needed certificates to connect to virtualizer
         cert, key, ca = self._init_credentials()
 
@@ -93,7 +104,7 @@ class VirtualizerChain(BaseGenAiChain):
                 max_attempts=3,  # graph_max_attempts,
                 request_timeout=60,  # virtualizer_timeout,
             )
-            # test the virtualier connection with a simple query
+            # test the virtualizer connection with a simple query
             test_query = VirtualizerServiceHelper.get_service().data_query("SELECT 1")
             if test_query.exception is not None:
                 raise test_query.exception
@@ -106,7 +117,7 @@ class VirtualizerChain(BaseGenAiChain):
         return VirtualizerServiceHelper.get_service()
 
     def _init_credentials(self) -> Tuple[str, str, str]:
-        "This method obtains the certificates needed to access Virtualizer as a 3-tuple (cert, key, ca)."
+        # This method obtains the certificates needed to access Virtualizer as a 3-tuple (cert, key, ca).
         # In production, the certificates are obtained from Vault, but for local development, you can
         # define the following environment variables and the VaultClient will use those to obtain the
         # certificates instead of trying to access Vault:
@@ -114,7 +125,7 @@ class VirtualizerChain(BaseGenAiChain):
         #    VAULT_LOCAL_CLIENT_KEY
         #    VAULT_LOCAL_CA_CERTS
         # For the production case, where the chain is executed inside GenAI API, you don't need to
-        # explicitily pass the Vault connection details (hot, port and token) since these fields are
+        # explicitly pass the Vault connection details (hot, port and token) since these fields are
         # inferred from environment variables that are automatically set by GenAI API
         try:
             vault = VaultClient()

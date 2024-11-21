@@ -33,7 +33,7 @@ GENAI_API_SERVICE_NAME=genai-api-test.s000001-genai
 VAULT_LOCAL_CLIENT_CERT=/path/to/certs/user.crt
 VAULT_LOCAL_CLIENT_KEY=/path/to/certs/user_private.key
 VAULT_LOCAL_CA_CERTS=/path/to/certs/ca-cert.crt
-VIRTUALIZER_HOST=genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com)
+VIRTUALIZER_HOST=genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com
 VIRTUALIZER_PORT=8080
 VIRTUALIZER_BASE_PATH=/service/virtualizer
 ```

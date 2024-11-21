@@ -31,12 +31,12 @@ $ poetry install
 ```bash
 GENAI_API_SERVICE_NAME=genai-api-test.s000001-genai
 GENAI_API_TENANT=s000001
-GENAI_API_REST_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com):8080/service/genai-api
+GENAI_API_REST_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-api
 GENAI_API_REST_USE_SSL=true
 GENAI_API_REST_CLIENT_CERT=/path/to/certs/user.crt
 GENAI_API_REST_CLIENT_KEY=/path/to/certs/user_private.key
 GENAI_API_REST_CA_CERTS=/path/to/certs/ca-cert.crt
-GENAI_GATEWAY_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com):8080/service/genai-gateway
+GENAI_GATEWAY_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-gateway
 GENAI_GATEWAY_USE_SSL=true
 GENAI_GATEWAY_CLIENT_CERT=/path/to/certs/user.crt
 GENAI_GATEWAY_CLIENT_KEY=/path/to/certs/user_private.key

@@ -21,7 +21,7 @@ def main(chain_config):
         {
           "input": {
             "destination": "Sicily",
-            "input": "when to go?"
+            "input": "When to go?"
           },
           "config": {
             "metadata": {

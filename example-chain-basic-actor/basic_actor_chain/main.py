@@ -20,15 +20,6 @@ def main(chain_config):
        {
           "input": {
              "user_request": "Hi! Nice to meet you! Where's the Queen of Hearts?"
-          },
-          "config": {
-            "metadata": {
-              "__genai_state": {
-                "client_auth_type": "mtls",
-                "client_user_id": "your-user",
-                "client_tenant": "your-tenant"
-              }
-            }
           }
        }
       ```

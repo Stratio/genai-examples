@@ -28,16 +28,7 @@ def main(chain_config):
               "collection_name":"semantic_banking_customer_product360",
               "table_value":"customer",
               "column_value":"Full_Name"
-            },
-          "config": {
-            "metadata": {
-              "__genai_state": {
-                "client_auth_type": "mtls",
-                "client_user_id": "your-user",
-                "client_tenant": "your-tenant"
-              }
             }
-          }
         }
       ```
       The "config" -> "metadata" -> "__genai_state" is only needed to test while developing locally.

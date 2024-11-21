@@ -98,33 +98,64 @@ def get_proxy_url(proxy_url, certs):
     return url, genai_api_host
 
 
+def build_env_var(name, value, file_format):
+    (maybe_export, maybe_quote) = (
+        ("export ", '"') if file_format == "bash" else ("", "")
+    )
+    return f"{maybe_export}{name}={maybe_quote}{value}{maybe_quote}\n"
+
+
 def create_env_file(proxy_url, certs, genai_api_host, file_format):
-    (maybe_export, maybe_quote, ext) = ("export ", '"' ,"sh") if file_format == 'bash' else ("", "", "env")
-    file_name = f"genai-env.{ext}"
-    file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), f"genai-env.{ext}"))
+    file_ext = "sh" if file_format == "bash" else "env"
+    file_name = f"genai-env.{file_ext}"
+    file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), file_name))
     print(f"Creating {file_name} file")
     client_cert, client_key, ca_cert = certs
     genai_api_tenant = genai_api_host.split(".")[1].split("-")[0]
+    proxy_host = urlparse(proxy_url).hostname
+    proxy_port = urlparse(proxy_url).port
     with open(file_path, "w") as f:
-        f.write(f"{maybe_export}GENAI_API_SERVICE_NAME={maybe_quote}{genai_api_host}{maybe_quote}\n")
-        f.write(f"{maybe_export}GENAI_API_TENANT={maybe_quote}{genai_api_tenant}{maybe_quote}\n")
-        f.write(f"{maybe_export}GENAI_API_REST_URL={maybe_quote}{proxy_url}/service/genai-api{maybe_quote}\n")
-        f.write(f"{maybe_export}GENAI_API_REST_USE_SSL=true\n")
-        f.write(f"{maybe_export}GENAI_API_REST_CLIENT_CERT={maybe_quote}{client_cert}{maybe_quote}\n")
-        f.write(f"{maybe_export}GENAI_API_REST_CLIENT_KEY={maybe_quote}{client_key}{maybe_quote}\n")
-        f.write(f"{maybe_export}GENAI_API_REST_CA_CERTS={maybe_quote}{ca_cert}{maybe_quote}\n")
-        f.write(f"\n")
-        f.write(f"{maybe_export}GENAI_GATEWAY_URL={maybe_quote}{proxy_url}/service/genai-gateway{maybe_quote}\n")
-        f.write(f"{maybe_export}GENAI_GATEWAY_USE_SSL=true\n")
-        f.write(f"{maybe_export}GENAI_GATEWAY_CLIENT_CERT={maybe_quote}{client_cert}{maybe_quote}\n")
-        f.write(f"{maybe_export}GENAI_GATEWAY_CLIENT_KEY={maybe_quote}{client_key}{maybe_quote}\n")
-        f.write(f"{maybe_export}GENAI_GATEWAY_CA_CERTS={maybe_quote}{ca_cert}{maybe_quote}\n")
-        f.write(f"\n")
-        f.write(f"{maybe_export}VAULT_LOCAL_CLIENT_CERT={maybe_quote}{client_cert}{maybe_quote}\n")
-        f.write(f"{maybe_export}VAULT_LOCAL_CLIENT_KEY={maybe_quote}{client_key}{maybe_quote}\n")
-        f.write(f"{maybe_export}VAULT_LOCAL_CA_CERTS={maybe_quote}{ca_cert}{maybe_quote}\n")
-        f.write(f"\n")
-        f.write(f"{maybe_export}VIRTUALIZER_BASE_PATH={maybe_quote}/service/virtualizer{maybe_quote}\n")
+        f.write("# AVAILABLE in GenAI-API!\n")
+        f.write(build_env_var("GENAI_API_SERVICE_NAME", genai_api_host, file_format))
+        f.write(build_env_var("GENAI_API_TENANT", genai_api_tenant, file_format))
+        f.write(
+            build_env_var(
+                "GENAI_API_REST_URL", f"{proxy_url}/service/genai-api", file_format
+            )
+        )
+        f.write(build_env_var("GENAI_API_REST_USE_SSL", "true", file_format))
+        f.write(build_env_var("GENAI_API_REST_CLIENT_CERT", client_cert, file_format))
+        f.write(build_env_var("GENAI_API_REST_CLIENT_KEY", client_key, file_format))
+        f.write(build_env_var("GENAI_API_REST_CA_CERTS", ca_cert, file_format))
+        f.write(
+            build_env_var(
+                "GENAI_GATEWAY_URL", f"{proxy_url}/service/genai-gateway", file_format
+            )
+        )
+        f.write(build_env_var("GENAI_GATEWAY_USE_SSL", "true", file_format))
+        f.write(build_env_var("GENAI_GATEWAY_CLIENT_CERT", client_cert, file_format))
+        f.write(build_env_var("GENAI_GATEWAY_CLIENT_KEY", client_key, file_format))
+        f.write(build_env_var("GENAI_GATEWAY_CA_CERTS", ca_cert, file_format))
+        f.write("\n")
+        f.write("# NOT AVAILABLE in GenAI-API!\n")
+        f.write(build_env_var("VAULT_LOCAL_CLIENT_CERT", client_cert, file_format))
+        f.write(build_env_var("VAULT_LOCAL_CLIENT_KEY", client_key, file_format))
+        f.write(build_env_var("VAULT_LOCAL_CA_CERTS", ca_cert, file_format))
+        f.write(build_env_var("VIRTUALIZER_HOST", proxy_host, file_format))
+        f.write(build_env_var("VIRTUALIZER_PORT", str(proxy_port), file_format))
+        f.write(
+            build_env_var("VIRTUALIZER_BASE_PATH", "/service/virtualizer", file_format)
+        )
+        f.write(
+            build_env_var(
+                "OPENSEARCH_URL", f"{proxy_url}/service/opensearch", file_format
+            )
+        )
+        f.write(
+            build_env_var(
+                "GOVERNANCE_URL", f"{proxy_url}/service/governance", file_format
+            )
+        )
     print(f"=> Created {file_name} file in {file_path}")
 
 

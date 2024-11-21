@@ -1,64 +1,75 @@
-# Example chain to show how to create a simple Actor and invoke it from the chain
+# Example Chain with a Basic Actor
 
-This is an example showing how to define a simple actor and use it in a basic question-answering chain.
+This is an example showing how to define a simple Actor and use it in a basic question-answering chain.
 
 ## Local deployment
 
-We assume that you already have poetry installed. If not, you can install it from [here](https://python-poetry.org/docs/#installation).
+To set up the chain locally, follow the steps in the [main README of this repository](../README.md). Here is a summary of the steps:
 
-Verify that you have a dependencies source in your `pyproject.toml` with the URL of a PyPi server providing the *Stratio GenAI Core* dependency, like the one in *Stratio GenAI Developer Proxy*.
-Note that the URL below is just an example and you should add the correct URL for your case.
+1. Make sure you have Python >= 3.9 and Poetry installed.
+
+2. Edit the `pyproject.toml` and change the URL of the `stratio-releases` repository. You should use the URL of the *Stratio GenAI Developer Proxy* Load Balancer.
 
 ```toml
 [[tool.poetry.source]]
 name = "stratio-releases"
-url = "https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-api/v1/pypi/simple/"
+url = "https://genai-developer-proxy-loadbalancer.<your-tenant-genai.yourdomain.com>:8080/service/genai-api/v1/pypi/simple/"
 priority = "supplemental"
 ```
-You should also configure Poetry to use the CA of the cluster to verify the certificate of the
-above configured repository (the CA of the cluster can be found in the zip you obtain from Gosec with your
-certificates).
 
-```
-$ poetry config certificates.stratio-releases.cert /path/to/ca-cert.crt 
-```
+3. Install the dependencies with Poetry. Replace `/path/to/your/cert/folder/ca-cert.crt` with the path to the CA certificate file.
 
-Then install the poetry environment:
-```
+```bash
+$ poetry config virtualenvs.in-project true
+$ poetry config certificates.stratio-releases.cert /path/to/your/cert/folder/ca-cert.crt
+$ poetry lock --no-update
 $ poetry install
 ```
 
-Set up the needed environment variables. You can create a file `env.sh` like the following (or use the [helper script](../README.md#extra-environment-variables)):
+4. Configure the environment variables executing the script `scripts/create_env_file.py`. You will find the environment variables in the files `genai-env.env` and `genai-env.sh` in the `genai-examples/scripts` folder.
 
-```bash
-# These variables are used by the GenAI Gateway client to access the Gateway
-export GENAI_GATEWAY_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-gateway
-export GENAI_GATEWAY_USE_SSL=true
-export GENAI_GATEWAY_CLIENT_CERT=/path/to/certs/user.crt
-export GENAI_GATEWAY_CLIENT_KEY=/path/to/certs/user_private.key
-export GENAI_GATEWAY_CA_CERTS=/path/to/certs/ca-cert.crt
-```
-and then source it (or [add to PyCharm](../README.md#running-from-pycharm))
-```
-$ source env.sh
-```
+5. Run the chain `basic_actor_chain/main.py`. You can do it in the terminal or in PyCharm. You can open the Swagger UI in the URL `http://127.0.0.1:8080/`.
 
-Finally, you can now run the chain locally by calling the `main.py` script in the poetry environment (or [run from PyCharm](../README.md#running-from-pycharm)):
-```
-$ poetry run python basic_actor_chain/main.py
-```
+6. Invoke the chain using the `POST /invoke` endpoint with the following request body:
 
-Once started, the chain will expose a swagger UI in the following URL: `http://0.0.0.0:8080/`.
-
-You can test your chain either via the swagger UI exposed by the local chain server, or with curl.
-
-An example of request body for the invoke POST is the following:
 ```json
 {
   "input": {
-     "user_request": "Hi! Nice to meet you! Where's the Queen of Hearts?"
+     "user_request": "Hi! Nice to meet you! Where is the Queen of Hearts?"
   }
 }
 ```
 
-The `"config"` key with the extra metadata about the user that has invoked the chain is normally added by GenAI API before passing the input to the chain, but while developing locally you should add it by hand.
+## Deployment in the Stratio GenAI API
+
+To deploy the chain in the Stratio GenAI API, follow the steps in the [main README of this repository](../README.md). Here is a summary of the steps:
+
+1. Build the chain package with the command `poetry build`.
+2. Open the Swagger UI of the Stratio GenAI API installed in your development environment.
+3. Upload the chain package with the endpoint `POST /v1/packages`.
+4. Deploy the chain with the endpoint `POST /v1/chains` and the request body:
+
+```json
+{
+  "chain_id": "basic_actor_chain",
+  "chain_config": {
+    "package_id": "basic_actor_chain-0.3.1a0",
+    "chain_module": "basic_actor_chain.chain",
+    "chain_class": "BasicActorChain",
+    "chain_params": {
+      "gateway_endpoint": "openai-chat",
+      "llm_timeout": 60
+    }
+  }
+}
+```
+
+5. Invoke the chain using the `POST /v1/chains/basic_actor_chain/invoke` endpoint with the following request body:
+
+```json
+{
+  "input": {
+     "user_request": "Hi! Nice to meet you! Where is the Queen of Hearts?"
+  }
+}
+```

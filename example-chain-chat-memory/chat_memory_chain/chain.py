@@ -85,8 +85,7 @@ class MemoryChain(BaseGenAiChain, ABC):
         self.n = n
         # create an instance of the StratioConversationMemory that will be used to persist the chat history
         self.chat_memory = self._init_stratio_memory()
-        # create model gateway
-        # Gateway target URI is configured from environment variable
+        # create model, Gateway target URI is configured from environment variable
         self.model = self._init_model()
 
         # Create a test prompt for the chat model

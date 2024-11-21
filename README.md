@@ -308,7 +308,7 @@ Once you have finished developing your chain you can build it with:
 $ poetry build
 ```
 
-and you will find a `tar.gz` in the `dist` folder that you can use to register the chain and associated pacakge in *Stratio GenAI API*. Note that the `"chain_params"` field in the chain registration request should contain the parameters that your chain class constructor expects.
+You will find a `tar.gz` in the `dist` folder that you can use deploy the package and register the chain in *Stratio GenAI API*.
 
 ### Deploying your chain
 
@@ -324,7 +324,7 @@ curl -X 'POST' \
   -F 'package=@<basic-actor-chain-package>.tar.gz;type=application/gzip'
 ```
 
-2. Register the chain:
+2. Register the chain. Note that the `chain_params` field in the chain registration request should contain the parameters that your chain class constructor expects:
 
 ```bash
 curl -X 'POST' \

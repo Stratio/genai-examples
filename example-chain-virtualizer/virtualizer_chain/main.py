@@ -21,20 +21,20 @@ def main(chain_config):
     ```json
       {
           "input": {
-              "query": "SELECT 1 as id"
+            "query": "SELECT 1 as id"
           },
           "config": {
-              "metadata": {
-                  "__genai_state": {
-                      "client_auth_type": "mtls",
-                      "client_user_id": "admin",
-                      "client_tenant": "s000001"
-                  }
+            "metadata": {
+              "__genai_state": {
+                "client_auth_type": "mtls",
+                "client_user_id": "<your-user>",
+                "client_tenant": "<your-tenant>"
               }
+            }
           }
       }
       ```
-      The "config" -> "metadata" -> "__genai_state" is only need to test while developing locally.
+      The "config" -> "metadata" -> "__genai_state" is only needed to test while developing locally.
       In a real environment GenAI API adds automatically that fields from the auth info before
       passing the data to the chain
     """

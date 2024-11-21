@@ -26,7 +26,7 @@ To set up the chain locally, follow the steps in the [main README of this reposi
 ```toml
 [[tool.poetry.source]]
 name = "stratio-releases"
-url = "https://genai-developer-proxy-loadbalancer.<your-tenant-genai.yourdomain.com>:8080/service/genai-api/v1/pypi/simple/"
+url = "https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-api/v1/pypi/simple/"
 priority = "supplemental"
 ```
 
@@ -39,11 +39,18 @@ $ poetry lock --no-update
 $ poetry install
 ```
 
-4. Configure the environment variables executing the script `scripts/create_env_file.py`. You will find the environment variables in the files `genai-env.env` and `genai-env.sh` in the `genai-examples/scripts` folder.
+4. Configure the environment variables executing the script `scripts/create_env_file.py`. You will find the environment variables in the files `genai-env.env` and `genai-env.sh` in the `genai-examples/scripts` folder. This chain uses the following environment variables:
+
+```bash
+VAULT_LOCAL_CLIENT_CERT=/path/to/certs/user.crt
+VAULT_LOCAL_CLIENT_KEY=/path/to/certs/user_private.key
+VAULT_LOCAL_CA_CERTS=/path/to/certs/ca-cert.crt
+OPENSEARCH_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com):8080/service/opensearch
+```
 
 5. Run the chain `opensearch_chain/main.py`. You can do it in the terminal or in PyCharm. You can open the Swagger UI in the URL `http://127.0.0.1:8080/`.
 
-6. Invoke the chain using the `POST /invoke` endpoint with the following request body:
+6. Invoke the chain using the `POST /invoke` endpoint with the following request body. Replace `<your-user>` and `<your-tenant>` with your user and tenant:
 
 ```json
 {
@@ -52,6 +59,15 @@ $ poetry install
     "collection_name": "<index_name>",
     "table_value": "<table_name>",
     "column_value": "<column_name>"
+  },
+  "config": {
+    "metadata": {
+      "__genai_state": {
+        "client_auth_type": "mtls",
+        "client_user_id": "<your-user>",
+        "client_tenant": "<your-tenant>"
+      }
+    }
   }
 }
 ```
@@ -80,7 +96,7 @@ To deploy the chain in the Stratio GenAI API, follow the steps in the [main READ
 }
 ```
 
-5. Invoke the chain using the `POST /v1/chains/opensearch_chain/invoke` endpoint with the following request body:
+5. Invoke the chain using the `POST /v1/chains/opensearch_chain/invoke` endpoint with the following request body. You don't need to include your credentials in the metadata, GenAI API will set them automatically:
 
 ```json
 {

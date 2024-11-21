@@ -70,7 +70,7 @@ class BasicActorChain(BaseGenAiChain, ABC):
             :return: The username extracted from the chain data.
             """
             # The actor replies differently in case the username is Alice.
-            # This step extract the username from the auth metadata extracted by the extract_genai_auth runnable.
+            # This step extracts the username from the auth metadata extracted by the extract_genai_auth runnable.
             chain_data[CHAIN_KEY_USER_NAME] = extract_uid(chain_data)
             return chain_data
 

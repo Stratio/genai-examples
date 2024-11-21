@@ -13,7 +13,7 @@ To set up the chain locally, follow the steps in the [main README of this reposi
 ```toml
 [[tool.poetry.source]]
 name = "stratio-releases"
-url = "https://genai-developer-proxy-loadbalancer.<your-tenant-genai.yourdomain.com>:8080/service/genai-api/v1/pypi/simple/"
+url = "https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-api/v1/pypi/simple/"
 priority = "supplemental"
 ```
 
@@ -26,7 +26,22 @@ $ poetry lock --no-update
 $ poetry install
 ```
 
-4. Configure the environment variables executing the script `scripts/create_env_file.py`. You will find the environment variables in the files `genai-env.env` and `genai-env.sh` in the `genai-examples/scripts` folder.
+4. Configure the environment variables executing the script `scripts/create_env_file.py`. You will find the environment variables in the files `genai-env.env` and `genai-env.sh` in the `genai-examples/scripts` folder. This chain uses the following environment variables:
+
+```bash
+GENAI_API_SERVICE_NAME=genai-api-test.s000001-genai
+GENAI_API_TENANT=s000001
+GENAI_API_REST_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com):8080/service/genai-api
+GENAI_API_REST_USE_SSL=true
+GENAI_API_REST_CLIENT_CERT=/path/to/certs/user.crt
+GENAI_API_REST_CLIENT_KEY=/path/to/certs/user_private.key
+GENAI_API_REST_CA_CERTS=/path/to/certs/ca-cert.crt
+GENAI_GATEWAY_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com):8080/service/genai-gateway
+GENAI_GATEWAY_USE_SSL=true
+GENAI_GATEWAY_CLIENT_CERT=/path/to/certs/user.crt
+GENAI_GATEWAY_CLIENT_KEY=/path/to/certs/user_private.key
+GENAI_GATEWAY_CA_CERTS=/path/to/certs/ca-cert.crt
+```
 
 5. Run the chain `chat_memory_chain/main.py`. You can do it in the terminal or in PyCharm. You can open the Swagger UI in the URL `http://127.0.0.1:8080/`.
 
@@ -94,7 +109,7 @@ To deploy the chain in the Stratio GenAI API, follow the steps in the [main READ
 }
 ```
 
-5. Invoke the chain using the `POST /v1/chains/chat_memory_chain/invoke` endpoint with the following request body. You don't need to include your credentials in the metadata, GenAI API will set them automatically.
+5. Invoke the chain using the `POST /v1/chains/chat_memory_chain/invoke` endpoint with the following request body. You don't need to include your credentials in the metadata, GenAI API will set them automatically:
 
 ```json
 {

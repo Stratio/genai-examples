@@ -21,7 +21,7 @@ To set up the chain locally, follow the steps in the [main README of this reposi
 
 1. Make sure you have Python >= 3.9 and Poetry installed.
 
-2. Edit the `pyproject.toml` and change the URL of the `stratio-releases` repository. You should use the URL of the *Stratio GenAI Developer Proxy* Load Balancer.
+2. Edit the `pyproject.toml` and change the URL of the `stratio-releases` repository. You should use the URL of the *Stratio GenAI Developer Proxy* Load Balancer including path "/service/genai-api/v1/pypi/simple".
 
 ```toml
 [[tool.poetry.source]]

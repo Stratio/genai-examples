@@ -200,7 +200,7 @@ You will find the files `genai-env.env` and `genai-env.sh` in the `genai-example
 
 The dependencies of your chain are declared in the `pyproject.toml` file of your chain Poetry project, and they are managed by Poetry. The *Stratio GenAI Core* package is not public, so in order for Poetry to be able to obtain it you need to configure a Poetry source where this package can be found. The *Stratio GenAI Developer Proxy* hosts a PyPi server where the dependencies can be found.
 
-You should edit the `pyproject.toml` file and add a block like the following (changing the url with the actual URL of your *Stratio GenAI Developer Proxy*):
+You should edit the `pyproject.toml` file and add a block like the following (changing the url with the actual URL of your *Stratio GenAI Developer Proxy*) including path "/service/genai-api/v1/pypi/simple":
 ```toml
 [[tool.poetry.source]]
 name = "stratio-releases"

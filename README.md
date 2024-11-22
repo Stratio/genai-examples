@@ -38,7 +38,7 @@ Move to an example directory, for example the `example-chain-basic-actor`, which
 $ cd genai-examples/example-chain-basic-actor
 ```
 
-Edit the `pyproject.toml` file and change the `url` value with the URL of the *Stratio GenAI Developer Proxy* Load Balancer:
+Edit the `pyproject.toml` file and change the `url` value with the URL of the *Stratio GenAI Developer Proxy* Load Balancer including path "/service/genai-api/v1/pypi/simple":
 
 ```toml
 [[tool.poetry.source]]

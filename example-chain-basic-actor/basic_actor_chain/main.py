@@ -52,7 +52,7 @@ if __name__ == "__main__":
     # gateway_endpoint: The ID of the endpoint in the GenAI Gateway pointing to the desired model.
     chain_config = {
         # Change the endpoint according to the model you will use
-        "gateway_endpoint": "QA-openai-chat-gpt-4o-mini",
+        "gateway_endpoint": "openai-chat-o3-mini",
         "llm_timeout": 30,
     }
     main(chain_config)

@@ -17,7 +17,7 @@ from basic_actor_chain.actors.basic_actor import (
 from basic_actor_chain.chain import BasicActorChain
 from genai_core.test.mock_helper import mock_init_stratio_gateway, mock_actor
 
-GATEWAY_ENDPOINT = "openai-chat"
+GATEWAY_ENDPOINT = "openai-chat-o3-mini"
 
 USER_REQUEST_EXPLANATION = (
     "The user is asking about the location of the Queen of Hearts in Wonderland."

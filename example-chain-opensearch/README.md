@@ -85,7 +85,7 @@ To deploy the chain in the Stratio GenAI API, follow the steps in the [main READ
 {
   "chain_id": "opensearch_chain",
   "chain_config": {
-    "package_id": "opensearch_chain-0.3.4a0",
+    "package_id": "opensearch_chain-0.4.0a0",
     "chain_module": "opensearch_chain.chain",
     "chain_class": "OpenSearchChain",
     "chain_params": {

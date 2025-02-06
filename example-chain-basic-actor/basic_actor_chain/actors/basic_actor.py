@@ -80,8 +80,8 @@ INPUT_TEMPLATE = f"""# USER REQUEST START #
 class BasicExampleActorOutput(BaseModel):
     """
     This object represents the output of the actor.
-    The actor should return a riddle that answers the user's request.
-    an explanation of the user's request and a message explaining the riddle.
+    The actor should return a riddle that answers the user's request
+    and an explanation of the user's request and a message explaining the riddle.
 
     Attributes:
         user_request_explanation (str): Explanation of the user's request.

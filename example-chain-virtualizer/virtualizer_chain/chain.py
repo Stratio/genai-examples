@@ -9,19 +9,24 @@ nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 import os
-from typing import Tuple
+from typing import Tuple, Optional
 
 from genai_core.chain.base import BaseGenAiChain
 from genai_core.logger.logger import log
 from genai_core.clients.vault.vault_client import VaultClient
 from genai_core.constants.constants import ENV_VAR_GENAI_API_SERVICE_NAME
 from genai_core.helpers.chain_helpers import extract_uid
-from genai_core.runnables.common_runnables import runnable_extract_genai_auth
+from genai_core.runnables.genai_auth import GenAiAuth, GenAiAuthRunnable
+from langchain_core.runnables.config import RunnableConfig
 from genai_core.services.virtualizer.virtualizer_service_helper import (
     VirtualizerServiceHelper,
     VirtualizerService,
 )
-from langchain_core.runnables import Runnable, RunnableLambda
+from langchain_core.runnables import Runnable, RunnableLambda, chain
+
+# Basic Chain specific keys
+CHAIN_KEY_GENAI_AUTH = "genai_auth"
+CHAIN_KEY_REQUEST_ID = "request_id"
 
 
 # You should define your chains in a class inheriting from the BaseGenAiChain.
@@ -36,10 +41,24 @@ class VirtualizerChain(BaseGenAiChain):
     # request body, "chain_config" -> "chain_params" -> {json with several keys} are the parameters
     # that will be passed here to the constructor. For local development, these parameters are
     # passed in the main.py script (which is the script start the chain for local development)
+
+
     def __init__(self, virtualizer_host: str, virtualizer_port: int):
         log.info("initiating chain")
         self.virtualizer = self._init_virtualizer(virtualizer_host, virtualizer_port)
         log.info("chain ready")
+
+    @staticmethod
+    def extract_uid(chain_data: dict) -> Optional[str]:
+        """
+        Given the chain data, extracts the user id.
+        """
+        auth = chain_data.get(CHAIN_KEY_GENAI_AUTH)
+        if not isinstance(auth, GenAiAuth):
+            raise AssertionError(
+                f"No valid genai auth found in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
+            )
+        return auth.user_id_impersonated if auth.user_id_impersonated else auth.user_id
 
     # This should return a Langchain Runnable with an invoke method. When invoking the chain,
     # the "input" field of the request body will be passed to the invoke method of this Runnable
@@ -50,7 +69,25 @@ class VirtualizerChain(BaseGenAiChain):
         # the uid of the nominal user, and GenAI Core provides some Runnables to add this info
         # to the chain data. When developing locally, you should add this metadata manually to the
         # invoke request body.
-        return runnable_extract_genai_auth() | RunnableLambda(self._execute_query)
+        @chain
+        def _extract_genai_auth(
+                chain_data: dict, config: RunnableConfig
+        ):
+            """Method to extract GenAI authentication"""
+            auth = GenAiAuthRunnable().invoke(chain_data, config)
+            if not isinstance(auth, GenAiAuth):
+                raise AssertionError(
+                    f"No valid genai auth found in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
+                )
+            chain_data[CHAIN_KEY_GENAI_AUTH] = auth
+            #
+            if auth.request_id is not None:
+                chain_data[CHAIN_KEY_REQUEST_ID] = auth.request_id
+
+            return chain_data
+
+
+        return _extract_genai_auth | RunnableLambda(self._execute_query)
 
     def _execute_query(self, chain_data: dict) -> dict:
         # Note that you should always impersonate the nominal user so that they can only see data for which
@@ -58,7 +95,7 @@ class VirtualizerChain(BaseGenAiChain):
         # from extra metadata that GenAI API adds to the invoke body, and we can use GenAI Core helper
         # methods to extract the userID from that extra info in the chain_data
         query = chain_data["query"]
-        user = extract_uid(chain_data)
+        user = self.extract_uid(chain_data)
 
         # modify the query so that it is impersonated
         query = f"EXECUTE AS {user} {query}"

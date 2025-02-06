@@ -12,10 +12,10 @@ from abc import ABC
 from typing import Optional
 
 from genai_core.chain.base import BaseGenAiChain
+from genai_core.runnables.genai_auth import GenAiAuth, GenAiAuthRunnable
 from genai_core.clients.vault.vault_client import VaultClient
 from genai_core.logger.logger import log
-from genai_core.runnables.common_runnables import runnable_extract_genai_auth
-from langchain_core.runnables import Runnable, chain
+from langchain_core.runnables import Runnable, chain, RunnableConfig
 
 from opensearch_chain.constants.constants import (
     OPENSEARCH_SEARCH_VALUE_KEY,
@@ -26,6 +26,7 @@ from opensearch_chain.constants.constants import (
     OPENSEARCH_NO_RESULTS,
 )
 from opensearch_chain.services.opensearch_service import OpenSearchService
+from opensearch_chain.constants.constants import CHAIN_KEY_GENAI_AUTH, CHAIN_KEY_REQUEST_ID
 
 
 class OpenSearchChain(BaseGenAiChain, ABC):
@@ -133,7 +134,24 @@ class OpenSearchChain(BaseGenAiChain, ABC):
                 ] = f"Unable to search index. Exception: {e}"
             return chain_data
 
-        return runnable_extract_genai_auth() | _ask_opensearch
+        @chain
+        def _extract_genai_auth(
+                chain_data: dict, config: RunnableConfig
+        ):
+            """Method to extract GenAI authentication"""
+            auth = GenAiAuthRunnable().invoke(chain_data, config)
+            if not isinstance(auth, GenAiAuth):
+                raise AssertionError(
+                    f"No valid genai auth found in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
+                )
+            chain_data[CHAIN_KEY_GENAI_AUTH] = auth
+            #
+            if auth.request_id is not None:
+                chain_data[CHAIN_KEY_REQUEST_ID] = auth.request_id
+
+            return chain_data
+
+        return _extract_genai_auth | _ask_opensearch
 
     @staticmethod
     def _init_credentials():

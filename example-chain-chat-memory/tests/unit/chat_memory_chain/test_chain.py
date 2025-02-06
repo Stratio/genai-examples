@@ -2,18 +2,20 @@
 © 2024 Stratio Big Data Inc., Sucursal en España. All rights reserved.
 This software – including all its source code – contains proprietary
 information of Stratio Big Data Inc., Sucursal en España and
-may not be revealed, sold, transferred, modified, distributed or
+may nºot be revealed, sold, transferred, modified, distributed or
 otherwise made available, licensed or sublicensed to third parties;
 nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 import pytest
+from unittest.mock import MagicMock
 from genai_core.chat_models.stratio_chat import StratioGenAIGatewayChat
 from genai_core.constants.constants import (
     CHAIN_MEMORY_KEY_CHAT_HISTORY,
     CHAIN_KEY_CHAT_ID,
 )
-from genai_core.memory.stratio_conversation_memory import StratioConversationMemory
+from chat_memory_chain.constants.constants import CHAIN_KEY_CONVERSATION_LAST_MSG_ID, CHAIN_KEY_CONVERSATION_IS_NEW
+from genai_core.memory.stratio_conversation_memory import StratioConversationMemory, ConversationMemoryOutput
 from genai_core.test.mock_helper import mock_init_stratio_gateway, mock_gateway_chat
 from langchain_core.messages import AIMessage, HumanMessage
 
@@ -32,6 +34,18 @@ MOCK_MODEL_RESPONSE = (
     "\n\nSummer (July to August) can be hot and crowded, especially in coastal areas, while winter (November to March) is cooler and quieter, "
     "but some attractions may have limited hours. \n\nChoose based on your preferences for weather and crowd levels!"
 )
+MOCK_CHAT_HISTORY_FIRST_QUESTION = [
+	HumanMessage(
+        content=INPUT_MOCK_FIRST_QUESTION,
+        additional_kwargs={},
+        response_metadata={}
+    ),
+	AIMessage(
+        content=MOCK_MODEL_RESPONSE,
+        additional_kwargs={},
+        response_metadata={}
+    )
+]
 INPUT_MOCK_SECOND_QUESTION = "I prefer another time of the year"
 MOCK_MODEL_MEMORY_RESPONSE = (
     "If you prefer to visit Sicily during the winter months (November to March), here are some highlights:"
@@ -45,6 +59,7 @@ MOCK_MODEL_MEMORY_RESPONSE = (
     " especially in more remote areas. If you enjoy a quieter, more authentic experience, "
     "winter can be a lovely time to explore Sicily!"
 )
+
 
 
 @pytest.fixture
@@ -81,29 +96,47 @@ def mock_memory(mock_chat):
         use_ssl=False,
     )
 
-
 def mock_load_save_conversation_memory(mocker) -> None:
     mocker.patch(
-        "genai_core.memory.stratio_conversation_memory.StratioConversationMemory.save_memory",
-        return_value="id",
+        "genai_core.memory.stratio_conversation_memory.StratioConversationMemory.create_conversation_or_append_message",
+        return_value=MagicMock(
+            conversation_id="test_chat_id",
+            conversation_last_msg_id="last_msg_id",
+            conversation_next_msg_id="next_msg_id",
+            conversation_is_new=True,
+            chat_history=[],
+        ),
     )
     mocker.patch(
-        "genai_core.memory.stratio_conversation_memory.StratioConversationMemory.load_memory",
-        return_value=[
-            AIMessage(content=MOCK_MODEL_RESPONSE),
-            HumanMessage(
-                content=[
-                    {
-                        "input": INPUT_MOCK_FIRST_QUESTION,
-                        "destination": DESTINATION_MOCK,
-                    }
-                ]
-            ),
-        ],
+        "genai_core.memory.stratio_conversation_memory.StratioConversationMemory.load_conversation",
+        return_value=MagicMock(
+            conversation_last_msg_id="last_msg_id",
+            conversation_is_new=False,
+            chat_history=[]
+        )
+    )
+    mocker.patch(
+        "genai_core.memory.stratio_conversation_memory.StratioConversationMemory.update_conversation_message",
+        return_value=None
+    )
+    mocker.patch(
+        "genai_core.memory.stratio_conversation_memory.StratioConversationMemory.update_conversation",
+        return_value=None
     )
 
+def mock_load_save_conversation_memory_SECOND_QUESTION(mocker) -> None:
+    mocker.patch(
+        "genai_core.memory.stratio_conversation_memory.StratioConversationMemory.create_conversation_or_append_message",
+        return_value=MagicMock(
+            conversation_id="test_chat_id",
+            conversation_last_msg_id="last_msg_id",
+            conversation_next_msg_id="next_msg_id",
+            conversation_is_new=False,
+            chat_history=MOCK_CHAT_HISTORY_FIRST_QUESTION,
+        ),
+    )
 
-class TestOpensearchChain:
+class TestChatMemoryChain:
     """
     Test suite for the MemoryChain class.
     """
@@ -127,19 +160,25 @@ class TestOpensearchChain:
         )
 
         assert result_first_interaction[CHAIN_KEY_CHAT_ID]
+        assert result_first_interaction[CHAIN_KEY_CHAT_ID] == "test_chat_id"
+        assert result_first_interaction[CHAIN_KEY_CONVERSATION_LAST_MSG_ID] == "last_msg_id"
+        assert result_first_interaction[CHAIN_KEY_CONVERSATION_IS_NEW] is True
+        assert result_first_interaction[CHAIN_MEMORY_KEY_CHAT_HISTORY] == []
 
+        mock_load_save_conversation_memory_SECOND_QUESTION(mocker)
         mock_gateway_chat(mocker, MOCK_MODEL_MEMORY_RESPONSE)
 
         result_second_interaction = chain.invoke(
             {
                 CHAIN_KEY_CHAT_ID: result_first_interaction[CHAIN_KEY_CHAT_ID],
-                "input": INPUT_MOCK_FIRST_QUESTION,
+                "input": INPUT_MOCK_SECOND_QUESTION,
                 "destination": DESTINATION_MOCK,
             }
         )
 
         assert len(result_second_interaction[CHAIN_MEMORY_KEY_CHAT_HISTORY]) == 2
-
+        assert result_second_interaction[CHAIN_KEY_CHAT_ID] == "test_chat_id"
+        assert result_second_interaction[CHAIN_KEY_CONVERSATION_IS_NEW] is False
 
 if __name__ == "__main__":
     pytest.main()

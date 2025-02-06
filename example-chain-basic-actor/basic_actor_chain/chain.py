@@ -12,12 +12,12 @@ from abc import ABC
 
 from langchain_core.runnables import Runnable, chain
 from genai_core.chain.base import BaseGenAiChain
-from genai_core.helpers.chain_helpers import extract_uid
+from genai_core.runnables.genai_auth import GenAiAuthRunnable
 from genai_core.logger.logger import log
-from genai_core.runnables.common_runnables import runnable_extract_genai_auth
-
+from genai_core.runnables.genai_auth import GenAiAuth
 from .actors.basic_actor import BasicExampleActor
-from .constants.constants import CHAIN_KEY_USER_NAME
+from .constants.constants import CHAIN_KEY_USER_NAME, CHAIN_KEY_GENAI_AUTH
+from langchain_core.runnables import RunnableConfig
 
 
 # Here you define your chain, which inherits from the BaseGenAiChain, so you only need to implement
@@ -40,6 +40,7 @@ class BasicActorChain(BaseGenAiChain, ABC):
             timeout=llm_timeout,
         )
         log.info("Basic Actor Example chain ready!")
+
 
     # This should return a Langchain Runnable with an invoke method. When invoking the chain,
     # the body of the request will be passed to the invoke method
@@ -70,16 +71,43 @@ class BasicActorChain(BaseGenAiChain, ABC):
             :return: The username extracted from the chain data.
             """
             # The actor replies differently in case the username is Alice.
-            # This step extracts the username from the auth metadata extracted by the extract_genai_auth runnable.
-            chain_data[CHAIN_KEY_USER_NAME] = extract_uid(chain_data)
+            # This step extracts the username from the auth metadata extracted by the _extract_genai_auth runnable.
+            auth = chain_data.get(CHAIN_KEY_GENAI_AUTH)
+            if not isinstance(auth, GenAiAuth):
+                raise AssertionError(
+                    f"No valid genai auth found in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
+                )
+            chain_data[CHAIN_KEY_USER_NAME] =  auth.user_id_impersonated if auth.user_id_impersonated else auth.user_id
+
+            return chain_data
+
+        @chain
+        def _extract_genai_auth(
+                chain_data: dict, config: RunnableConfig
+        ):
+            """
+            Method to extract GenAI authentication from the chain data and config.
+
+            :param chain_data: The data passed through the chain.
+            :param config: The configuration for the runnable.
+            :return: The chain data with the GenAI authentication added.
+            """
+
+            auth = GenAiAuthRunnable().invoke(chain_data, config)
+            if not isinstance(auth, GenAiAuth):
+                raise AssertionError(
+                    f"No valid genai auth found in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
+                )
+            chain_data[CHAIN_KEY_GENAI_AUTH] = auth
             return chain_data
 
         # The chain is composed of three runnables steps:
-        # runnable_extract_genai_auth, _extract_user_name and _invoke_actor.
+        # _extract_genai_auth, _extract_user_name and _invoke_actor.
         # GenAI API adds extra auth metadata to the body received in the
         # invoke request before passing it to the chain. From these metadata is
         # possible to extract the uid of the nominal user.
         # When developing locally, you should add this metadata manually
         # to the invoke request body as part of the config section of the body (see README.md).
         # for ths reason the first step is to extract the auth metadata.
-        return runnable_extract_genai_auth() | _extract_user_name | _invoke_actor
+
+        return _extract_genai_auth | _extract_user_name | _invoke_actor

@@ -22,7 +22,7 @@ priority = "supplemental"
 ```bash
 $ poetry config virtualenvs.in-project true
 $ poetry config certificates.stratio-releases.cert /path/to/your/cert/folder/ca-cert.crt
-$ poetry lock --no-update
+$ poetry lock
 $ poetry install
 ```
 
@@ -70,11 +70,11 @@ To deploy the chain in the Stratio GenAI API, follow the steps in the [main READ
 {
   "chain_id": "basic_actor_chain",
   "chain_config": {
-    "package_id": "basic_actor_chain-0.3.4a0",
+    "package_id": "basic_actor_chain-0.4.0a0",
     "chain_module": "basic_actor_chain.chain",
     "chain_class": "BasicActorChain",
     "chain_params": {
-      "gateway_endpoint": "openai-chat",
+      "gateway_endpoint": "openai-chat-o3-mini",
       "llm_timeout": 60
     }
   }

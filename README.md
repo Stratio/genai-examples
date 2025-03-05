@@ -2,6 +2,11 @@
 
 This repository is intended for developers who want to create GenAI chains using the *Stratio GenAI Core* framework so the chains can be easily be deployed in *Stratio GenAI API*.
 
+| Git branch | GenAI Core version | 
+|------------|--------------------|
+| main       | 0.4.0              |
+| branch-0.3 | 0.3.4              |
+
 This repository provides some simple examples of GenAI chains focused on a specific task.
 There are four basic chains that you can use as a starting point to create your own chains:
 
@@ -334,7 +339,7 @@ curl -X 'POST' \
   -d '{
       "chain_id": "basic_actor_chain",
       "chain_config": {
-        "package_id": "basic_actor_chain-0.3.1a0",
+        "package_id": "basic_actor_chain-0.3.4a0",
         "chain_module": "basic_actor_chain.chain",
         "chain_class": "BasicActorChain",
         "chain_params": {

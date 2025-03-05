@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "opensearch-chain"
-version = "0.3.1a0"
+version = "0.3.4a0"
 description = "A simple chain that connects to Opensearch service and processes the result of a search"
 authors = []
 include = ["requirements.txt"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-genai-core = "0.3.1"
+genai-core = "0.3.4"
 # already included in genai-core but we set a fixed version
 langchain = "0.2.16"
 langchain-community = "0.2.16"

@@ -771,18 +771,19 @@ files = [
 
 [[package]]
 name = "genai-core"
-version = "0.3.1"
+version = "0.3.4"
 description = ""
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "genai_core-0.3.1-py3-none-any.whl", hash = "sha256:911b237e5c3d0f17c2f0fdd5758dda3a6d4689e16c4f0242e3c9ac6609e93ca4"},
-    {file = "genai_core-0.3.1.tar.gz", hash = "sha256:50ca5b195d6983b46e60682b4313be6ab1975f714ddd8e4f934565dd5cf30786"},
+    {file = "genai_core-0.3.4-py3-none-any.whl", hash = "sha256:3bed0614d6e1a2029eb289fa7715b79929d65d8f0935659b29033e5be4f5c258"},
+    {file = "genai_core-0.3.4.tar.gz", hash = "sha256:b081917d9a8ea66acf1fdd8cca676505d10f6db7f0e86f37ca9af7d07f0f0366"},
 ]
 
 [package.dependencies]
 beautifulsoup4 = ">=4.12.3,<5.0.0"
 fastapi = ">=0.111.1,<0.112.0"
+html2text = ">=2024.2.26,<2025.0.0"
 httpx = ">=0.27.0,<0.28.0"
 langchain = ">=0.2.14,<0.3.0"
 langchain-aws = ">=0.1.17,<0.2.0"
@@ -892,6 +893,16 @@ python-versions = ">=3.7"
 files = [
     {file = "h11-0.14.0-py3-none-any.whl", hash = "sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761"},
     {file = "h11-0.14.0.tar.gz", hash = "sha256:8f19fbbe99e72420ff35c00b27a34cb9937e902a8b810e2c88300c6f0a3b699d"},
+]
+
+[[package]]
+name = "html2text"
+version = "2024.2.26"
+description = "Turn HTML into equivalent Markdown-structured text."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "html2text-2024.2.26.tar.gz", hash = "sha256:05f8e367d15aaabc96415376776cdd11afd5127a77fce6e36afc60c563ca2c32"},
 ]
 
 [[package]]
@@ -3181,4 +3192,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "c3080117523b035fc94cde6c5a4e0d10282123930de3ec7adb9b68cf24e2863d"
+content-hash = "f070da8a7c62fb1fcc42a129eda5c05cfea1b76401351f64bab40b8a93241012"

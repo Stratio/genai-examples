@@ -1,5 +1,5 @@
 # Changelog
 
-## 0.3.1 (upcoming)
+## Git brach - branch-0.3
 
-* Examples built with genai-core 0.3.1
+* Examples built with genai-core 0.3.4

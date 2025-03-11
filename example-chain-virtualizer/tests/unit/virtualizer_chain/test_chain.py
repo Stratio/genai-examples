@@ -8,6 +8,7 @@ otherwise made available, licensed or sublicensed to third parties;
 nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
+
 from genai_core.services.virtualizer.virtualizer_service import VirtualizerData
 from langchain_core.runnables.config import RunnableConfig
 import pytest

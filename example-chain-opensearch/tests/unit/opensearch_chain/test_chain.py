@@ -7,6 +7,7 @@ otherwise made available, licensed or sublicensed to third parties;
 nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
+
 import pytest
 
 from opensearch_chain.chain import OpenSearchChain

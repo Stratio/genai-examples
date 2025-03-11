@@ -8,6 +8,7 @@ otherwise made available, licensed or sublicensed to third parties;
 nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
+
 from abc import ABC
 from typing import Optional
 
@@ -123,18 +124,18 @@ class OpenSearchChain(BaseGenAiChain, ABC):
                     chain_data[OPENSEARCH_RESULT_KEY] = OPENSEARCH_NO_RESULTS
                 else:
                     first_value = search_result["hits"]["hits"][0]["_source"]["value"]
-                    chain_data[
-                        OPENSEARCH_RESULT_KEY
-                    ] = f"For the requested search value '{search_value}' in the column '{column_value}' of the table  '{table_value}', the first result is '{first_value}'."
+                    chain_data[OPENSEARCH_RESULT_KEY] = (
+                        f"For the requested search value '{search_value}' in the column '{column_value}' of the table  '{table_value}', the first result is '{first_value}'."
+                    )
 
             except Exception as e:
                 log.error(
                     f"Unable to search index. Exception: {e}",
                     chain_data,
                 )
-                chain_data[
-                    OPENSEARCH_RESULT_KEY
-                ] = f"Unable to search index. Exception: {e}"
+                chain_data[OPENSEARCH_RESULT_KEY] = (
+                    f"Unable to search index. Exception: {e}"
+                )
             return chain_data
 
         @chain

@@ -20,7 +20,7 @@ Please check the readme of each chain for more information.
 Stratio GenAI chains are built with [Poetry](https://python-poetry.org/docs/#installation), so in order to develop a chain you need to make sure you have the following tools in your machine:
 
 * [Python](https://www.python.org/) >= 3.9
-* [Poetry](https://python-poetry.org/docs/#installing-with-the-official-installer). We recommend to use the "official installer method".
+* [Poetry](https://python-poetry.org/docs/#installing-with-the-official-installer). >= 2.0 (We recommend to use the "official installer method".)
 * A Python editor of you choice, like [PyCharm](https://www.jetbrains.com/pycharm/) or [Visual Studio Code](https://code.visualstudio.com/)
 
 ## Quick start guide (TLDR)

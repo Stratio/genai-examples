@@ -55,7 +55,7 @@ ignore-paths = [
     "^scripts/.*$",
 ]
 load-plugins = ["pylintfileheader"]
-file-header = "[\\S\\n\\t\\v ]+© 2024 Stratio Big Data Inc."
+file-header = "[\\S\\n\\t\\v ]+© 2025 Stratio Big Data Inc."
 file-header-ignore-empty-files = true
 
 [tool.pylint.basic]

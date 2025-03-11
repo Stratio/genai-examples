@@ -19,7 +19,7 @@ The chain will present the first of these value as the result of the chain if a 
 
 To set up the chain locally, follow the steps in the [main README of this repository](../README.md). Here is a summary of the steps:
 
-1. Make sure you have Python >= 3.9 and Poetry installed.
+1. Make sure you have Python >= 3.9 and Poetry >= 2.0 installed.
 
 2. Edit the `pyproject.toml` and change the URL of the `stratio-releases` repository. You should use the URL of the *Stratio GenAI Developer Proxy* Load Balancer including path "/service/genai-api/v1/pypi/simple".
 

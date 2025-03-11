@@ -1,5 +1,5 @@
 """
-© 2024 Stratio Big Data Inc., Sucursal en España. All rights reserved.
+© 2025 Stratio Big Data Inc., Sucursal en España. All rights reserved.
 
 This software – including all its source code – contains proprietary
 information of Stratio Big Data Inc., Sucursal en España and
@@ -75,7 +75,7 @@ class BasicActorChain(BaseGenAiChain, ABC):
             auth = chain_data.get(CHAIN_KEY_GENAI_AUTH)
             if not isinstance(auth, GenAiAuth):
                 raise AssertionError(
-                    f"No valid genai auth found in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
+                    f"Genai auth not found or invalid auth data in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
                 )
             chain_data[CHAIN_KEY_USER_NAME] = (
                 auth.user_id_impersonated if auth.user_id_impersonated else auth.user_id
@@ -96,7 +96,7 @@ class BasicActorChain(BaseGenAiChain, ABC):
             auth = GenAiAuthRunnable().invoke(chain_data, config)
             if not isinstance(auth, GenAiAuth):
                 raise AssertionError(
-                    f"No valid genai auth found in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
+                    f"Genai auth not found or invalid auth data in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
                 )
             chain_data[CHAIN_KEY_GENAI_AUTH] = auth
             return chain_data

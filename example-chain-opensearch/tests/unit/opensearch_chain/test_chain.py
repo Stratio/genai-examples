@@ -1,5 +1,5 @@
 """
-© 2024 Stratio Big Data Inc., Sucursal en España. All rights reserved.
+© 2025 Stratio Big Data Inc., Sucursal en España. All rights reserved.
 This software – including all its source code – contains proprietary
 information of Stratio Big Data Inc., Sucursal en España and
 may not be revealed, sold, transferred, modified, distributed or

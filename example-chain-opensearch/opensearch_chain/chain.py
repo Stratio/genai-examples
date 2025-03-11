@@ -26,7 +26,10 @@ from opensearch_chain.constants.constants import (
     OPENSEARCH_NO_RESULTS,
 )
 from opensearch_chain.services.opensearch_service import OpenSearchService
-from opensearch_chain.constants.constants import CHAIN_KEY_GENAI_AUTH, CHAIN_KEY_REQUEST_ID
+from opensearch_chain.constants.constants import (
+    CHAIN_KEY_GENAI_AUTH,
+    CHAIN_KEY_REQUEST_ID,
+)
 
 
 class OpenSearchChain(BaseGenAiChain, ABC):
@@ -135,9 +138,7 @@ class OpenSearchChain(BaseGenAiChain, ABC):
             return chain_data
 
         @chain
-        def _extract_genai_auth(
-                chain_data: dict, config: RunnableConfig
-        ):
+        def _extract_genai_auth(chain_data: dict, config: RunnableConfig):
             """Method to extract GenAI authentication"""
             auth = GenAiAuthRunnable().invoke(chain_data, config)
             if not isinstance(auth, GenAiAuth):

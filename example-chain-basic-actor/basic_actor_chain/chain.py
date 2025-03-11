@@ -41,7 +41,6 @@ class BasicActorChain(BaseGenAiChain, ABC):
         )
         log.info("Basic Actor Example chain ready!")
 
-
     # This should return a Langchain Runnable with an invoke method. When invoking the chain,
     # the body of the request will be passed to the invoke method
     def chain(self) -> Runnable:
@@ -77,14 +76,14 @@ class BasicActorChain(BaseGenAiChain, ABC):
                 raise AssertionError(
                     f"No valid genai auth found in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
                 )
-            chain_data[CHAIN_KEY_USER_NAME] =  auth.user_id_impersonated if auth.user_id_impersonated else auth.user_id
+            chain_data[CHAIN_KEY_USER_NAME] = (
+                auth.user_id_impersonated if auth.user_id_impersonated else auth.user_id
+            )
 
             return chain_data
 
         @chain
-        def _extract_genai_auth(
-                chain_data: dict, config: RunnableConfig
-        ):
+        def _extract_genai_auth(chain_data: dict, config: RunnableConfig):
             """
             Method to extract GenAI authentication from the chain data and config.
 

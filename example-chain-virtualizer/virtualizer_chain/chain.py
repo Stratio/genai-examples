@@ -42,7 +42,6 @@ class VirtualizerChain(BaseGenAiChain):
     # that will be passed here to the constructor. For local development, these parameters are
     # passed in the main.py script (which is the script start the chain for local development)
 
-
     def __init__(self, virtualizer_host: str, virtualizer_port: int):
         log.info("initiating chain")
         self.virtualizer = self._init_virtualizer(virtualizer_host, virtualizer_port)
@@ -70,9 +69,7 @@ class VirtualizerChain(BaseGenAiChain):
         # to the chain data. When developing locally, you should add this metadata manually to the
         # invoke request body.
         @chain
-        def _extract_genai_auth(
-                chain_data: dict, config: RunnableConfig
-        ):
+        def _extract_genai_auth(chain_data: dict, config: RunnableConfig):
             """Method to extract GenAI authentication"""
             auth = GenAiAuthRunnable().invoke(chain_data, config)
             if not isinstance(auth, GenAiAuth):
@@ -85,7 +82,6 @@ class VirtualizerChain(BaseGenAiChain):
                 chain_data[CHAIN_KEY_REQUEST_ID] = auth.request_id
 
             return chain_data
-
 
         return _extract_genai_auth | RunnableLambda(self._execute_query)
 

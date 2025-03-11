@@ -8,6 +8,7 @@ otherwise made available, licensed or sublicensed to third parties;
 nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
+
 import uuid
 from abc import ABC
 from typing import Optional
@@ -30,7 +31,6 @@ from genai_core.logger.chain_logger import ChainLogger
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from genai_core.memory.stratio_conversation_memory import CreateConversation
 from genai_core.model.sql_chain_models import SqlChatMessageInput
-
 
 
 from genai_core.chain.base import BaseGenAiChain, GenAiChainParams
@@ -214,7 +214,9 @@ class MemoryChain(BaseGenAiChain, ABC):
         :return: The updated chain data dictionary with chat history included.
         """
 
-        ChainLogger.debug("Loading chat memory", graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA))
+        ChainLogger.debug(
+            "Loading chat memory", graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA)
+        )
 
         chain_data[CHAIN_KEY_REASONING] = []
         if chain_data.get(CHAIN_KEY_SAVE_CONVERSATION) is None:
@@ -237,7 +239,11 @@ class MemoryChain(BaseGenAiChain, ABC):
                 graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
             )
             chain_data[CHAIN_KEY_CHAT_ID] = None
-            chain_data['halt_execution'](ErrorCode.CONVERSATION_ERROR) if 'halt_execution' in chain_data else None
+            (
+                chain_data["halt_execution"](ErrorCode.CONVERSATION_ERROR)
+                if "halt_execution" in chain_data
+                else None
+            )
 
         if chain_data.get(CHAIN_MEMORY_KEY_CHAT_HISTORY):
             chat_history_str = []
@@ -261,16 +267,27 @@ class MemoryChain(BaseGenAiChain, ABC):
         :param chain_data: The chain data dictionary.
         :return: The updated chain data dictionary with chat history saved.
         """
-        if not chain_data.get(CHAIN_KEY_SAVE_CONVERSATION) or chain_data.get(CHAIN_KEY_CONVERSATION_LAST_MSG_ID) is None:
+        if (
+            not chain_data.get(CHAIN_KEY_SAVE_CONVERSATION)
+            or chain_data.get(CHAIN_KEY_CONVERSATION_LAST_MSG_ID) is None
+        ):
             # if the conversation was not created, we should not save it.
             # this happens when the parameter save_conversation is false or when the chain input is invalid
-            ChainLogger.info("Skipping saving chat history.", graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA))
+            ChainLogger.info(
+                "Skipping saving chat history.",
+                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+            )
             return chain_data
 
         try:
-            ChainLogger.debug(f"Saving chat history... Conversation Id {chain_data.get(CHAIN_KEY_CHAT_ID)}", graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA))
+            ChainLogger.debug(
+                f"Saving chat history... Conversation Id {chain_data.get(CHAIN_KEY_CHAT_ID)}",
+                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+            )
 
-            chain_data[CHAIN_KEY_MEMORY_OUTPUT] = self._extract_memory_output(chain_data)
+            chain_data[CHAIN_KEY_MEMORY_OUTPUT] = self._extract_memory_output(
+                chain_data
+            )
 
             user_id = self.extract_uid(chain_data)
             self.chat_memory.update_conversation_message(
@@ -289,7 +306,10 @@ class MemoryChain(BaseGenAiChain, ABC):
             )
 
             title = None
-            if chain_data.get(CHAIN_KEY_CONVERSATION_IS_NEW) and chain_data.get(CHAIN_KEY_CONVERSATION_ACTOR) is not None:
+            if (
+                chain_data.get(CHAIN_KEY_CONVERSATION_IS_NEW)
+                and chain_data.get(CHAIN_KEY_CONVERSATION_ACTOR) is not None
+            ):
                 title = chain_data[CHAIN_KEY_CONVERSATION_ACTOR].title
             self.chat_memory.update_conversation(
                 user_id=user_id,
@@ -307,10 +327,13 @@ class MemoryChain(BaseGenAiChain, ABC):
                 f"Unable to save chat history. Conversation Id: {chain_data.get(CHAIN_KEY_CHAT_ID)}. Exception: {e}",
                 graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
             )
-            chain_data['halt_execution'](ErrorCode.CONVERSATION_ERROR) if 'halt_execution' in chain_data else None
+            (
+                chain_data["halt_execution"](ErrorCode.CONVERSATION_ERROR)
+                if "halt_execution" in chain_data
+                else None
+            )
 
         return chain_data
-
 
     def _extract_memory_output(self, chain_data: dict) -> str:
         """
@@ -337,29 +360,49 @@ class MemoryChain(BaseGenAiChain, ABC):
             input_msg=chain_data[CHAIN_KEY_CONVERSATION_INPUT].model_dump(
                 exclude_none=True, exclude_unset=True
             ),
-            output_msg=output.model_dump(
-                exclude_none=True, exclude_unset=True
-            ),
+            output_msg=output.model_dump(exclude_none=True, exclude_unset=True),
             reasoning=chain_data[CHAIN_KEY_REASONING],
             title=chain_data[CHAIN_KEY_INPUT_QUESTION],
             state=ConversationState.RUNNING.value,
-            collection_name=chain_data[CHAIN_KEY_INPUT_COLLECTION] if CHAIN_KEY_INPUT_COLLECTION in chain_data else None,
-            interaction_field=chain_data[CHAIN_KEY_INTERACTION_FIELD] if CHAIN_KEY_INTERACTION_FIELD in chain_data else None,
-            application=chain_data[CHAIN_KEY_APPLICATION] if CHAIN_KEY_APPLICATION in chain_data else None,
+            collection_name=(
+                chain_data[CHAIN_KEY_INPUT_COLLECTION]
+                if CHAIN_KEY_INPUT_COLLECTION in chain_data
+                else None
+            ),
+            interaction_field=(
+                chain_data[CHAIN_KEY_INTERACTION_FIELD]
+                if CHAIN_KEY_INTERACTION_FIELD in chain_data
+                else None
+            ),
+            application=(
+                chain_data[CHAIN_KEY_APPLICATION]
+                if CHAIN_KEY_APPLICATION in chain_data
+                else None
+            ),
             suggested_msg=list(),
         )
 
-        conversation_memory = (
-                self.chat_memory.create_conversation_or_append_message(
-                    user_id=self.extract_uid(chain_data),
-                    conversation_id=chain_data.get(CHAIN_KEY_CHAT_ID) if CHAIN_KEY_CHAT_ID in chain_data else None,
-                    conversation_msg_id=chain_data.get(CHAIN_KEY_CHAT_MESSAGE_ID) if CHAIN_KEY_CHAT_MESSAGE_ID in chain_data else None,
-                    create_conversation=create_conversation,
-                )
-            )
+        conversation_memory = self.chat_memory.create_conversation_or_append_message(
+            user_id=self.extract_uid(chain_data),
+            conversation_id=(
+                chain_data.get(CHAIN_KEY_CHAT_ID)
+                if CHAIN_KEY_CHAT_ID in chain_data
+                else None
+            ),
+            conversation_msg_id=(
+                chain_data.get(CHAIN_KEY_CHAT_MESSAGE_ID)
+                if CHAIN_KEY_CHAT_MESSAGE_ID in chain_data
+                else None
+            ),
+            create_conversation=create_conversation,
+        )
         chain_data[CHAIN_KEY_CHAT_ID] = conversation_memory.conversation_id
-        chain_data[CHAIN_KEY_CONVERSATION_LAST_MSG_ID] = conversation_memory.conversation_last_msg_id
-        chain_data[CHAIN_KEY_CONVERSATION_IS_NEW] = conversation_memory.conversation_is_new
+        chain_data[CHAIN_KEY_CONVERSATION_LAST_MSG_ID] = (
+            conversation_memory.conversation_last_msg_id
+        )
+        chain_data[CHAIN_KEY_CONVERSATION_IS_NEW] = (
+            conversation_memory.conversation_is_new
+        )
         chain_data[CHAIN_MEMORY_KEY_CHAT_HISTORY] = conversation_memory.chat_history
         if conversation_memory.conversation_is_new:
             ChainLogger.info(
@@ -399,8 +442,12 @@ class MemoryChain(BaseGenAiChain, ABC):
                 graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
             )
         else:
-            chain_data[CHAIN_KEY_CONVERSATION_LAST_MSG_ID] = conversation_memory.conversation_last_msg_id
-            chain_data[CHAIN_KEY_CONVERSATION_IS_NEW] = conversation_memory.conversation_is_new
+            chain_data[CHAIN_KEY_CONVERSATION_LAST_MSG_ID] = (
+                conversation_memory.conversation_last_msg_id
+            )
+            chain_data[CHAIN_KEY_CONVERSATION_IS_NEW] = (
+                conversation_memory.conversation_is_new
+            )
             chain_data[CHAIN_MEMORY_KEY_CHAT_HISTORY] = conversation_memory.chat_history
             ChainLogger.info(
                 f"Successfully loaded {len(chain_data[CHAIN_MEMORY_KEY_CHAT_HISTORY])} chat messages from "
@@ -423,9 +470,9 @@ class MemoryChain(BaseGenAiChain, ABC):
             :param chain_data: The chain data dictionary.
             :return: The updated chain data dictionary with the model's response.
             """
-            chain_data[
-                CHAIN_KEY_CONVERSATION_INPUT
-            ] = MemoryExampleMessageInput.model_validate(chain_data)
+            chain_data[CHAIN_KEY_CONVERSATION_INPUT] = (
+                MemoryExampleMessageInput.model_validate(chain_data)
+            )
             travel_agent_chain = self.prompt | self.model
             chain_output = {
                 "content_type": ContentType.MESSAGE,
@@ -435,9 +482,7 @@ class MemoryChain(BaseGenAiChain, ABC):
             return chain_data
 
         @chain
-        def _extract_genai_auth(
-                chain_data: dict, config: RunnableConfig
-        ):
+        def _extract_genai_auth(chain_data: dict, config: RunnableConfig):
             """
             Method to extract GenAI authentication from the chain data and config.
 

@@ -13,42 +13,37 @@ import uuid
 from abc import ABC
 from typing import Optional
 
-from genai_core.clients.api.api_client_model import ConversationState
+from genai_core.chain.base import BaseGenAiChain, GenAiChainParams
 from genai_core.chat_models.stratio_chat import StratioGenAIGatewayChat
-from genai_core.constants.constants import (
-    CHAIN_KEY_MEMORY_ID,
-    CHAIN_KEY_CHAT_ID,
-    CHAIN_MEMORY_KEY_CHAT_HISTORY,
-    CHAIN_KEY_INPUT_QUESTION,
-    CHAIN_KEY_CONVERSATION_INPUT,
-    CHAIN_KEY_CONVERSATION_OUTPUT,
-    CHAIN_KEY_INPUT_COLLECTION,
-    CHAIN_KEY_CONTENT,
-)
+from genai_core.clients.api.api_client_model import ConversationState
+from genai_core.constants.constants import (CHAIN_KEY_CHAT_ID,
+                                            CHAIN_KEY_CONTENT,
+                                            CHAIN_KEY_CONVERSATION_INPUT,
+                                            CHAIN_KEY_CONVERSATION_OUTPUT,
+                                            CHAIN_KEY_GENAI_AUTH,
+                                            CHAIN_KEY_INPUT_COLLECTION,
+                                            CHAIN_KEY_INPUT_QUESTION,
+                                            CHAIN_KEY_INTENT,
+                                            CHAIN_KEY_MEMORY_ID,
+                                            CHAIN_MEMORY_KEY_CHAT_HISTORY)
 from genai_core.errors.error_code import ErrorCode
 from genai_core.graph.graph_data import GraphData
+from genai_core.helpers.chain_helpers import extract_uid
 from genai_core.logger.chain_logger import ChainLogger
+from genai_core.logger.logger import log
+from genai_core.memory.stratio_conversation_memory import (
+    CreateConversation, StratioConversationMemory)
+from genai_core.model.sql_chain_models import (ContentType,
+                                               SqlChatMessageInput,
+                                               SqlChatMessageOutput)
+from genai_core.runnables.genai_auth import GenAiAuth, GenAiAuthRunnable
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
-from genai_core.memory.stratio_conversation_memory import CreateConversation
-from genai_core.model.sql_chain_models import SqlChatMessageInput
-
-
-from genai_core.chain.base import BaseGenAiChain, GenAiChainParams
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.runnables import (Runnable, RunnableConfig, RunnableLambda,
+                                      chain)
+from pydantic import BaseModel
 
 from chat_memory_chain.constants.constants import *
-from genai_core.logger.logger import log
-from genai_core.memory.stratio_conversation_memory import StratioConversationMemory
-from genai_core.model.sql_chain_models import ContentType, SqlChatMessageOutput
-from langchain_core.runnables import RunnableConfig
-from genai_core.runnables.genai_auth import GenAiAuthRunnable
-from genai_core.runnables.genai_auth import GenAiAuth
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.runnables import (
-    Runnable,
-    RunnableLambda,
-    chain,
-)
-from pydantic import BaseModel
 
 
 class MemoryExampleMessageInput(BaseModel):
@@ -162,21 +157,6 @@ class MemoryChain(BaseGenAiChain, ABC):
 
         return chain_data
 
-    @staticmethod
-    def extract_uid(chain_data: dict) -> Optional[str]:
-        """
-        Given the chain data, extracts the user id.
-
-        param chain_data: The chain data dictionary.
-        return: The user id.
-        """
-        auth = chain_data.get(CHAIN_KEY_GENAI_AUTH)
-        if not isinstance(auth, GenAiAuth):
-            raise AssertionError(
-                f"Genai auth not found or invalid auth data in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
-            )
-        return auth.user_id_impersonated if auth.user_id_impersonated else auth.user_id
-
     def base_chain_output(self, chain_data: dict) -> dict:
         """
         Returns the base output for a chain
@@ -289,7 +269,7 @@ class MemoryChain(BaseGenAiChain, ABC):
                 chain_data
             )
 
-            user_id = self.extract_uid(chain_data)
+            user_id = extract_uid(chain_data.get(CHAIN_KEY_GRAPH_DATA))
             self.chat_memory.update_conversation_message(
                 user_id=user_id,
                 conversation_id=chain_data.get(CHAIN_KEY_CHAT_ID),
@@ -383,7 +363,7 @@ class MemoryChain(BaseGenAiChain, ABC):
         )
 
         conversation_memory = self.chat_memory.create_conversation_or_append_message(
-            user_id=self.extract_uid(chain_data),
+            user_id=extract_uid(chain_data.get(CHAIN_KEY_GRAPH_DATA)),
             conversation_id=(
                 chain_data.get(CHAIN_KEY_CHAT_ID)
                 if CHAIN_KEY_CHAT_ID in chain_data
@@ -427,7 +407,7 @@ class MemoryChain(BaseGenAiChain, ABC):
         conversation_memory = None
         if chain_data.get(CHAIN_KEY_CHAT_ID) is not None:
             conversation_memory = self.sql_chain.chat_memory.load_conversation(
-                user_id=self.extract_uid(chain_data),
+                user_id=extract_uid(chain_data.get(CHAIN_KEY_GRAPH_DATA)),
                 conversation_id=chain_data.get(CHAIN_KEY_CHAT_ID),
                 conversation_msg_id=chain_data.get(CHAIN_KEY_CHAT_MESSAGE_ID),
             )
@@ -497,10 +477,8 @@ class MemoryChain(BaseGenAiChain, ABC):
                     f"Genai auth not found or invalid auth data in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
                 )
             chain_data[CHAIN_KEY_GENAI_AUTH] = auth
-            #
             if auth.request_id is not None:
                 chain_data[CHAIN_KEY_REQUEST_ID] = auth.request_id
-
             chain_data[CHAIN_KEY_GRAPH_DATA] = GraphData(**chain_data)
 
             return chain_data

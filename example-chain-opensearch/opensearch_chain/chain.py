@@ -13,24 +13,17 @@ from abc import ABC
 from typing import Optional
 
 from genai_core.chain.base import BaseGenAiChain
-from genai_core.runnables.genai_auth import GenAiAuth, GenAiAuthRunnable
 from genai_core.clients.vault.vault_client import VaultClient
+from genai_core.constants.constants import CHAIN_KEY_GENAI_AUTH
 from genai_core.logger.logger import log
-from langchain_core.runnables import Runnable, chain, RunnableConfig
+from genai_core.runnables.genai_auth import GenAiAuth, GenAiAuthRunnable
+from langchain_core.runnables import Runnable, RunnableConfig, chain
 
 from opensearch_chain.constants.constants import (
-    OPENSEARCH_SEARCH_VALUE_KEY,
-    OPENSEARCH_COLLECTION_NAME_KEY,
-    OPENSEARCH_TABLE_VALUE_KEY,
-    OPENSEARCH_COLUMN_VALUE_KEY,
-    OPENSEARCH_RESULT_KEY,
-    OPENSEARCH_NO_RESULTS,
-)
+    CHAIN_KEY_REQUEST_ID, OPENSEARCH_COLLECTION_NAME_KEY,
+    OPENSEARCH_COLUMN_VALUE_KEY, OPENSEARCH_NO_RESULTS, OPENSEARCH_RESULT_KEY,
+    OPENSEARCH_SEARCH_VALUE_KEY, OPENSEARCH_TABLE_VALUE_KEY)
 from opensearch_chain.services.opensearch_service import OpenSearchService
-from opensearch_chain.constants.constants import (
-    CHAIN_KEY_GENAI_AUTH,
-    CHAIN_KEY_REQUEST_ID,
-)
 
 
 class OpenSearchChain(BaseGenAiChain, ABC):
@@ -140,14 +133,20 @@ class OpenSearchChain(BaseGenAiChain, ABC):
 
         @chain
         def _extract_genai_auth(chain_data: dict, config: RunnableConfig):
-            """Method to extract GenAI authentication"""
+            """
+            Method to extract GenAI authentication from the chain data and config.
+
+            :param chain_data: The data passed through the chain.
+            :param config: The configuration for the runnable.
+            :return: The chain data with the GenAI authentication added.
+            """
+
             auth = GenAiAuthRunnable().invoke(chain_data, config)
             if not isinstance(auth, GenAiAuth):
                 raise AssertionError(
                     f"Genai auth not found or invalid auth data in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
                 )
             chain_data[CHAIN_KEY_GENAI_AUTH] = auth
-            #
             if auth.request_id is not None:
                 chain_data[CHAIN_KEY_REQUEST_ID] = auth.request_id
 

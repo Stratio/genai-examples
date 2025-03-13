@@ -8,26 +8,21 @@ nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 
-import pytest
 from unittest.mock import MagicMock
+
+import pytest
 from genai_core.chat_models.stratio_chat import StratioGenAIGatewayChat
-from genai_core.constants.constants import (
-    CHAIN_MEMORY_KEY_CHAT_HISTORY,
-    CHAIN_KEY_CHAT_ID,
-)
-from chat_memory_chain.constants.constants import (
-    CHAIN_KEY_CONVERSATION_LAST_MSG_ID,
-    CHAIN_KEY_CONVERSATION_IS_NEW,
-)
+from genai_core.constants.constants import (CHAIN_KEY_CHAT_ID,
+                                            CHAIN_MEMORY_KEY_CHAT_HISTORY)
 from genai_core.memory.stratio_conversation_memory import (
-    StratioConversationMemory,
-    ConversationMemoryOutput,
-)
-from genai_core.test.mock_helper import mock_init_stratio_gateway, mock_gateway_chat
+    ConversationMemoryOutput, StratioConversationMemory)
+from genai_core.test.mock_helper import (mock_gateway_chat,
+                                         mock_init_stratio_gateway)
 from langchain_core.messages import AIMessage, HumanMessage
 
 from chat_memory_chain.chain import MemoryChain
-
+from chat_memory_chain.constants.constants import (
+    CHAIN_KEY_CONVERSATION_IS_NEW, CHAIN_KEY_CONVERSATION_LAST_MSG_ID)
 
 GATEWAY_ENDPOINT = "openai-chat"
 
@@ -159,7 +154,19 @@ class TestChatMemoryChain:
 
         chain = MemoryChain(gateway_endpoint=GATEWAY_ENDPOINT).chain()
         result_first_interaction = chain.invoke(
-            {"input": INPUT_MOCK_FIRST_QUESTION, "destination": DESTINATION_MOCK}
+            {
+                "input": INPUT_MOCK_FIRST_QUESTION,
+                "destination": DESTINATION_MOCK,
+                "config": {
+                    "metadata": {
+                        "__genai_state": {
+                            "client_auth_type": "mtls",
+                            "client_user_id": "<your-user>",
+                            "client_tenant": "<your-tenant>",
+                        }
+                    }
+                },
+            }
         )
 
         assert result_first_interaction[CHAIN_KEY_CHAT_ID]

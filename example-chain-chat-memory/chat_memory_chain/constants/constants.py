@@ -10,12 +10,9 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 
 # Basic Chain specific keys
-CHAIN_KEY_GENAI_AUTH = "genai_auth"
 CHAIN_KEY_REQUEST_ID = "request_id"
 CHAIN_KEY_REASONING = "reasoning"
 CHAIN_KEY_SAVE_CONVERSATION = "save_conversation"
-CHAIN_KEY_CHAT_ID = "chat_id"
-CHAIN_KEY_INTENT = "intent"
 CHAIN_KEY_CHAT_MESSAGE_ID = "chat_message_id"
 CHAIN_KEY_CHAT_HISTORY_STR = "chat_history_str"
 CHAIN_KEY_CONVERSATION_LAST_MSG_ID = "conversation_last_msg_id"

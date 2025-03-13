@@ -9,21 +9,17 @@ nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 
-from typing import Type, List, Union
+from typing import List, Type, Union
 
 from genai_core.actors.base import ActorInput
 from genai_core.actors.gateway_actor import GatewayActor
 from genai_core.constants.constants import CHAIN_KEY_USER_REQUEST
 from langchain_core.messages import BaseMessage
-
 from langchain_core.prompts.chat import BaseMessagePromptTemplate
 from pydantic import BaseModel
 
-from ..constants.constants import (
-    SCENARIO_INPUT_MSG,
-    USER_REQUEST_EXPLANATION,
-    CHAIN_KEY_USER_NAME,
-)
+from ..constants.constants import (CHAIN_KEY_USER_NAME, SCENARIO_INPUT_MSG,
+                                   USER_REQUEST_EXPLANATION)
 
 # This block represents the instructions for the given actor.
 # The context: the actor is a character from Alice in Wonderland, the Mad Hatter.

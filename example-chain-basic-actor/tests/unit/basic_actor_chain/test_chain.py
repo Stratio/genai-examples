@@ -10,13 +10,11 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 
 import pytest
+from genai_core.test.mock_helper import mock_actor, mock_init_stratio_gateway
 
-from basic_actor_chain.actors.basic_actor import (
-    BasicExampleActor,
-    BasicExampleActorOutput,
-)
+from basic_actor_chain.actors.basic_actor import (BasicExampleActor,
+                                                  BasicExampleActorOutput)
 from basic_actor_chain.chain import BasicActorChain
-from genai_core.test.mock_helper import mock_init_stratio_gateway, mock_actor
 
 GATEWAY_ENDPOINT = "openai-chat-o3-mini"
 

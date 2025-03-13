@@ -11,14 +11,14 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 
 from abc import ABC
 
-from langchain_core.runnables import Runnable, chain
 from genai_core.chain.base import BaseGenAiChain
-from genai_core.runnables.genai_auth import GenAiAuthRunnable
+from genai_core.constants.constants import CHAIN_KEY_GENAI_AUTH
 from genai_core.logger.logger import log
-from genai_core.runnables.genai_auth import GenAiAuth
+from genai_core.runnables.genai_auth import GenAiAuth, GenAiAuthRunnable
+from langchain_core.runnables import Runnable, RunnableConfig, chain
+
 from .actors.basic_actor import BasicExampleActor
-from .constants.constants import CHAIN_KEY_USER_NAME, CHAIN_KEY_GENAI_AUTH
-from langchain_core.runnables import RunnableConfig
+from .constants.constants import CHAIN_KEY_USER_NAME
 
 
 # Here you define your chain, which inherits from the BaseGenAiChain, so you only need to implement

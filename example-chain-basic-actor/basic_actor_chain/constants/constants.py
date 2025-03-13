@@ -16,4 +16,3 @@ USER_REQUEST_EXPLANATION = (
 
 # Basic Chain specific keys
 CHAIN_KEY_USER_NAME = "username"
-CHAIN_KEY_GENAI_AUTH = "genai_auth"

@@ -10,24 +10,23 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 
 import os
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 from genai_core.chain.base import BaseGenAiChain
-from genai_core.logger.logger import log
 from genai_core.clients.vault.vault_client import VaultClient
-from genai_core.constants.constants import ENV_VAR_GENAI_API_SERVICE_NAME
+from genai_core.constants.constants import (CHAIN_KEY_GENAI_AUTH,
+                                            CHAIN_KEY_REQUEST_ID,
+                                            ENV_VAR_GENAI_API_SERVICE_NAME)
 from genai_core.helpers.chain_helpers import extract_uid
+from genai_core.logger.logger import log
 from genai_core.runnables.genai_auth import GenAiAuth, GenAiAuthRunnable
-from langchain_core.runnables.config import RunnableConfig
 from genai_core.services.virtualizer.virtualizer_service_helper import (
-    VirtualizerServiceHelper,
-    VirtualizerService,
-)
+    VirtualizerService, VirtualizerServiceHelper)
 from langchain_core.runnables import Runnable, RunnableLambda, chain
+from langchain_core.runnables.config import RunnableConfig
 
 # Basic Chain specific keys
-CHAIN_KEY_GENAI_AUTH = "genai_auth"
-CHAIN_KEY_REQUEST_ID = "request_id"
+CHAIN_KEY_GRAPH_DATA = "graph_data"
 
 
 # You should define your chains in a class inheriting from the BaseGenAiChain.
@@ -71,16 +70,23 @@ class VirtualizerChain(BaseGenAiChain):
         # invoke request body.
         @chain
         def _extract_genai_auth(chain_data: dict, config: RunnableConfig):
-            """Method to extract GenAI authentication"""
+            """
+            Method to extract GenAI authentication from the chain data and config.
+
+            :param chain_data: The data passed through the chain.
+            :param config: The configuration for the runnable.
+            :return: The chain data with the GenAI authentication added.
+            """
+
             auth = GenAiAuthRunnable().invoke(chain_data, config)
             if not isinstance(auth, GenAiAuth):
                 raise AssertionError(
                     f"Genai auth not found or invalid auth data in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
                 )
             chain_data[CHAIN_KEY_GENAI_AUTH] = auth
-            #
             if auth.request_id is not None:
                 chain_data[CHAIN_KEY_REQUEST_ID] = auth.request_id
+            chain_data[CHAIN_KEY_GRAPH_DATA] = GraphData(**chain_data)
 
             return chain_data
 
@@ -92,7 +98,7 @@ class VirtualizerChain(BaseGenAiChain):
         # from extra metadata that GenAI API adds to the invoke body, and we can use GenAI Core helper
         # methods to extract the userID from that extra info in the chain_data
         query = chain_data["query"]
-        user = self.extract_uid(chain_data)
+        user = extract_uid(chain_data.get(CHAIN_KEY_GRAPH_DATA))
 
         # modify the query so that it is impersonated
         query = f"EXECUTE AS {user} {query}"

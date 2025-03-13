@@ -9,13 +9,14 @@ nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 
-from genai_core.services.virtualizer.virtualizer_service import VirtualizerData
-from langchain_core.runnables.config import RunnableConfig
-import pytest
 import random
 import string
 
+import pytest
+from genai_core.services.virtualizer.virtualizer_service import VirtualizerData
+from langchain_core.runnables.config import RunnableConfig
 from pytest_mock import MockerFixture
+
 from virtualizer_chain.chain import VirtualizerChain
 
 

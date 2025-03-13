@@ -9,7 +9,7 @@ nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
 from opensearchpy import OpenSearch
 

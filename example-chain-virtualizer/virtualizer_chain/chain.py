@@ -16,9 +16,9 @@ from genai_core.chain.base import BaseGenAiChain
 from genai_core.clients.vault.vault_client import VaultClient
 from genai_core.constants.constants import (
     CHAIN_KEY_GENAI_AUTH,
-    CHAIN_KEY_REQUEST_ID,
     ENV_VAR_GENAI_API_SERVICE_NAME,
 )
+from genai_core.graph.graph_data import GraphData
 from genai_core.helpers.chain_helpers import extract_uid
 from genai_core.logger.logger import log
 from genai_core.runnables.genai_auth import GenAiAuth, GenAiAuthRunnable
@@ -88,8 +88,6 @@ class VirtualizerChain(BaseGenAiChain):
                     f"Genai auth not found or invalid auth data in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
                 )
             chain_data[CHAIN_KEY_GENAI_AUTH] = auth
-            if auth.request_id is not None:
-                chain_data[CHAIN_KEY_REQUEST_ID] = auth.request_id
             chain_data[CHAIN_KEY_GRAPH_DATA] = GraphData(**chain_data)
 
             return chain_data

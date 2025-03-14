@@ -31,6 +31,7 @@ from langchain_core.runnables.config import RunnableConfig
 
 # Basic Chain specific keys
 CHAIN_KEY_GRAPH_DATA = "graph_data"
+CHAIN_KEY_REQUEST_ID = "request_id"
 
 
 # You should define your chains in a class inheriting from the BaseGenAiChain.
@@ -88,6 +89,8 @@ class VirtualizerChain(BaseGenAiChain):
                     f"Genai auth not found or invalid auth data in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
                 )
             chain_data[CHAIN_KEY_GENAI_AUTH] = auth
+            if auth.request_id is not None:
+                chain_data[CHAIN_KEY_REQUEST_ID] = auth.request_id
             chain_data[CHAIN_KEY_GRAPH_DATA] = GraphData(**chain_data)
 
             return chain_data

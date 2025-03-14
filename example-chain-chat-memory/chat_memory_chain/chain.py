@@ -16,31 +16,36 @@ from typing import Optional
 from genai_core.chain.base import BaseGenAiChain, GenAiChainParams
 from genai_core.chat_models.stratio_chat import StratioGenAIGatewayChat
 from genai_core.clients.api.api_client_model import ConversationState
-from genai_core.constants.constants import (CHAIN_KEY_CHAT_ID,
-                                            CHAIN_KEY_CONTENT,
-                                            CHAIN_KEY_CONVERSATION_INPUT,
-                                            CHAIN_KEY_CONVERSATION_OUTPUT,
-                                            CHAIN_KEY_GENAI_AUTH,
-                                            CHAIN_KEY_INPUT_COLLECTION,
-                                            CHAIN_KEY_INPUT_QUESTION,
-                                            CHAIN_KEY_INTENT,
-                                            CHAIN_KEY_MEMORY_ID,
-                                            CHAIN_MEMORY_KEY_CHAT_HISTORY)
+from genai_core.constants.constants import (
+    CHAIN_KEY_CHAT_ID,
+    CHAIN_KEY_CONTENT,
+    CHAIN_KEY_CONVERSATION_INPUT,
+    CHAIN_KEY_CONVERSATION_OUTPUT,
+    CHAIN_KEY_GENAI_AUTH,
+    CHAIN_KEY_INPUT_COLLECTION,
+    CHAIN_KEY_INPUT_QUESTION,
+    CHAIN_KEY_INTENT,
+    CHAIN_KEY_MEMORY_ID,
+    CHAIN_MEMORY_KEY_CHAT_HISTORY,
+)
 from genai_core.errors.error_code import ErrorCode
 from genai_core.graph.graph_data import GraphData
 from genai_core.helpers.chain_helpers import extract_uid
 from genai_core.logger.chain_logger import ChainLogger
 from genai_core.logger.logger import log
 from genai_core.memory.stratio_conversation_memory import (
-    CreateConversation, StratioConversationMemory)
-from genai_core.model.sql_chain_models import (ContentType,
-                                               SqlChatMessageInput,
-                                               SqlChatMessageOutput)
+    CreateConversation,
+    StratioConversationMemory,
+)
+from genai_core.model.sql_chain_models import (
+    ContentType,
+    SqlChatMessageInput,
+    SqlChatMessageOutput,
+)
 from genai_core.runnables.genai_auth import GenAiAuth, GenAiAuthRunnable
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.runnables import (Runnable, RunnableConfig, RunnableLambda,
-                                      chain)
+from langchain_core.runnables import Runnable, RunnableConfig, RunnableLambda, chain
 from pydantic import BaseModel
 
 from chat_memory_chain.constants.constants import *

@@ -20,9 +20,14 @@ from genai_core.runnables.genai_auth import GenAiAuth, GenAiAuthRunnable
 from langchain_core.runnables import Runnable, RunnableConfig, chain
 
 from opensearch_chain.constants.constants import (
-    CHAIN_KEY_REQUEST_ID, OPENSEARCH_COLLECTION_NAME_KEY,
-    OPENSEARCH_COLUMN_VALUE_KEY, OPENSEARCH_NO_RESULTS, OPENSEARCH_RESULT_KEY,
-    OPENSEARCH_SEARCH_VALUE_KEY, OPENSEARCH_TABLE_VALUE_KEY)
+    CHAIN_KEY_REQUEST_ID,
+    OPENSEARCH_COLLECTION_NAME_KEY,
+    OPENSEARCH_COLUMN_VALUE_KEY,
+    OPENSEARCH_NO_RESULTS,
+    OPENSEARCH_RESULT_KEY,
+    OPENSEARCH_SEARCH_VALUE_KEY,
+    OPENSEARCH_TABLE_VALUE_KEY,
+)
 from opensearch_chain.services.opensearch_service import OpenSearchService
 
 

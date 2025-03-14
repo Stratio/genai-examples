@@ -14,14 +14,18 @@ from typing import Optional, Tuple
 
 from genai_core.chain.base import BaseGenAiChain
 from genai_core.clients.vault.vault_client import VaultClient
-from genai_core.constants.constants import (CHAIN_KEY_GENAI_AUTH,
-                                            CHAIN_KEY_REQUEST_ID,
-                                            ENV_VAR_GENAI_API_SERVICE_NAME)
+from genai_core.constants.constants import (
+    CHAIN_KEY_GENAI_AUTH,
+    CHAIN_KEY_REQUEST_ID,
+    ENV_VAR_GENAI_API_SERVICE_NAME,
+)
 from genai_core.helpers.chain_helpers import extract_uid
 from genai_core.logger.logger import log
 from genai_core.runnables.genai_auth import GenAiAuth, GenAiAuthRunnable
 from genai_core.services.virtualizer.virtualizer_service_helper import (
-    VirtualizerService, VirtualizerServiceHelper)
+    VirtualizerService,
+    VirtualizerServiceHelper,
+)
 from langchain_core.runnables import Runnable, RunnableLambda, chain
 from langchain_core.runnables.config import RunnableConfig
 

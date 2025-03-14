@@ -11,8 +11,10 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 import pytest
 
 from opensearch_chain.chain import OpenSearchChain
-from opensearch_chain.constants.constants import (OPENSEARCH_NO_RESULTS,
-                                                  OPENSEARCH_RESULT_KEY)
+from opensearch_chain.constants.constants import (
+    OPENSEARCH_NO_RESULTS,
+    OPENSEARCH_RESULT_KEY,
+)
 
 # Mock values for testing
 SEARCH_VALUE_TEST_MOCK = "Scott"

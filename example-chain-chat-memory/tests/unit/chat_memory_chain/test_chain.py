@@ -12,17 +12,22 @@ from unittest.mock import MagicMock
 
 import pytest
 from genai_core.chat_models.stratio_chat import StratioGenAIGatewayChat
-from genai_core.constants.constants import (CHAIN_KEY_CHAT_ID,
-                                            CHAIN_MEMORY_KEY_CHAT_HISTORY)
+from genai_core.constants.constants import (
+    CHAIN_KEY_CHAT_ID,
+    CHAIN_MEMORY_KEY_CHAT_HISTORY,
+)
 from genai_core.memory.stratio_conversation_memory import (
-    ConversationMemoryOutput, StratioConversationMemory)
-from genai_core.test.mock_helper import (mock_gateway_chat,
-                                         mock_init_stratio_gateway)
+    ConversationMemoryOutput,
+    StratioConversationMemory,
+)
+from genai_core.test.mock_helper import mock_gateway_chat, mock_init_stratio_gateway
 from langchain_core.messages import AIMessage, HumanMessage
 
 from chat_memory_chain.chain import MemoryChain
 from chat_memory_chain.constants.constants import (
-    CHAIN_KEY_CONVERSATION_IS_NEW, CHAIN_KEY_CONVERSATION_LAST_MSG_ID)
+    CHAIN_KEY_CONVERSATION_IS_NEW,
+    CHAIN_KEY_CONVERSATION_LAST_MSG_ID,
+)
 
 GATEWAY_ENDPOINT = "openai-chat"
 

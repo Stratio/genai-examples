@@ -38,6 +38,8 @@ VIRTUALIZER_PORT=8080
 VIRTUALIZER_BASE_PATH=/service/virtualizer
 ```
 
+Please note that the Virtualizer host, when using the *Stratio GenAI Developer Proxy*, should be configured with the value provided by the *Stratio GenAI Developer Proxy*.
+
 5. Run the chain `virtualizer_chain/main.py`. You can do it in the terminal or in PyCharm. You can open the Swagger UI in the URL `http://127.0.0.1:8080/`.
 
 ```bash

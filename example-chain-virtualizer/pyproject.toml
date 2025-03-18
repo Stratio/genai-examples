@@ -7,7 +7,7 @@ include = ["requirements.txt"]
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
-genai-core = "0.4.0rc0+33cc1df"
+genai-core = "0.4.0rc0+2aa1330"
 # already included in genai-core but we set a fixed version
 langchain = "0.3.19"
 langchain-community = "0.3.17"

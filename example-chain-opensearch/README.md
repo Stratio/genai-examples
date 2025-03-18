@@ -50,6 +50,10 @@ OPENSEARCH_URL=https://genai-developer-proxy-loadbalancer.your-tenant-genai.your
 
 5. Run the chain `opensearch_chain/main.py`. You can do it in the terminal or in PyCharm. You can open the Swagger UI in the URL `http://127.0.0.1:8080/`.
 
+```bash
+poetry run python opensearch_chain/main.py
+```
+
 6. Invoke the chain using the `POST /invoke` endpoint with the following request body. Replace `<your-user>` and `<your-tenant>` with your user and tenant:
 
 ```json

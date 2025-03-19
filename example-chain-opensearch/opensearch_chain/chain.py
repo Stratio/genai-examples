@@ -1,5 +1,5 @@
 """
-© 2024 Stratio Big Data Inc., Sucursal en España. All rights reserved.
+© 2025 Stratio Big Data Inc., Sucursal en España. All rights reserved.
 
 This software – including all its source code – contains proprietary
 information of Stratio Big Data Inc., Sucursal en España and
@@ -8,22 +8,25 @@ otherwise made available, licensed or sublicensed to third parties;
 nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
+
 from abc import ABC
 from typing import Optional
 
 from genai_core.chain.base import BaseGenAiChain
 from genai_core.clients.vault.vault_client import VaultClient
+from genai_core.constants.constants import CHAIN_KEY_GENAI_AUTH
 from genai_core.logger.logger import log
-from genai_core.runnables.common_runnables import runnable_extract_genai_auth
-from langchain_core.runnables import Runnable, chain
+from genai_core.runnables.genai_auth import GenAiAuth, GenAiAuthRunnable
+from langchain_core.runnables import Runnable, RunnableConfig, chain
 
 from opensearch_chain.constants.constants import (
-    OPENSEARCH_SEARCH_VALUE_KEY,
+    CHAIN_KEY_REQUEST_ID,
     OPENSEARCH_COLLECTION_NAME_KEY,
-    OPENSEARCH_TABLE_VALUE_KEY,
     OPENSEARCH_COLUMN_VALUE_KEY,
-    OPENSEARCH_RESULT_KEY,
     OPENSEARCH_NO_RESULTS,
+    OPENSEARCH_RESULT_KEY,
+    OPENSEARCH_SEARCH_VALUE_KEY,
+    OPENSEARCH_TABLE_VALUE_KEY,
 )
 from opensearch_chain.services.opensearch_service import OpenSearchService
 
@@ -119,21 +122,42 @@ class OpenSearchChain(BaseGenAiChain, ABC):
                     chain_data[OPENSEARCH_RESULT_KEY] = OPENSEARCH_NO_RESULTS
                 else:
                     first_value = search_result["hits"]["hits"][0]["_source"]["value"]
-                    chain_data[
-                        OPENSEARCH_RESULT_KEY
-                    ] = f"For the requested search value '{search_value}' in the column '{column_value}' of the table  '{table_value}', the first result is '{first_value}'."
+                    chain_data[OPENSEARCH_RESULT_KEY] = (
+                        f"For the requested search value '{search_value}' in the column '{column_value}' of the table  '{table_value}', the first result is '{first_value}'."
+                    )
 
             except Exception as e:
                 log.error(
                     f"Unable to search index. Exception: {e}",
                     chain_data,
                 )
-                chain_data[
-                    OPENSEARCH_RESULT_KEY
-                ] = f"Unable to search index. Exception: {e}"
+                chain_data[OPENSEARCH_RESULT_KEY] = (
+                    f"Unable to search index. Exception: {e}"
+                )
             return chain_data
 
-        return runnable_extract_genai_auth() | _ask_opensearch
+        @chain
+        def _extract_genai_auth(chain_data: dict, config: RunnableConfig):
+            """
+            Method to extract GenAI authentication from the chain data and config.
+
+            :param chain_data: The data passed through the chain.
+            :param config: The configuration for the runnable.
+            :return: The chain data with the GenAI authentication added.
+            """
+
+            auth = GenAiAuthRunnable().invoke(chain_data, config)
+            if not isinstance(auth, GenAiAuth):
+                raise AssertionError(
+                    f"Genai auth not found or invalid auth data in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
+                )
+            chain_data[CHAIN_KEY_GENAI_AUTH] = auth
+            if auth.request_id is not None:
+                chain_data[CHAIN_KEY_REQUEST_ID] = auth.request_id
+
+            return chain_data
+
+        return _extract_genai_auth | _ask_opensearch
 
     @staticmethod
     def _init_credentials():

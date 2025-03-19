@@ -1,5 +1,5 @@
 """
-© 2024 Stratio Big Data Inc., Sucursal en España. All rights reserved.
+© 2025 Stratio Big Data Inc., Sucursal en España. All rights reserved.
 
 This software – including all its source code – contains proprietary
 information of Stratio Big Data Inc., Sucursal en España and
@@ -8,16 +8,17 @@ otherwise made available, licensed or sublicensed to third parties;
 nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
+
 import pytest
+from genai_core.test.mock_helper import mock_actor, mock_init_stratio_gateway
 
 from basic_actor_chain.actors.basic_actor import (
     BasicExampleActor,
     BasicExampleActorOutput,
 )
 from basic_actor_chain.chain import BasicActorChain
-from genai_core.test.mock_helper import mock_init_stratio_gateway, mock_actor
 
-GATEWAY_ENDPOINT = "openai-chat"
+GATEWAY_ENDPOINT = "openai-chat-o3-mini"
 
 USER_REQUEST_EXPLANATION = (
     "The user is asking about the location of the Queen of Hearts in Wonderland."

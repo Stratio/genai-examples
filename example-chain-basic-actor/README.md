@@ -6,7 +6,7 @@ This is an example showing how to define a simple Actor and use it in a basic qu
 
 To set up the chain locally, follow the steps in the [main README of this repository](../README.md). Here is a summary of the steps:
 
-1. Make sure you have Python >= 3.9 and Poetry installed.
+1. Make sure you have Python >= 3.9 and Poetry >= 2.0 installed.
 
 2. Edit the `pyproject.toml` and change the URL of the `stratio-releases` repository. You should use the URL of the *Stratio GenAI Developer Proxy* Load Balancer including path "/service/genai-api/v1/pypi/simple".
 
@@ -22,7 +22,7 @@ priority = "supplemental"
 ```bash
 $ poetry config virtualenvs.in-project true
 $ poetry config certificates.stratio-releases.cert /path/to/your/cert/folder/ca-cert.crt
-$ poetry lock --no-update
+$ poetry lock
 $ poetry install
 ```
 
@@ -37,6 +37,10 @@ GENAI_GATEWAY_CA_CERTS=/path/to/certs/ca-cert.crt
 ```
 
 5. Run the chain `basic_actor_chain/main.py`. You can do it in the terminal or in PyCharm. You can open the Swagger UI in the URL `http://127.0.0.1:8080/`.
+
+```bash
+poetry run python basic_actor_chain/main.py
+```
 
 6. Invoke the chain using the `POST /invoke` endpoint with the following request body. Replace `<your-user>` and `<your-tenant>` with your user and tenant:
 
@@ -70,11 +74,11 @@ To deploy the chain in the Stratio GenAI API, follow the steps in the [main READ
 {
   "chain_id": "basic_actor_chain",
   "chain_config": {
-    "package_id": "basic_actor_chain-0.3.4a0",
+    "package_id": "basic_actor_chain-0.4.0a0",
     "chain_module": "basic_actor_chain.chain",
     "chain_class": "BasicActorChain",
     "chain_params": {
-      "gateway_endpoint": "openai-chat",
+      "gateway_endpoint": "openai-chat-o3-mini",
       "llm_timeout": 60
     }
   }

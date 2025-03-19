@@ -1,5 +1,5 @@
 """
-© 2024 Stratio Big Data Inc., Sucursal en España. All rights reserved.
+© 2025 Stratio Big Data Inc., Sucursal en España. All rights reserved.
 
 This software – including all its source code – contains proprietary
 information of Stratio Big Data Inc., Sucursal en España and
@@ -8,7 +8,8 @@ otherwise made available, licensed or sublicensed to third parties;
 nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
-from typing import Optional, Dict, Any
+
+from typing import Any, Dict, Optional
 
 from opensearchpy import OpenSearch
 

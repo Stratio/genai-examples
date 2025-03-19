@@ -1,5 +1,5 @@
 """
-© 2024 Stratio Big Data Inc., Sucursal en España. All rights reserved.
+© 2025 Stratio Big Data Inc., Sucursal en España. All rights reserved.
 
 This software – including all its source code – contains proprietary
 information of Stratio Big Data Inc., Sucursal en España and
@@ -8,36 +8,47 @@ otherwise made available, licensed or sublicensed to third parties;
 nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
+
 import uuid
 from abc import ABC
-
-from genai_core.chat_models.stratio_chat import StratioGenAIGatewayChat
-from genai_core.constants.constants import (
-    CHAIN_KEY_MEMORY_ID,
-    CHAIN_KEY_CHAT_ID,
-    CHAIN_MEMORY_KEY_CHAT_HISTORY,
-    CHAIN_KEY_INPUT_QUESTION,
-    CHAIN_KEY_CONVERSATION_INPUT,
-    CHAIN_KEY_CONVERSATION_OUTPUT,
-    CHAIN_KEY_INPUT_COLLECTION,
-)
-from genai_core.errors.error_code import ErrorCode
-from genai_core.helpers.chain_helpers import extract_uid, update_data_with_error
-from genai_core.logger.chain_logger import ChainLogger
+from typing import Optional
 
 from genai_core.chain.base import BaseGenAiChain, GenAiChainParams
-
-from genai_core.logger.logger import log
-from genai_core.memory.stratio_conversation_memory import StratioConversationMemory
-from genai_core.model.sql_chain_models import ContentType
-from genai_core.runnables.common_runnables import runnable_extract_genai_auth
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.runnables import (
-    Runnable,
-    RunnableLambda,
-    chain,
+from genai_core.chat_models.stratio_chat import StratioGenAIGatewayChat
+from genai_core.clients.api.api_client_model import ConversationState
+from genai_core.constants.constants import (
+    CHAIN_KEY_CHAT_ID,
+    CHAIN_KEY_CONTENT,
+    CHAIN_KEY_CONVERSATION_INPUT,
+    CHAIN_KEY_CONVERSATION_OUTPUT,
+    CHAIN_KEY_GENAI_AUTH,
+    CHAIN_KEY_INPUT_COLLECTION,
+    CHAIN_KEY_INPUT_QUESTION,
+    CHAIN_KEY_INTENT,
+    CHAIN_KEY_MEMORY_ID,
+    CHAIN_MEMORY_KEY_CHAT_HISTORY,
 )
+from genai_core.errors.error_code import ErrorCode
+from genai_core.graph.graph_data import GraphData
+from genai_core.helpers.chain_helpers import extract_uid
+from genai_core.logger.chain_logger import ChainLogger
+from genai_core.logger.logger import log
+from genai_core.memory.stratio_conversation_memory import (
+    CreateConversation,
+    StratioConversationMemory,
+)
+from genai_core.model.sql_chain_models import (
+    ContentType,
+    SqlChatMessageInput,
+    SqlChatMessageOutput,
+)
+from genai_core.runnables.genai_auth import GenAiAuth, GenAiAuthRunnable
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.runnables import Runnable, RunnableConfig, RunnableLambda, chain
 from pydantic import BaseModel
+
+from chat_memory_chain.constants.constants import *
 
 
 class MemoryExampleMessageInput(BaseModel):
@@ -60,6 +71,8 @@ class MemoryChain(BaseGenAiChain, ABC):
     # => Model and prompt for the travel agent chat
     model = StratioGenAIGatewayChat
     prompt = ChatPromptTemplate
+
+    data = GraphData
 
     def __init__(
         self,
@@ -137,7 +150,7 @@ class MemoryChain(BaseGenAiChain, ABC):
         )
 
     @staticmethod
-    def create_short_memory_id(chain_data: dict) -> dict:
+    def create_short_memory_id_and_conversation_output(chain_data: dict) -> dict:
         """
         Creates a short memory id for chains that require chat_id to store memory.
 
@@ -145,7 +158,34 @@ class MemoryChain(BaseGenAiChain, ABC):
         :return: The updated chain data dictionary with a new memory id.
         """
         chain_data[CHAIN_KEY_MEMORY_ID] = str(uuid.uuid4())
+        chain_data[CHAIN_KEY_CONVERSATION_INPUT] = SqlChatMessageInput(**chain_data)
+
         return chain_data
+
+    def base_chain_output(self, chain_data: dict) -> dict:
+        """
+        Returns the base output for a chain
+
+        :param chain_data: The chain data dictionary.
+        :return: The base output for a chain.
+        """
+        return {
+            "intent": chain_data.get(CHAIN_KEY_INTENT) or "other",
+            "version": 2,
+        }
+
+    def running_chain_output(self, chain_data: dict) -> SqlChatMessageOutput:
+        """
+        Returns the output for a running chain
+
+        :param chain_data: The chain data dictionary.
+        :return: The output for a running chain.
+        """
+        output = self.base_chain_output(chain_data) | {
+            "content_type": ContentType.MESSAGE,
+            "content": {"message": "..."},
+        }
+        return SqlChatMessageOutput.model_validate(output)
 
     def load_and_include_chat_history(self, chain_data: dict) -> dict:
         """
@@ -158,25 +198,50 @@ class MemoryChain(BaseGenAiChain, ABC):
         :param chain_data: The chain data dictionary.
         :return: The updated chain data dictionary with chat history included.
         """
-        ChainLogger.debug("Loading chat memory", chain_data)
-        if CHAIN_KEY_CHAT_ID in chain_data:
-            try:
-                loaded_memory = self.chat_memory.load_memory(
-                    user_id=extract_uid(chain_data),
-                    conversation_id=chain_data[CHAIN_KEY_CHAT_ID],
-                )
-                if loaded_memory:
-                    chain_data[CHAIN_MEMORY_KEY_CHAT_HISTORY] = loaded_memory
-                    ChainLogger.info(
-                        f"Successfully loaded {len(loaded_memory)} chat messages.",
-                        chain_data,
-                    )
-            except Exception as e:
-                ChainLogger.warning(
-                    f"Unable to load chat history. Exception: {e}", chain_data
-                )
-                del chain_data[CHAIN_KEY_CHAT_ID]
-                update_data_with_error(chain_data, ErrorCode.CHAT_ID_NOT_FOUND)
+
+        ChainLogger.debug(
+            "Loading chat memory", graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA)
+        )
+
+        chain_data[CHAIN_KEY_REASONING] = []
+        if chain_data.get(CHAIN_KEY_SAVE_CONVERSATION) is None:
+            chain_data[CHAIN_KEY_SAVE_CONVERSATION] = True
+        ChainLogger.debug(
+            f"Loading chat history. Conversation Id: {chain_data.get(CHAIN_KEY_CHAT_ID)} Message Id: {chain_data.get(CHAIN_KEY_CHAT_MESSAGE_ID)} "
+            f"Save Conversation: {chain_data.get(CHAIN_KEY_SAVE_CONVERSATION)}",
+            graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+        )
+
+        try:
+            if chain_data[CHAIN_KEY_SAVE_CONVERSATION]:
+                self._load_or_create_conversation(chain_data)
+            else:
+                self._load_conversation(chain_data)
+        except Exception as e:
+            ChainLogger.warning(
+                f"Unable to load chat history. Conversation Id {chain_data.get(CHAIN_KEY_CHAT_ID)} "
+                f"Message Id: {chain_data.get(CHAIN_KEY_CHAT_MESSAGE_ID)}. Exception: {e}",
+                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+            )
+            chain_data[CHAIN_KEY_CHAT_ID] = None
+            (
+                chain_data["halt_execution"](ErrorCode.CONVERSATION_ERROR)
+                if "halt_execution" in chain_data
+                else None
+            )
+
+        if chain_data.get(CHAIN_MEMORY_KEY_CHAT_HISTORY):
+            chat_history_str = []
+            for msg in chain_data[CHAIN_MEMORY_KEY_CHAT_HISTORY]:
+                if isinstance(msg, HumanMessage):
+                    chat_history_str.append(f"\t<human>{msg.content}</human>")
+                elif isinstance(msg, AIMessage):
+                    chat_history_str.append(f"\t<ai>{msg.content}</ai>")
+                elif isinstance(msg, SystemMessage):
+                    chat_history_str.append(f"\t<system>{msg.content}</system>")
+            chat_history_str = "\n".join(chat_history_str)
+            chain_data[CHAIN_KEY_CHAT_HISTORY_STR] = chat_history_str
+
         return chain_data
 
     def save_and_include_chat_history(self, chain_data: dict) -> dict:
@@ -187,40 +252,193 @@ class MemoryChain(BaseGenAiChain, ABC):
         :param chain_data: The chain data dictionary.
         :return: The updated chain data dictionary with chat history saved.
         """
+        if (
+            not chain_data.get(CHAIN_KEY_SAVE_CONVERSATION)
+            or chain_data.get(CHAIN_KEY_CONVERSATION_LAST_MSG_ID) is None
+        ):
+            # if the conversation was not created, we should not save it.
+            # this happens when the parameter save_conversation is false or when the chain input is invalid
+            ChainLogger.info(
+                "Skipping saving chat history.",
+                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+            )
+            return chain_data
+
         try:
-            ChainLogger.debug("Saving chat history...", chain_data)
+            ChainLogger.debug(
+                f"Saving chat history... Conversation Id {chain_data.get(CHAIN_KEY_CHAT_ID)}",
+                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+            )
 
-            # Extract input question
-            input_data = chain_data.get(CHAIN_KEY_INPUT_QUESTION)
-            output_data = "No response."
+            chain_data[CHAIN_KEY_MEMORY_OUTPUT] = self._extract_memory_output(
+                chain_data
+            )
 
-            # Extract the output data based on the intent
-            if CHAIN_KEY_CONVERSATION_OUTPUT in chain_data:
-                output_data = chain_data[CHAIN_KEY_CONVERSATION_OUTPUT]["content"]
-
-            chat_id = self.chat_memory.save_memory(
-                user_id=extract_uid(chain_data),
-                input_msg=chain_data[CHAIN_KEY_CONVERSATION_INPUT].model_dump(
+            user_id = extract_uid(chain_data.get(CHAIN_KEY_GRAPH_DATA))
+            self.chat_memory.update_conversation_message(
+                user_id=user_id,
+                conversation_id=chain_data.get(CHAIN_KEY_CHAT_ID),
+                conversation_msg_id=chain_data.get(CHAIN_KEY_CONVERSATION_LAST_MSG_ID),
+                memory_input=chain_data.get(CHAIN_KEY_INPUT_QUESTION),
+                memory_output=chain_data.get(CHAIN_KEY_MEMORY_OUTPUT),
+                input_msg=chain_data.get(CHAIN_KEY_CONVERSATION_INPUT).model_dump(
                     exclude_none=True, exclude_unset=True
                 ),
-                output_msg=chain_data[CHAIN_KEY_CONVERSATION_OUTPUT],
-                memory_input=input_data,
-                memory_output=output_data,
-                title=chain_data[CHAIN_KEY_INPUT_QUESTION],
-                conversation_id=chain_data.get(CHAIN_KEY_CHAT_ID),
-                collection_name=chain_data.get(CHAIN_KEY_INPUT_COLLECTION),
-                interaction_field=chain_data.get("interaction_field"),
-                application=chain_data.get("application"),
+                output_msg=chain_data.get(CHAIN_KEY_CONVERSATION_OUTPUT),
+                reasoning=chain_data.get(CHAIN_KEY_REASONING),
+                chat_history=chain_data.get(CHAIN_MEMORY_KEY_CHAT_HISTORY),
+                suggested_msg=chain_data.get(CHAIN_KEY_SUGGESTED_MSG),
             )
-            chain_data[CHAIN_KEY_CHAT_ID] = chat_id
+
+            title = None
+            if (
+                chain_data.get(CHAIN_KEY_CONVERSATION_IS_NEW)
+                and chain_data.get(CHAIN_KEY_CONVERSATION_ACTOR) is not None
+            ):
+                title = chain_data[CHAIN_KEY_CONVERSATION_ACTOR].title
+            self.chat_memory.update_conversation(
+                user_id=user_id,
+                conversation_id=chain_data.get(CHAIN_KEY_CHAT_ID),
+                title=title,
+                state=ConversationState.FINISHED.value,
+            )
             ChainLogger.info(
-                f"Chat history saved. Conversation Id: {chat_id}", chain_data
+                f"Chat history saved. Conversation Id: {chain_data.get(CHAIN_KEY_CHAT_ID)} "
+                f"(Message Id: {chain_data.get(CHAIN_KEY_CONVERSATION_LAST_MSG_ID)})",
+                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
             )
         except Exception as e:
             ChainLogger.warning(
-                f"Unable to save chat history. Exception: {e}", chain_data
+                f"Unable to save chat history. Conversation Id: {chain_data.get(CHAIN_KEY_CHAT_ID)}. Exception: {e}",
+                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
             )
+            (
+                chain_data["halt_execution"](ErrorCode.CONVERSATION_ERROR)
+                if "halt_execution" in chain_data
+                else None
+            )
+
         return chain_data
+
+    def _extract_memory_output(self, chain_data: dict) -> str:
+        """
+        Define what is the memory output to be saved
+
+        :param chain_data: The chain data dictionary.
+        :return: The memory output to be saved.
+        """
+
+        if (chain_data.get(CHAIN_KEY_CONVERSATION_OUTPUT)).get(CHAIN_KEY_CONTENT):
+            return f"{chain_data[CHAIN_KEY_CONVERSATION_OUTPUT][CHAIN_KEY_CONTENT]}"
+
+        return "No response."
+
+    def _load_or_create_conversation(self, chain_data: dict):
+        """
+        Load or create a new conversation.
+
+        :param chain_data: The chain data dictionary.
+        :return: Create a new conversation or load all the chat messages from the conversation.
+        """
+        output = self.running_chain_output(chain_data)
+        create_conversation = CreateConversation(
+            input_msg=chain_data[CHAIN_KEY_CONVERSATION_INPUT].model_dump(
+                exclude_none=True, exclude_unset=True
+            ),
+            output_msg=output.model_dump(exclude_none=True, exclude_unset=True),
+            reasoning=chain_data[CHAIN_KEY_REASONING],
+            title=chain_data[CHAIN_KEY_INPUT_QUESTION],
+            state=ConversationState.RUNNING.value,
+            collection_name=(
+                chain_data[CHAIN_KEY_INPUT_COLLECTION]
+                if CHAIN_KEY_INPUT_COLLECTION in chain_data
+                else None
+            ),
+            interaction_field=(
+                chain_data[CHAIN_KEY_INTERACTION_FIELD]
+                if CHAIN_KEY_INTERACTION_FIELD in chain_data
+                else None
+            ),
+            application=(
+                chain_data[CHAIN_KEY_APPLICATION]
+                if CHAIN_KEY_APPLICATION in chain_data
+                else None
+            ),
+            suggested_msg=list(),
+        )
+
+        conversation_memory = self.chat_memory.create_conversation_or_append_message(
+            user_id=extract_uid(chain_data.get(CHAIN_KEY_GRAPH_DATA)),
+            conversation_id=(
+                chain_data.get(CHAIN_KEY_CHAT_ID)
+                if CHAIN_KEY_CHAT_ID in chain_data
+                else None
+            ),
+            conversation_msg_id=(
+                chain_data.get(CHAIN_KEY_CHAT_MESSAGE_ID)
+                if CHAIN_KEY_CHAT_MESSAGE_ID in chain_data
+                else None
+            ),
+            create_conversation=create_conversation,
+        )
+        chain_data[CHAIN_KEY_CHAT_ID] = conversation_memory.conversation_id
+        chain_data[CHAIN_KEY_CONVERSATION_LAST_MSG_ID] = (
+            conversation_memory.conversation_last_msg_id
+        )
+        chain_data[CHAIN_KEY_CONVERSATION_IS_NEW] = (
+            conversation_memory.conversation_is_new
+        )
+        chain_data[CHAIN_MEMORY_KEY_CHAT_HISTORY] = conversation_memory.chat_history
+        if conversation_memory.conversation_is_new:
+            ChainLogger.info(
+                f"Successfully created new conversation '{chain_data[CHAIN_KEY_CHAT_ID]}' "
+                f"(Message Id: {chain_data[CHAIN_KEY_CONVERSATION_LAST_MSG_ID]}).",
+                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+            )
+        else:
+            ChainLogger.info(
+                f"Successfully loaded {len(chain_data[CHAIN_MEMORY_KEY_CHAT_HISTORY])} chat messages from "
+                f"conversation '{chain_data[CHAIN_KEY_CHAT_ID]}' (Message Id: {chain_data[CHAIN_KEY_CONVERSATION_LAST_MSG_ID]}).",
+                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+            )
+
+    def _load_conversation(self, chain_data: dict):
+        """
+        Load a conversation from the memory.
+
+        :param chain_data: The chain data dictionary.
+        :return: Load all the chat messages from the conversation.
+        """
+        conversation_memory = None
+        if chain_data.get(CHAIN_KEY_CHAT_ID) is not None:
+            conversation_memory = self.sql_chain.chat_memory.load_conversation(
+                user_id=extract_uid(chain_data.get(CHAIN_KEY_GRAPH_DATA)),
+                conversation_id=chain_data.get(CHAIN_KEY_CHAT_ID),
+                conversation_msg_id=chain_data.get(CHAIN_KEY_CHAT_MESSAGE_ID),
+            )
+
+        if conversation_memory is None:
+            chain_data[CHAIN_KEY_CONVERSATION_LAST_MSG_ID] = None
+            chain_data[CHAIN_KEY_CONVERSATION_IS_NEW] = True
+            chain_data[CHAIN_MEMORY_KEY_CHAT_HISTORY] = []
+            ChainLogger.info(
+                f"Conversation '{chain_data[CHAIN_KEY_CHAT_ID]}' (Message Id: {chain_data[CHAIN_KEY_CONVERSATION_LAST_MSG_ID]}) not found. "
+                "A new conversation won't be created because 'save_conversation' parameter is set to False.",
+                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+            )
+        else:
+            chain_data[CHAIN_KEY_CONVERSATION_LAST_MSG_ID] = (
+                conversation_memory.conversation_last_msg_id
+            )
+            chain_data[CHAIN_KEY_CONVERSATION_IS_NEW] = (
+                conversation_memory.conversation_is_new
+            )
+            chain_data[CHAIN_MEMORY_KEY_CHAT_HISTORY] = conversation_memory.chat_history
+            ChainLogger.info(
+                f"Successfully loaded {len(chain_data[CHAIN_MEMORY_KEY_CHAT_HISTORY])} chat messages from "
+                f"conversation '{chain_data[CHAIN_KEY_CHAT_ID]}' (Message Id: {chain_data[CHAIN_KEY_CONVERSATION_LAST_MSG_ID]}).",
+                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+            )
 
     def chain(self) -> Runnable:
         """
@@ -237,9 +455,9 @@ class MemoryChain(BaseGenAiChain, ABC):
             :param chain_data: The chain data dictionary.
             :return: The updated chain data dictionary with the model's response.
             """
-            chain_data[
-                CHAIN_KEY_CONVERSATION_INPUT
-            ] = MemoryExampleMessageInput.model_validate(chain_data)
+            chain_data[CHAIN_KEY_CONVERSATION_INPUT] = (
+                MemoryExampleMessageInput.model_validate(chain_data)
+            )
             travel_agent_chain = self.prompt | self.model
             chain_output = {
                 "content_type": ContentType.MESSAGE,
@@ -248,11 +466,33 @@ class MemoryChain(BaseGenAiChain, ABC):
             chain_data[CHAIN_KEY_CONVERSATION_OUTPUT] = chain_output
             return chain_data
 
+        @chain
+        def _extract_genai_auth(chain_data: dict, config: RunnableConfig):
+            """
+            Method to extract GenAI authentication from the chain data and config.
+
+            :param chain_data: The data passed through the chain.
+            :param config: The configuration for the runnable.
+            :return: The chain data with the GenAI authentication added.
+            """
+
+            auth = GenAiAuthRunnable().invoke(chain_data, config)
+            if not isinstance(auth, GenAiAuth):
+                raise AssertionError(
+                    f"Genai auth not found or invalid auth data in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
+                )
+            chain_data[CHAIN_KEY_GENAI_AUTH] = auth
+            if auth.request_id is not None:
+                chain_data[CHAIN_KEY_REQUEST_ID] = auth.request_id
+            chain_data[CHAIN_KEY_GRAPH_DATA] = GraphData(**chain_data)
+
+            return chain_data
+
         chat_memory_chain = (
             # the runnable_extract_genai_auth is used to extract the auth
             # information from the metadata which is used by the load_memory method
-            runnable_extract_genai_auth()
-            | RunnableLambda(self.create_short_memory_id)
+            _extract_genai_auth
+            | RunnableLambda(self.create_short_memory_id_and_conversation_output)
             | RunnableLambda(self.load_and_include_chat_history)
             | _plan_trip_to_destination
             | self.save_and_include_chat_history
@@ -260,4 +500,10 @@ class MemoryChain(BaseGenAiChain, ABC):
         return chat_memory_chain
 
     def chain_params(self) -> GenAiChainParams:
+        """
+        Define the chain parameters.
+
+        :return: The chain parameters.
+        """
+
         return GenAiChainParams(audit_input_fields=["*"], audit_output_fields=["*"])

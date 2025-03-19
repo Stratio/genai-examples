@@ -1,5 +1,5 @@
 """
-© 2024 Stratio Big Data Inc., Sucursal en España. All rights reserved.
+© 2025 Stratio Big Data Inc., Sucursal en España. All rights reserved.
 
 This software – including all its source code – contains proprietary
 information of Stratio Big Data Inc., Sucursal en España and
@@ -8,20 +8,20 @@ otherwise made available, licensed or sublicensed to third parties;
 nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
-from typing import Type, List, Union
+
+from typing import List, Type, Union
 
 from genai_core.actors.base import ActorInput
 from genai_core.actors.gateway_actor import GatewayActor
 from genai_core.constants.constants import CHAIN_KEY_USER_REQUEST
 from langchain_core.messages import BaseMessage
-
 from langchain_core.prompts.chat import BaseMessagePromptTemplate
 from pydantic import BaseModel
 
 from ..constants.constants import (
+    CHAIN_KEY_USER_NAME,
     SCENARIO_INPUT_MSG,
     USER_REQUEST_EXPLANATION,
-    CHAIN_KEY_USER_NAME,
 )
 
 # This block represents the instructions for the given actor.
@@ -80,8 +80,8 @@ INPUT_TEMPLATE = f"""# USER REQUEST START #
 class BasicExampleActorOutput(BaseModel):
     """
     This object represents the output of the actor.
-    The actor should return a riddle that answers the user's request.
-    an explanation of the user's request and a message explaining the riddle.
+    The actor should return a riddle that answers the user's request
+    and an explanation of the user's request and a message explaining the riddle.
 
     Attributes:
         user_request_explanation (str): Explanation of the user's request.

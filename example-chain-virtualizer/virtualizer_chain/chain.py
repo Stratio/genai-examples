@@ -1,5 +1,5 @@
 """
-© 2024 Stratio Big Data Inc., Sucursal en España. All rights reserved.
+© 2025 Stratio Big Data Inc., Sucursal en España. All rights reserved.
 
 This software – including all its source code – contains proprietary
 information of Stratio Big Data Inc., Sucursal en España and
@@ -8,20 +8,30 @@ otherwise made available, licensed or sublicensed to third parties;
 nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
+
 import os
-from typing import Tuple
+from typing import Optional, Tuple
 
 from genai_core.chain.base import BaseGenAiChain
-from genai_core.logger.logger import log
 from genai_core.clients.vault.vault_client import VaultClient
-from genai_core.constants.constants import ENV_VAR_GENAI_API_SERVICE_NAME
-from genai_core.helpers.chain_helpers import extract_uid
-from genai_core.runnables.common_runnables import runnable_extract_genai_auth
-from genai_core.services.virtualizer.virtualizer_service_helper import (
-    VirtualizerServiceHelper,
-    VirtualizerService,
+from genai_core.constants.constants import (
+    CHAIN_KEY_GENAI_AUTH,
+    ENV_VAR_GENAI_API_SERVICE_NAME,
 )
-from langchain_core.runnables import Runnable, RunnableLambda
+from genai_core.graph.graph_data import GraphData
+from genai_core.helpers.chain_helpers import extract_uid
+from genai_core.logger.logger import log
+from genai_core.runnables.genai_auth import GenAiAuth, GenAiAuthRunnable
+from genai_core.services.virtualizer.virtualizer_service_helper import (
+    VirtualizerService,
+    VirtualizerServiceHelper,
+)
+from langchain_core.runnables import Runnable, RunnableLambda, chain
+from langchain_core.runnables.config import RunnableConfig
+
+# Basic Chain specific keys
+CHAIN_KEY_GRAPH_DATA = "graph_data"
+CHAIN_KEY_REQUEST_ID = "request_id"
 
 
 # You should define your chains in a class inheriting from the BaseGenAiChain.
@@ -36,10 +46,23 @@ class VirtualizerChain(BaseGenAiChain):
     # request body, "chain_config" -> "chain_params" -> {json with several keys} are the parameters
     # that will be passed here to the constructor. For local development, these parameters are
     # passed in the main.py script (which is the script start the chain for local development)
+
     def __init__(self, virtualizer_host: str, virtualizer_port: int):
         log.info("initiating chain")
         self.virtualizer = self._init_virtualizer(virtualizer_host, virtualizer_port)
         log.info("chain ready")
+
+    @staticmethod
+    def extract_uid(chain_data: dict) -> Optional[str]:
+        """
+        Given the chain data, extracts the user id.
+        """
+        auth = chain_data.get(CHAIN_KEY_GENAI_AUTH)
+        if not isinstance(auth, GenAiAuth):
+            raise AssertionError(
+                f"Genai auth not found or invalid auth data in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
+            )
+        return auth.user_id_impersonated if auth.user_id_impersonated else auth.user_id
 
     # This should return a Langchain Runnable with an invoke method. When invoking the chain,
     # the "input" field of the request body will be passed to the invoke method of this Runnable
@@ -50,7 +73,29 @@ class VirtualizerChain(BaseGenAiChain):
         # the uid of the nominal user, and GenAI Core provides some Runnables to add this info
         # to the chain data. When developing locally, you should add this metadata manually to the
         # invoke request body.
-        return runnable_extract_genai_auth() | RunnableLambda(self._execute_query)
+        @chain
+        def _extract_genai_auth(chain_data: dict, config: RunnableConfig):
+            """
+            Method to extract GenAI authentication from the chain data and config.
+
+            :param chain_data: The data passed through the chain.
+            :param config: The configuration for the runnable.
+            :return: The chain data with the GenAI authentication added.
+            """
+
+            auth = GenAiAuthRunnable().invoke(chain_data, config)
+            if not isinstance(auth, GenAiAuth):
+                raise AssertionError(
+                    f"Genai auth not found or invalid auth data in chain_data key '{CHAIN_KEY_GENAI_AUTH}'"
+                )
+            chain_data[CHAIN_KEY_GENAI_AUTH] = auth
+            if auth.request_id is not None:
+                chain_data[CHAIN_KEY_REQUEST_ID] = auth.request_id
+            chain_data[CHAIN_KEY_GRAPH_DATA] = GraphData(**chain_data)
+
+            return chain_data
+
+        return _extract_genai_auth | RunnableLambda(self._execute_query)
 
     def _execute_query(self, chain_data: dict) -> dict:
         # Note that you should always impersonate the nominal user so that they can only see data for which
@@ -58,7 +103,7 @@ class VirtualizerChain(BaseGenAiChain):
         # from extra metadata that GenAI API adds to the invoke body, and we can use GenAI Core helper
         # methods to extract the userID from that extra info in the chain_data
         query = chain_data["query"]
-        user = extract_uid(chain_data)
+        user = extract_uid(chain_data.get(CHAIN_KEY_GRAPH_DATA))
 
         # modify the query so that it is impersonated
         query = f"EXECUTE AS {user} {query}"

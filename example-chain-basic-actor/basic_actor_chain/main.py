@@ -1,5 +1,5 @@
 """
-© 2024 Stratio Big Data Inc., Sucursal en España. All rights reserved.
+© 2025 Stratio Big Data Inc., Sucursal en España. All rights reserved.
 
 This software – including all its source code – contains proprietary
 information of Stratio Big Data Inc., Sucursal en España and
@@ -8,6 +8,7 @@ otherwise made available, licensed or sublicensed to third parties;
 nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
+
 from genai_core.server.server import GenAiServer
 
 
@@ -52,7 +53,7 @@ if __name__ == "__main__":
     # gateway_endpoint: The ID of the endpoint in the GenAI Gateway pointing to the desired model.
     chain_config = {
         # Change the endpoint according to the model you will use
-        "gateway_endpoint": "QA-openai-chat-gpt-4o-mini",
+        "gateway_endpoint": "openai-chat-o3-mini",
         "llm_timeout": 30,
     }
     main(chain_config)

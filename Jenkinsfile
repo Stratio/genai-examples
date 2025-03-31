@@ -5,7 +5,7 @@ hose {
     DEVTIMEOUT = 60
     RELEASETIMEOUT = 60
     BUILDTOOL = 'make'
-    BUILDTOOL_IMAGE = 'stratio/python-builder-3.9:1.0.0'
+    BUILDTOOL_IMAGE = 'stratio/python-builder-3.9:1.1.0'
     BUILDTOOL_CPU_LIMIT = '8'
     BUILDTOOL_CPU_REQUEST = '2'
     PYTHON_MODULE = true

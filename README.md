@@ -315,6 +315,14 @@ $ poetry build
 
 You will find a `tar.gz` in the `dist` folder that you can use deploy the package and register the chain in *Stratio GenAI API*.
 
+### Configure the Git Hooks
+
+Since formatting the code and sorting the imports is mandatory, you can automate the process installing a Git Hook.
+
+* Execute `./bin/install-hooks.sh`
+
+Each time you commit the changes the files will be formatted.
+
 ### Deploying your chain
 
 To deploy your chain in *Stratio GenAI API* you need to upload the chain package we built in the previous section to the API and register the chain.

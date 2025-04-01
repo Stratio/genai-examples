@@ -17,6 +17,9 @@ while IFS= read -r module; do
     echo "Checking code format for module $module ..."
     poetry run black --check ./
 
+    echo "Checking code imports for module $module ..."
+    poetry run isort --check-only ./
+
     echo "Running lint for module $module ..."
     poetry run pylint './**/*.py' --msg-template="$module/{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" > pylint-report.txt || true
 

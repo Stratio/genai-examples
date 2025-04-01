@@ -18,7 +18,7 @@ while IFS= read -r module; do
         exit 1
     fi
     echo "Updating poetry.lock in module $module ..."
-    poetry lock    poetry lock --no-update
+    poetry lock
     echo "Installing packages for module $module ..."
     poetry install
 done < $MODULES_FILE_NAME

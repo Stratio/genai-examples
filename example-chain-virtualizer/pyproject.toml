@@ -19,14 +19,15 @@ boto3 = "1.35.74"
 profile = "black"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "8.3.4"
+pytest = "8.3.5"
 pytest-asyncio = "0.25.3"
 pytest-mock = "3.14.0"
 pytest-cov = "6.0.0"
-pylint = "3.3.4"
+pytest-alembic = "0.11.1"
+pylint = "3.3.5"
 pylintfileheader = "1.0.0"
-black = "^24.10.0"
-isort = "^5.13.2"
+black = "25.01.0"
+isort = "6.0.1"
 mypy = "1.15.0"
 
 [tool.pytest.ini_options]

@@ -12,7 +12,7 @@ while IFS= read -r module; do
     cd "$BASEDIR"/"$module"
     echo "Cleaning module $module ..."
     rm -rf dist
-    rm -f requirements.txt
+    rm -rf dist_download
 done < $MODULES_FILE_NAME
 
 find . -type f -name 'tmp*' -delete

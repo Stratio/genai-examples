@@ -1,35 +1,35 @@
 [tool.poetry]
 name = "opensearch-chain"
-version = "0.4.0a0"
+version = "0.5.0a0"
 description = "A simple chain that connects to Opensearch service and processes the result of a search"
 authors = []
-include = ["requirements.txt"]
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.13"
-genai-core = "0.4.0"
+python = "^3.9"
+genai-core = "0.5.0"
 # already included in genai-core but we set a fixed version
-langchain = "0.3.19"
-langchain-community = "0.3.17"
-langchain-openai = "0.3.6"
-langchain-aws = "0.2.12"
-boto3 = "1.35.74"
+langchain = "0.3.25"
+langchain-community = "0.3.24"
+langchain-openai = "0.3.18"
+langchain-aws = "0.2.23"
 opensearch-py = "2.7.1"
-
-[tool.isort]
-profile = "black"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "8.3.5"
-pytest-asyncio = "0.25.3"
-pytest-mock = "3.14.0"
-pytest-cov = "6.0.0"
-pytest-alembic = "0.11.1"
-pylint = "3.3.5"
+pytest-asyncio = "1.0.0"
+pytest-mock = "3.14.1"
+pytest-cov = "6.1.1"
+pylint = "3.3.7"
 pylintfileheader = "1.0.0"
 black = "25.01.0"
 isort = "6.0.1"
 mypy = "1.15.0"
+
+[tool.poetry.scripts]
+build-fat-package = 'genai_core.builder.builder:main'
+
+[tool.isort]
+profile = "black"
 
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"

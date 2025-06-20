@@ -11,7 +11,6 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 
 import uuid
 from abc import ABC
-from typing import Optional
 
 from genai_core.chain.base import BaseGenAiChain, GenAiChainParams
 from genai_core.chat_models.stratio_chat import StratioGenAIGatewayChat
@@ -199,9 +198,7 @@ class MemoryChain(BaseGenAiChain, ABC):
         :return: The updated chain data dictionary with chat history included.
         """
 
-        ChainLogger.debug(
-            "Loading chat memory", graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA)
-        )
+        ChainLogger.debug("Loading chat memory", chain_data.get(CHAIN_KEY_GRAPH_DATA))
 
         chain_data[CHAIN_KEY_REASONING] = []
         if chain_data.get(CHAIN_KEY_SAVE_CONVERSATION) is None:
@@ -209,7 +206,7 @@ class MemoryChain(BaseGenAiChain, ABC):
         ChainLogger.debug(
             f"Loading chat history. Conversation Id: {chain_data.get(CHAIN_KEY_CHAT_ID)} Message Id: {chain_data.get(CHAIN_KEY_CHAT_MESSAGE_ID)} "
             f"Save Conversation: {chain_data.get(CHAIN_KEY_SAVE_CONVERSATION)}",
-            graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+            chain_data.get(CHAIN_KEY_GRAPH_DATA),
         )
 
         try:
@@ -221,7 +218,7 @@ class MemoryChain(BaseGenAiChain, ABC):
             ChainLogger.warning(
                 f"Unable to load chat history. Conversation Id {chain_data.get(CHAIN_KEY_CHAT_ID)} "
                 f"Message Id: {chain_data.get(CHAIN_KEY_CHAT_MESSAGE_ID)}. Exception: {e}",
-                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+                chain_data.get(CHAIN_KEY_GRAPH_DATA),
             )
             chain_data[CHAIN_KEY_CHAT_ID] = None
             (
@@ -260,14 +257,14 @@ class MemoryChain(BaseGenAiChain, ABC):
             # this happens when the parameter save_conversation is false or when the chain input is invalid
             ChainLogger.info(
                 "Skipping saving chat history.",
-                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+                chain_data.get(CHAIN_KEY_GRAPH_DATA),
             )
             return chain_data
 
         try:
             ChainLogger.debug(
                 f"Saving chat history... Conversation Id {chain_data.get(CHAIN_KEY_CHAT_ID)}",
-                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+                chain_data.get(CHAIN_KEY_GRAPH_DATA),
             )
 
             chain_data[CHAIN_KEY_MEMORY_OUTPUT] = self._extract_memory_output(
@@ -288,6 +285,7 @@ class MemoryChain(BaseGenAiChain, ABC):
                 reasoning=chain_data.get(CHAIN_KEY_REASONING),
                 chat_history=chain_data.get(CHAIN_MEMORY_KEY_CHAT_HISTORY),
                 suggested_msg=chain_data.get(CHAIN_KEY_SUGGESTED_MSG),
+                chain_type="sql",
             )
 
             title = None
@@ -305,12 +303,12 @@ class MemoryChain(BaseGenAiChain, ABC):
             ChainLogger.info(
                 f"Chat history saved. Conversation Id: {chain_data.get(CHAIN_KEY_CHAT_ID)} "
                 f"(Message Id: {chain_data.get(CHAIN_KEY_CONVERSATION_LAST_MSG_ID)})",
-                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+                chain_data.get(CHAIN_KEY_GRAPH_DATA),
             )
         except Exception as e:
             ChainLogger.warning(
                 f"Unable to save chat history. Conversation Id: {chain_data.get(CHAIN_KEY_CHAT_ID)}. Exception: {e}",
-                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+                chain_data.get(CHAIN_KEY_GRAPH_DATA),
             )
             (
                 chain_data["halt_execution"](ErrorCode.CONVERSATION_ERROR)
@@ -365,6 +363,7 @@ class MemoryChain(BaseGenAiChain, ABC):
                 else None
             ),
             suggested_msg=list(),
+            chain_type="sql",
         )
 
         conversation_memory = self.chat_memory.create_conversation_or_append_message(
@@ -393,13 +392,13 @@ class MemoryChain(BaseGenAiChain, ABC):
             ChainLogger.info(
                 f"Successfully created new conversation '{chain_data[CHAIN_KEY_CHAT_ID]}' "
                 f"(Message Id: {chain_data[CHAIN_KEY_CONVERSATION_LAST_MSG_ID]}).",
-                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+                chain_data.get(CHAIN_KEY_GRAPH_DATA),
             )
         else:
             ChainLogger.info(
                 f"Successfully loaded {len(chain_data[CHAIN_MEMORY_KEY_CHAT_HISTORY])} chat messages from "
                 f"conversation '{chain_data[CHAIN_KEY_CHAT_ID]}' (Message Id: {chain_data[CHAIN_KEY_CONVERSATION_LAST_MSG_ID]}).",
-                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+                chain_data.get(CHAIN_KEY_GRAPH_DATA),
             )
 
     def _load_conversation(self, chain_data: dict):
@@ -424,7 +423,7 @@ class MemoryChain(BaseGenAiChain, ABC):
             ChainLogger.info(
                 f"Conversation '{chain_data[CHAIN_KEY_CHAT_ID]}' (Message Id: {chain_data[CHAIN_KEY_CONVERSATION_LAST_MSG_ID]}) not found. "
                 "A new conversation won't be created because 'save_conversation' parameter is set to False.",
-                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+                chain_data.get(CHAIN_KEY_GRAPH_DATA),
             )
         else:
             chain_data[CHAIN_KEY_CONVERSATION_LAST_MSG_ID] = (
@@ -437,7 +436,7 @@ class MemoryChain(BaseGenAiChain, ABC):
             ChainLogger.info(
                 f"Successfully loaded {len(chain_data[CHAIN_MEMORY_KEY_CHAT_HISTORY])} chat messages from "
                 f"conversation '{chain_data[CHAIN_KEY_CHAT_ID]}' (Message Id: {chain_data[CHAIN_KEY_CONVERSATION_LAST_MSG_ID]}).",
-                graph_data=chain_data.get(CHAIN_KEY_GRAPH_DATA),
+                chain_data.get(CHAIN_KEY_GRAPH_DATA),
             )
 
     def chain(self) -> Runnable:

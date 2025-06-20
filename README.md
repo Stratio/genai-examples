@@ -2,10 +2,11 @@
 
 This repository is intended for developers who want to create GenAI chains using the *Stratio GenAI Core* framework so the chains can be easily be deployed in *Stratio GenAI API*.
 
-| Git branch | GenAI Core version | 
-|------------|--------------------|
-| main       | 0.4.0              |
-| branch-0.3 | 0.3.4              |
+| Git branch                                                              | GenAI Core version | 
+|-------------------------------------------------------------------------|--------------------|
+| main                                                                    | 0.5.0              |
+| [branch-0.4](https://github.com/Stratio/genai-examples/tree/branch-0.4) | 0.4.0              |
+| [branch-0.3](https://github.com/Stratio/genai-examples/tree/branch-0.3) | 0.3.4              |
 
 This repository provides some simple examples of GenAI chains focused on a specific task.
 There are four basic chains that you can use as a starting point to create your own chains:
@@ -20,7 +21,7 @@ Please check the readme of each chain for more information.
 Stratio GenAI chains are built with [Poetry](https://python-poetry.org/docs/#installation), so in order to develop a chain you need to make sure you have the following tools in your machine:
 
 * [Python](https://www.python.org/) >= 3.9
-* [Poetry](https://python-poetry.org/docs/#installing-with-the-official-installer). >= 2.0 (We recommend to use the "official installer method".)
+* [Poetry](https://python-poetry.org/docs/#installing-with-the-official-installer) >= 2.1 (We recommend to use the "official installer method".)
 * A Python editor of you choice, like [PyCharm](https://www.jetbrains.com/pycharm/) or [Visual Studio Code](https://code.visualstudio.com/)
 
 ## Quick start guide (TLDR)
@@ -307,7 +308,19 @@ Run the `main.py` file again. You will see the logs in the PyCharm console, and 
 
 ### Building your chain
 
-Once you have finished developing your chain you can build it with:
+Once you have finished developing your chain, you can build the package.
+
+*Stratio GenAI API* supports two kinds of packages:
+
+* FAT package: archive with `tar.gz` format that includes the chain source code and all its dependencies. It can be installed in offline environments.
+* Source package: archive with `tar.gz` format that includes the chain source code. It requires access to a PyPI repository to download the dependencies during installation.
+
+To generate the FAT package, which includes all dependencies, run this command in the terminal:
+
+* Execute `poetry run build-fat-package`
+* You can find the configuration for this scrip [here](https://github.com/Stratio/genai-core/blob/branch-0.5/genai-core/genai_core/builder/builder.py#L27).
+
+To generate the source package (deprecated):
 
 ```
 $ poetry build
@@ -378,6 +391,7 @@ curl -X 'POST' \
 * Execute only unit test: `poetry run pytest tests/unit`
 * Execute only integration test: `poetry run pytest tests/integration`
 * Format the code execute `poetry run black ./`
+* Sort the imports in the code execute `poetry run isort ./`
 * Lint the code execute `poetry run pylint './**/'`
 * Check the Python's types execute `poetry run mypy ./`
 

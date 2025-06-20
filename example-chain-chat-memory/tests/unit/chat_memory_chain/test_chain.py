@@ -16,11 +16,11 @@ from genai_core.constants.constants import (
     CHAIN_KEY_CHAT_ID,
     CHAIN_MEMORY_KEY_CHAT_HISTORY,
 )
-from genai_core.memory.stratio_conversation_memory import (
-    ConversationMemoryOutput,
-    StratioConversationMemory,
+from genai_core.memory.stratio_conversation_memory import StratioConversationMemory
+from genai_core.test.mock_helper import (
+    mock_gateway_chat,
+    mock_init_stratio_gateway_openai,
 )
-from genai_core.test.mock_helper import mock_gateway_chat, mock_init_stratio_gateway
 from langchain_core.messages import AIMessage, HumanMessage
 
 from chat_memory_chain.chain import MemoryChain
@@ -64,7 +64,7 @@ MOCK_MODEL_MEMORY_RESPONSE = (
 
 @pytest.fixture
 def mock_chat(mocker):
-    mock_init_stratio_gateway(mocker)
+    mock_init_stratio_gateway_openai(mocker)
     mocker.patch(
         "genai_core.chat_models.stratio_chat.GatewayClient.get_endpoint_config",
         return_value={

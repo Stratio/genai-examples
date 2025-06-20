@@ -17,6 +17,8 @@ while IFS= read -r module; do
         echo "Poetry version >= 2.0 is required!"
         exit 1
     fi
+    echo "Cleaning stratio-staging cache in module $module ..."
+    poetry cache clear stratio-staging --all --no-interaction
     echo "Updating poetry.lock in module $module ..."
     poetry lock
     echo "Installing packages for module $module ..."

@@ -14,6 +14,7 @@ genai-env.sh
 # Python
 __pycache__/
 */dist/
+*/dist_download/
 *.cert
 *.key
 **/scratches

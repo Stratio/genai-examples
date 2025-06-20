@@ -6,7 +6,7 @@ This is an example chain to show how to run queries in Virtualizer from a chain.
 
 To set up the chain locally, follow the steps in the [main README of this repository](../README.md). Here is a summary of the steps:
 
-1. Make sure you have Python >= 3.9 and Poetry >= 2.0 installed.
+1. Make sure you have Python >= 3.9 and Poetry >= 2.1 installed.
 
 2. Edit the `pyproject.toml` and change the URL of the `stratio-releases` repository. You should use the URL of the *Stratio GenAI Developer Proxy* Load Balancer including path "/service/genai-api/v1/pypi/simple".
 
@@ -78,7 +78,7 @@ To deploy the chain in the Stratio GenAI API, follow the steps in the [main READ
 {
   "chain_id": "virtualizer_chain",
   "chain_config": {
-    "package_id": "virtualizer_chain-0.4.0a0",
+    "package_id": "virtualizer_chain-0.5.0a0",
     "chain_module": "virtualizer_chain.chain",
     "chain_class": "VirtualizerChain",
     "chain_params": {

@@ -10,6 +10,8 @@ fi
 
 while IFS= read -r module; do
     cd "$BASEDIR"/"$module"
+    export POETRY_VIRTUALENVS_IN_PROJECT=true
+    export POETRY_CACHE_DIR="$BASEDIR/.cache/poetry"
 
     echo "Installing test dependencies for module $module ..."
     poetry install

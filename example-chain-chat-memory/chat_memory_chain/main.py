@@ -86,6 +86,6 @@ if __name__ == "__main__":
     # - GENAI_GATEWAY_CA_CERTS=/path/to/certs/ca-cert.crt
     chain_config = {
         # Change the endpoint according to the model you will use
-        "gateway_endpoint": "openai-chat-o3-mini",
+        "gateway_endpoint": "openai-chat-o4-mini",
     }
     main(chain_config)

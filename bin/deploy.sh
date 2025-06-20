@@ -32,10 +32,12 @@ fi
 
 while IFS= read -r module; do
     cd "$BASEDIR"/"$module"
-    poetry config repositories.nexus "${NEXUS_PYPI_URL}/${NEXUS_PYPI_REPOSITORY}/"
-    poetry config http-basic.nexus "${USERNAME}" "${NEXUSPASS}"
+    export POETRY_VIRTUALENVS_IN_PROJECT=true
+    export POETRY_CACHE_DIR="$BASEDIR/.cache/poetry"
 
     echo "Publishing package for module $module in ${NEXUS_PYPI_URL}/${NEXUS_PYPI_REPOSITORY}/"
+    poetry config repositories.nexus "${NEXUS_PYPI_URL}/${NEXUS_PYPI_REPOSITORY}/"
+    poetry config http-basic.nexus "${USERNAME}" "${NEXUSPASS}"
     poetry publish -r nexus
     echo "Package available in ${NEXUS_PYPI_BROWSE_URL}:${NEXUS_PYPI_REPOSITORY}:${module}%2F${VERSION_PY}"
 done < $MODULES_FILE_NAME

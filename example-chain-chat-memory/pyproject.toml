@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "chat-memory-chain"
-version = "0.5.0a0"
+version = "0.5.1a0"
 description = "A simple chain that permits to store and retrieve conversations in memory"
 authors = []
 
 [tool.poetry.dependencies]
 python = "^3.9"
-genai-core = "0.5.0"
+genai-core = "0.5.1"
 # already included in genai-core but we set a fixed version
 langchain = "0.3.25"
 langchain-community = "0.3.24"

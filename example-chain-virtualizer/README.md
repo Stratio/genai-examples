@@ -78,7 +78,7 @@ To deploy the chain in the Stratio GenAI API, follow the steps in the [main READ
 {
   "chain_id": "virtualizer_chain",
   "chain_config": {
-    "package_id": "virtualizer_chain-0.5.0a0",
+    "package_id": "virtualizer_chain-0.5.1a0",
     "chain_module": "virtualizer_chain.chain",
     "chain_class": "VirtualizerChain",
     "chain_params": {

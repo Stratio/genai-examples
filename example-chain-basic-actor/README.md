@@ -74,11 +74,11 @@ To deploy the chain in the Stratio GenAI API, follow the steps in the [main READ
 {
   "chain_id": "basic_actor_chain",
   "chain_config": {
-    "package_id": "basic_actor_chain-0.5.0a0",
+    "package_id": "basic_actor_chain-0.5.1a0",
     "chain_module": "basic_actor_chain.chain",
     "chain_class": "BasicActorChain",
     "chain_params": {
-      "gateway_endpoint": "openai-chat-o4-mini",
+      "gateway_endpoint": "openai-chat-gpt-4.1-mini",
       "llm_timeout": 60
     }
   }

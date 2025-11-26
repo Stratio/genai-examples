@@ -4,6 +4,7 @@ This repository is intended for developers who want to create GenAI chains using
 
 | Git branch                                                              | GenAI Core version | 
 |-------------------------------------------------------------------------|--------------------|
+| main                                                                    | 0.6.0              |
 | [branch-0.5](https://github.com/Stratio/genai-examples/tree/branch-0.5) | 0.5.1              |
 | [branch-0.4](https://github.com/Stratio/genai-examples/tree/branch-0.4) | 0.4.0              |
 | [branch-0.3](https://github.com/Stratio/genai-examples/tree/branch-0.3) | 0.3.4              |
@@ -20,8 +21,8 @@ Please check the readme of each chain for more information.
 
 Stratio GenAI chains are built with [Poetry](https://python-poetry.org/docs/#installation), so in order to develop a chain you need to make sure you have the following tools in your machine:
 
-* [Python](https://www.python.org/) >= 3.9
-* [Poetry](https://python-poetry.org/docs/#installing-with-the-official-installer) >= 2.1 (We recommend to use the "official installer method".)
+* [Python](https://www.python.org/) >= 3.9 (GenAI-API uses Python 3.12 to deploy the chain)
+* [Poetry](https://python-poetry.org/docs/#installing-with-the-official-installer) >= 2.2 (We recommend to use the "official installer method".)
 * A Python editor of you choice, like [PyCharm](https://www.jetbrains.com/pycharm/) or [Visual Studio Code](https://code.visualstudio.com/)
 
 ## Quick start guide (TLDR)

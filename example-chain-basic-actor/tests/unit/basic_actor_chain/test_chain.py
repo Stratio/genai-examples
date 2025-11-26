@@ -40,7 +40,7 @@ class TestBasicActorChain:
         return BasicExampleActor(gateway_endpoint=GATEWAY_ENDPOINT)
 
     def test_chain(self, actor, mocker):
-        mock_actor(mocker, actor.__class__, [[ACTOR_OUTPUT]])
+        mock_actor(mocker, actor, [[ACTOR_OUTPUT]])
         chain = BasicActorChain(gateway_endpoint=GATEWAY_ENDPOINT, llm_timeout=100)
         chain_dag = chain.chain()
         result = chain_dag.invoke(

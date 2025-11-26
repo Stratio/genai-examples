@@ -103,11 +103,11 @@ To deploy the chain in the Stratio GenAI API, follow the steps in the [main READ
 {
   "chain_id": "chat_memory_chain",
   "chain_config": {
-    "package_id": "chat_memory_chain-0.5.0a0",
+    "package_id": "chat_memory_chain-0.5.1a0",
     "chain_module": "chat_memory_chain.chain",
     "chain_class": "MemoryChain",
     "chain_params": {
-      "gateway_endpoint": "openai-chat-o4-mini"
+      "gateway_endpoint": "openai-chat-gpt-4.1-mini"
     }
   }
 }

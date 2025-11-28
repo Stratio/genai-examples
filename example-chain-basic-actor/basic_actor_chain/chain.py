@@ -9,8 +9,6 @@ nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 
-from abc import ABC
-
 from genai_core.chain.base import BaseGenAiChain
 from genai_core.constants.constants import CHAIN_KEY_GENAI_AUTH
 from genai_core.logger.logger import log
@@ -24,7 +22,7 @@ from .constants.constants import CHAIN_KEY_USER_NAME
 # Here you define your chain, which inherits from the BaseGenAiChain, so you only need to implement
 # the `chain` method. Note that this chain is using a custom basic actor that needs to be instantiated with the gateway endpoint (the LLM model used).
 # the model need to be registered in the Stratio Gateway, and the gateway_endpoint variable is the id of the model in the gateway.
-class BasicActorChain(BaseGenAiChain, ABC):
+class BasicActorChain(BaseGenAiChain):
     # Actor instance of BasicExampleActor, which will be used in the chain
     basic_actor: BasicExampleActor
 

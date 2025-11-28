@@ -1,28 +1,30 @@
 [tool.poetry]
 name = "virtualizer-chain"
-version = "0.5.0a0"
+version = "0.6.0a0"
 description = "A simple chain to show how to connect to virtualizer from a chain"
 authors = []
 
 [tool.poetry.dependencies]
 python = "^3.9"
-genai-core = "0.5.0"
+genai-core = "0.6.0"
 # already included in genai-core but we set a fixed version
-langchain = "0.3.25"
-langchain-community = "0.3.24"
-langchain-openai = "0.3.18"
-langchain-aws = "0.2.23"
+langchain = "0.3.27"
+langchain-community = "0.3.31"
+langchain-openai = "0.3.35"
+langchain-aws = "0.2.35"
+langgraph = "0.4.10"
+langsmith = "0.4.33"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "8.3.5"
-pytest-asyncio = "1.0.0"
-pytest-mock = "3.14.1"
-pytest-cov = "6.1.1"
-pylint = "3.3.7"
+pytest = "8.4.2"
+pytest-asyncio = "1.2.0"
+pytest-mock = "3.15.1"
+pytest-cov = "7.0.0"
+pylint = "3.3.9"
 pylintfileheader = "1.0.0"
-black = "25.01.0"
-isort = "6.0.1"
-mypy = "1.15.0"
+black = "25.11.0"
+isort = "6.1.0"
+mypy = "1.18.2"
 
 [tool.poetry.scripts]
 build-fat-package = 'genai_core.builder.builder:main'

@@ -10,7 +10,6 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 
 import uuid
-from abc import ABC
 
 from genai_core.chain.base import BaseGenAiChain, GenAiChainParams
 from genai_core.chat_models.stratio_chat import StratioGenAIGatewayChat
@@ -57,7 +56,7 @@ class MemoryExampleMessageInput(BaseModel):
     destination: str
 
 
-class MemoryChain(BaseGenAiChain, ABC):
+class MemoryChain(BaseGenAiChain):
     """
     Example of a MemoryChain class that operates as a travel agent to help the user in planning a trip to a destination.
     The history of the chat is stored in a StratioConversationMemory instance.

@@ -18,7 +18,7 @@ from basic_actor_chain.actors.basic_actor import (
 )
 from basic_actor_chain.chain import BasicActorChain
 
-GATEWAY_ENDPOINT = "openai-chat-o4-mini"
+GATEWAY_ENDPOINT = "openai-chat-gpt-4.1-mini"
 
 USER_REQUEST_EXPLANATION = (
     "The user is asking about the location of the Queen of Hearts in Wonderland."
@@ -40,7 +40,7 @@ class TestBasicActorChain:
         return BasicExampleActor(gateway_endpoint=GATEWAY_ENDPOINT)
 
     def test_chain(self, actor, mocker):
-        mock_actor(mocker, actor.__class__, [[ACTOR_OUTPUT]])
+        mock_actor(mocker, actor, [[ACTOR_OUTPUT]])
         chain = BasicActorChain(gateway_endpoint=GATEWAY_ENDPOINT, llm_timeout=100)
         chain_dag = chain.chain()
         result = chain_dag.invoke(

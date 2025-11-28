@@ -9,7 +9,6 @@ nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 
-from abc import ABC
 from typing import Optional
 
 from genai_core.chain.base import BaseGenAiChain
@@ -31,7 +30,7 @@ from opensearch_chain.constants.constants import (
 from opensearch_chain.services.opensearch_service import OpenSearchService
 
 
-class OpenSearchChain(BaseGenAiChain, ABC):
+class OpenSearchChain(BaseGenAiChain):
     """
     Example of a GenAI Chain that interacts with OpenSearch service to obtain and process the result of a search.
 
@@ -69,7 +68,7 @@ class OpenSearchChain(BaseGenAiChain, ABC):
                 client_cert=cert,
                 client_key=key,
             )
-            assert opensearch_service.client.indices.get_alias("*")
+            assert opensearch_service.client.indices.get_alias(index="*")
             log.info(f"Connected with OpenSearch")
         except Exception as error:
             error_msg = f"Unable to init OpenSearch Chain. Unable to validate connection with OpenSearch. Error: {error}"

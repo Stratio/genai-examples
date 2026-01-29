@@ -2,7 +2,7 @@
 
 ## Git branch - [main](https://github.com/Stratio/genai-examples)
 
-* Examples built with genai-core 0.6.0
+* Examples built with genai-core 0.6.1
 
 ## Git branch - [branch-0.5](https://github.com/Stratio/genai-examples/tree/branch-0.5)
 

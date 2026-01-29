@@ -4,7 +4,7 @@ This repository is intended for developers who want to create GenAI chains using
 
 | Git branch                                                              | GenAI Core version | 
 |-------------------------------------------------------------------------|--------------------|
-| main                                                                    | 0.6.0              |
+| main                                                                    | 0.6.1              |
 | [branch-0.5](https://github.com/Stratio/genai-examples/tree/branch-0.5) | 0.5.1              |
 | [branch-0.4](https://github.com/Stratio/genai-examples/tree/branch-0.4) | 0.4.0              |
 | [branch-0.3](https://github.com/Stratio/genai-examples/tree/branch-0.3) | 0.3.4              |

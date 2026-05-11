@@ -68,7 +68,11 @@ class OpenSearchChain(BaseGenAiChain):
                 client_cert=cert,
                 client_key=key,
             )
-            assert opensearch_service.client.indices.get_alias(index="*")
+            connected, error_msg = opensearch_service.test_connection()
+            if not connected:
+                raise RuntimeError(
+                    f"Unable to test connection with {opensearch_url}: {error_msg}"
+                )
             log.info(f"Connected with OpenSearch")
         except Exception as error:
             error_msg = f"Unable to init OpenSearch Chain. Unable to validate connection with OpenSearch. Error: {error}"

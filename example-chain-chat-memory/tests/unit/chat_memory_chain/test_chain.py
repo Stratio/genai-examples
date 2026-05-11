@@ -29,7 +29,7 @@ from chat_memory_chain.constants.constants import (
     CHAIN_KEY_CONVERSATION_LAST_MSG_ID,
 )
 
-GATEWAY_ENDPOINT = "openai-chat"
+GATEWAY_ENDPOINT = "openai-gpt-5.4-mini"
 
 # Mock values for testing
 DESTINATION_MOCK = "Sicily"

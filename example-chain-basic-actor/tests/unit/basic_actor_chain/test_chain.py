@@ -17,7 +17,7 @@ from basic_actor_chain.actors.basic_actor import (
 )
 from basic_actor_chain.chain import BasicActorChain
 
-GATEWAY_ENDPOINT = "openai-chat-gpt-4.1-mini"
+GATEWAY_ENDPOINT = "openai-gpt-5.4-mini"
 
 USER_REQUEST_EXPLANATION = (
     "The user is asking about the location of the Queen of Hearts in Wonderland."

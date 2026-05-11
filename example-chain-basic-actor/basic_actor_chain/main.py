@@ -53,7 +53,7 @@ if __name__ == "__main__":
     # gateway_endpoint: The ID of the model group in Stratio GenAI LiteLLM pointing to the desired model.
     chain_config = {
         # Change the endpoint according to the model you will use
-        "gateway_endpoint": "openai-chat-gpt-4.1-mini",
+        "gateway_endpoint": "openai-gpt-5.4-mini",
         "llm_timeout": 30,
     }
     main(chain_config)

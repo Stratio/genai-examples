@@ -343,11 +343,11 @@ curl -X 'POST' \
   -d '{
       "chain_id": "basic_actor_chain",
       "chain_config": {
-        "package_id": "basic_actor_chain-0.3.4a0",
+        "package_id": "basic_actor_chain-0.7.0a0",
         "chain_module": "basic_actor_chain.chain",
         "chain_class": "BasicActorChain",
         "chain_params": {
-          "gateway_endpoint": "openai-chat",
+          "gateway_endpoint": "openai-gpt-5.4-mini",
           "llm_timeout": 60
         }
       }

@@ -26,16 +26,10 @@ $ poetry lock --no-update
 $ poetry install
 ```
 
-4. Configure the environment variables executing the script `scripts/create_env_file.py`. You will find the environment variables in the files `genai-env.env` and `genai-env.sh` in the `genai-examples/scripts` folder. This chain uses the following environment variables:
+4. Configure the environment variables running the `local-env` Poetry script. You will find the environment variables in the files `.local_env/genai-env.env` and `.local_env/genai-env.sh`.
 
 ```bash
-GENAI_API_SERVICE_NAME=genai-api-test.s000001-genai
-VAULT_LOCAL_CLIENT_CERT=/path/to/certs/user.crt
-VAULT_LOCAL_CLIENT_KEY=/path/to/certs/user_private.key
-VAULT_LOCAL_CA_CERTS=/path/to/certs/ca-cert.crt
-VIRTUALIZER_HOST=genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com
-VIRTUALIZER_PORT=8080
-VIRTUALIZER_BASE_PATH=/service/virtualizer
+poetry run local-env --certs_path /path/to/certs --developer_proxy_url https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080
 ```
 
 Please note that the Virtualizer host, when using the *Stratio GenAI Developer Proxy*, should be configured with the value provided by the *Stratio GenAI Developer Proxy*.

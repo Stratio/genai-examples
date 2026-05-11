@@ -29,7 +29,7 @@ $ poetry install
 4. Configure the environment variables running the `local-env` Poetry script. You will find the environment variables in the files `.local_env/genai-env.env` and `.local_env/genai-env.sh`.
 
 ```bash
-poetry run local-env --certs_path /path/to/certs --developer_proxy_url https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080
+poetry run local-env --certs_path /path/to/certs --developer_proxy_url https://genai.your-tenant.yourdomain.com/genai-developer-proxy
 ```
 
 Please note that the Virtualizer host, when using the *Stratio GenAI Developer Proxy*, should be configured with the value provided by the *Stratio GenAI Developer Proxy*.

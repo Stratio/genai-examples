@@ -30,9 +30,7 @@ Stratio GenAI chains are built with [Poetry](https://python-poetry.org/docs/#ins
 
 ### *Stratio GenAI Developer Proxy*
 
-You need access to *Stratio GenAI Developer Proxy* service. This service allows you to install the *Stratio GenAI Core* dependency and to access the services running in the Development environment from your local machine. The service is installed by Operations team. They will provide you a URL like this `https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080`.
-
-> **WARNING**: Make sure you use the Load Balancer URL, not the KEOS Ingress URL!
+You need access to *Stratio GenAI Developer Proxy* service. This service allows you to install the *Stratio GenAI Core* dependency and to access the services running in the Development environment from your local machine. The service is installed by Operations team. They will provide you a URL like this `https://genai.your-tenant.yourdomain.com/genai-developer-proxy`.
 
 ### User certificate
 
@@ -71,7 +69,7 @@ Execute the following commands to configure the environment variables:
 ```
 $ poetry run local-env \
     --certs_path /path/to/certs \
-    --developer_proxy_url https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080
+    --developer_proxy_url https://genai.your-tenant.yourdomain.com/genai-developer-proxy
 ```
 
 You will find the files `genai-env.env` and `genai-env.sh` in the `.local_env` folder with the environment variables.
@@ -129,7 +127,7 @@ Stratio GenAI chains are intended to run inside *Stratio GenAI API*. In order to
 
 The first and last problems above are solved by the *Stratio GenAI Developer Proxy*, which can be deployed in the development cluster to provide access to the services running inside the cluster, as well as to provide access to the PyPi server inside *Stratio GenAI API* containing the *Stratio GenAI Core* dependency.
 
-Once the service in installed on your development cluster, it should be reachable through a URL like this: `https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080`. Then, under different paths on that server, you can access the different services. For instance, the *Stratio GenAI LiteLLM* would be accessed from your local machine through  `https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-litellm`. All the available services, with their path in *Stratio GenAI Developer Proxy* are listed in the following table:
+Once the service is installed on your development cluster, it should be reachable through a URL like this: `https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080`. Then, under different paths on that server, you can access the different services. For instance, the *Stratio GenAI LiteLLM* would be accessed from your local machine through  `https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080/service/genai-litellm`. All the available services, with their path in *Stratio GenAI Developer Proxy* are listed in the following table:
 | service                  | Developer proxy path                |
 |--------------------------|-------------------------------------|
 | *Stratio GenAI LiteLLM*  | `/service/genai-litellm`            |
@@ -199,7 +197,7 @@ Execute the following command to configure the environment variables:
 ```
 $ poetry run local-env \
     --certs_path /path/to/certs  \
-    --developer_proxy_url https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080
+    --developer_proxy_url https://genai.your-tenant.yourdomain.com/genai-developer-proxy
 ```
 
 You will find the files `genai-env.env` and `genai-env.sh` in the `.local_env` folder with the environment variables.

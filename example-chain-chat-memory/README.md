@@ -29,7 +29,7 @@ $ poetry install
 4. Configure the environment variables running the `local-env` Poetry script. You will find the environment variables in the files `.local_env/genai-env.env` and `.local_env/genai-env.sh`.
 
 ```bash
-poetry run local-env --certs_path /path/to/certs --developer_proxy_url https://genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com:8080
+poetry run local-env --certs_path /path/to/certs --developer_proxy_url https://genai.your-tenant.yourdomain.com/genai-developer-proxy
 ```
 
 5. Run the chain `chat_memory_chain/main.py`. You can do it in the terminal or in PyCharm. You can open the Swagger UI in the URL `http://127.0.0.1:8080/`.

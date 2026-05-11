@@ -129,13 +129,12 @@ def create_env_file(proxy_url, certs, genai_api_host, file_format):
         f.write(build_env_var("GENAI_API_REST_CA_CERTS", ca_cert, file_format))
         f.write(
             build_env_var(
-                "GENAI_GATEWAY_URL", f"{proxy_url}/service/genai-gateway", file_format
+                "GENAI_LITELLM_URL", f"{proxy_url}/service/genai-litellm", file_format
             )
         )
-        f.write(build_env_var("GENAI_GATEWAY_USE_SSL", "true", file_format))
-        f.write(build_env_var("GENAI_GATEWAY_CLIENT_CERT", client_cert, file_format))
-        f.write(build_env_var("GENAI_GATEWAY_CLIENT_KEY", client_key, file_format))
-        f.write(build_env_var("GENAI_GATEWAY_CA_CERTS", ca_cert, file_format))
+        f.write(build_env_var("GENAI_LITELLM_CLIENT_CERT", client_cert, file_format))
+        f.write(build_env_var("GENAI_LITELLM_CLIENT_KEY", client_key, file_format))
+        f.write(build_env_var("GENAI_LITELLM_CA_CERTS", ca_cert, file_format))
         f.write("\n")
         f.write("# NOT AVAILABLE in GenAI-API!\n")
         f.write(build_env_var("VAULT_LOCAL_CLIENT_CERT", client_cert, file_format))

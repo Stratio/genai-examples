@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "chat-memory-chain"
-version = "0.6.0a0"
+version = "0.7.0a0"
 description = "A simple chain that permits to store and retrieve conversations in memory"
 authors = []
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.11"
 genai-core = "0.6.1"
 # already included in genai-core but we set a fixed version
 langchain = "0.3.27"
@@ -52,7 +52,7 @@ omit = [
 ]
 
 [tool.pylint.main]
-py-version = "3.9"
+py-version = "3.11"
 ignore-patterns = ["^\\.#"]
 ignore-paths = [
     "^tests$",

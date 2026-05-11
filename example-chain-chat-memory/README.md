@@ -6,7 +6,7 @@ This is an example of a GenAI chain that allows to remember the previous convers
 
 To set up the chain locally, follow the steps in the [main README of this repository](../README.md). Here is a summary of the steps:
 
-1. Make sure you have Python >= 3.9 (GenAI-API uses Python 3.12 to deploy the chain) and Poetry >= 2.2 installed.
+1. Make sure you have Python >= 3.11 (GenAI-API uses Python 3.12 to deploy the chain) and Poetry >= 2.2 installed.
 
 2. Edit the `pyproject.toml` and change the URL of the `stratio-releases` repository. You should use the URL of the *Stratio GenAI Developer Proxy* Load Balancer including path "/service/genai-api/v1/pypi/simple".
 
@@ -103,7 +103,7 @@ To deploy the chain in the Stratio GenAI API, follow the steps in the [main READ
 {
   "chain_id": "chat_memory_chain",
   "chain_config": {
-    "package_id": "chat_memory_chain-0.6.0a0",
+    "package_id": "chat_memory_chain-0.7.0a0",
     "chain_module": "chat_memory_chain.chain",
     "chain_class": "MemoryChain",
     "chain_params": {

@@ -38,24 +38,17 @@ poetry run local-env --certs_path /path/to/certs --developer_proxy_url https://g
 poetry run python basic_actor_chain/main.py
 ```
 
-6. Invoke the chain using the `POST /invoke` endpoint with the following request body. Replace `<your-user>` and `<your-tenant>` with your user and tenant:
+6. Invoke the chain using the `POST /invoke` endpoint with the following request body:
 
 ```json
 {
   "input": {
      "user_request": "Hi! Nice to meet you! Where is the Queen of Hearts?"
-  },
-  "config": {
-    "metadata": {
-      "__genai_state": {
-        "client_auth_type": "mtls",
-        "client_user_id": "<your-user>",
-        "client_tenant": "<your-tenant>"
-      }
-    }
   }
 }
 ```
+
+> The user credentials are automatically injected from the environment variables configured by the `local-env` script in step 4. No need to include them in the request body.
 
 ## Deployment in the Stratio GenAI API
 

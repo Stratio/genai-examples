@@ -12,7 +12,7 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 import uuid
 
 from genai_core.chain.base import BaseGenAiChain, GenAiChainParams
-from genai_core.chat_models.stratio_chat import StratioGenAIGatewayChat
+from genai_core.chat_models.litellm_chat_model import StratioLitellmGatewayChat
 from genai_core.clients.api.api_client_model import ConversationState
 from genai_core.constants.constants import (
     CHAIN_KEY_CHAT_ID,
@@ -67,7 +67,7 @@ class MemoryChain(BaseGenAiChain):
     chat_memory: StratioConversationMemory
 
     # => Model and prompt for the travel agent chat
-    model = StratioGenAIGatewayChat
+    model = StratioLitellmGatewayChat
     prompt = ChatPromptTemplate
 
     data = GraphData
@@ -127,7 +127,7 @@ class MemoryChain(BaseGenAiChain):
 
         return StratioConversationMemory(
             max_token_limit=16000,
-            chat_model=StratioGenAIGatewayChat(
+            chat_model=StratioLitellmGatewayChat(
                 endpoint=self.gateway_endpoint,
                 temperature=0,
                 request_timeout=self.request_timeout,
@@ -140,7 +140,7 @@ class MemoryChain(BaseGenAiChain):
         Gateway target URI need to be configured from environment variable GENAI_GATEWAY_URL
         :return: An instance of StratioGenAIGatewayChat.
         """
-        return StratioGenAIGatewayChat(
+        return StratioLitellmGatewayChat(
             endpoint=self.gateway_endpoint,
             temperature=self.chat_temperature,
             n=self.n,

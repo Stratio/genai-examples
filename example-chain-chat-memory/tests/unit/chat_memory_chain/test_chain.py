@@ -11,7 +11,7 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 from unittest.mock import MagicMock
 
 import pytest
-from genai_core.chat_models.stratio_chat import StratioGenAIGatewayChat
+from genai_core.chat_models.litellm_chat_model import StratioLitellmGatewayChat
 from genai_core.constants.constants import (
     CHAIN_KEY_CHAT_ID,
     CHAIN_MEMORY_KEY_CHAT_HISTORY,
@@ -19,7 +19,7 @@ from genai_core.constants.constants import (
 from genai_core.memory.stratio_conversation_memory import StratioConversationMemory
 from genai_core.test.mock_helper import (
     mock_gateway_chat,
-    mock_init_stratio_gateway_openai,
+    mock_init_litellm_gateway,
 )
 from langchain_core.messages import AIMessage, HumanMessage
 
@@ -64,26 +64,9 @@ MOCK_MODEL_MEMORY_RESPONSE = (
 
 @pytest.fixture
 def mock_chat(mocker):
-    mock_init_stratio_gateway_openai(mocker)
-    mocker.patch(
-        "genai_core.chat_models.stratio_chat.GatewayClient.get_endpoint_config",
-        return_value={
-            "id": GATEWAY_ENDPOINT,
-            "endpoint_type": "llm/v2/chat",
-            "model": {
-                "provider": "openai",
-                "name": "gpt-4o-mini-2024-07-18",
-                "input_cost_1k_tokens": 0.00015,
-                "output_cost_1k_tokens": 0.0006,
-                "token_limit": 128000,
-                "config": {
-                    "stratio_credential": "openai-token",
-                },
-            },
-        },
-    )
-    return StratioGenAIGatewayChat(
-        endpoint=GATEWAY_ENDPOINT, target_uri="http://127.0.0.1:1080", use_ssl=False
+    mock_init_litellm_gateway(mocker)
+    return StratioLitellmGatewayChat(
+        endpoint=GATEWAY_ENDPOINT,
     )
 
 

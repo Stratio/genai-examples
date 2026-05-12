@@ -2,8 +2,6 @@
 .idea
 .vscode
 .run
-genai-env.env
-genai-env.sh
 
 # File-based project format:
 *.iml
@@ -23,3 +21,6 @@ __pycache__/
 
 # Coverage
 .coverage
+
+# local environment variables
+.local_env/

@@ -6,7 +6,7 @@ This is an example chain to show how to run queries in Virtualizer from a chain.
 
 To set up the chain locally, follow the steps in the [main README of this repository](../README.md). Here is a summary of the steps:
 
-1. Make sure you have Python >= 3.9 (GenAI-API uses Python 3.12 to deploy the chain) and Poetry >= 2.2 installed.
+1. Make sure you have Python >= 3.11 (GenAI-API uses Python 3.12 to deploy the chain) and Poetry >= 2.2 installed.
 
 2. Edit the `pyproject.toml` and change the URL of the `stratio-releases` repository. You should use the URL of the *Stratio GenAI Developer Proxy* Load Balancer including path "/service/genai-api/v1/pypi/simple".
 
@@ -26,16 +26,10 @@ $ poetry lock --no-update
 $ poetry install
 ```
 
-4. Configure the environment variables executing the script `scripts/create_env_file.py`. You will find the environment variables in the files `genai-env.env` and `genai-env.sh` in the `genai-examples/scripts` folder. This chain uses the following environment variables:
+4. Configure the environment variables running the `local-env` Poetry script. You will find the environment variables in the files `.local_env/genai-env.env` and `.local_env/genai-env.sh`.
 
 ```bash
-GENAI_API_SERVICE_NAME=genai-api-test.s000001-genai
-VAULT_LOCAL_CLIENT_CERT=/path/to/certs/user.crt
-VAULT_LOCAL_CLIENT_KEY=/path/to/certs/user_private.key
-VAULT_LOCAL_CA_CERTS=/path/to/certs/ca-cert.crt
-VIRTUALIZER_HOST=genai-developer-proxy-loadbalancer.your-tenant-genai.yourdomain.com
-VIRTUALIZER_PORT=8080
-VIRTUALIZER_BASE_PATH=/service/virtualizer
+poetry run local-env --certs_path /path/to/certs --developer_proxy_url https://genai.your-tenant.yourdomain.com/genai-developer-proxy
 ```
 
 Please note that the Virtualizer host, when using the *Stratio GenAI Developer Proxy*, should be configured with the value provided by the *Stratio GenAI Developer Proxy*.
@@ -46,24 +40,17 @@ Please note that the Virtualizer host, when using the *Stratio GenAI Developer P
 poetry run python virtualizer_chain/main.py
 ```
 
-6. Invoke the chain using the `POST /invoke` endpoint with the following request body. Replace `<your-user>` and `<your-tenant>` with your user and tenant:
+6. Invoke the chain using the `POST /invoke` endpoint with the following request body:
 
 ```json
 {
   "input": {
      "query": "SELECT 1 as id"
-  },
-  "config": {
-    "metadata": {
-      "__genai_state": {
-        "client_auth_type": "mtls",
-        "client_user_id": "<your-user>",
-        "client_tenant": "<your-tenant>"
-      }
-    }
   }
 }
 ```
+
+> The user credentials are automatically injected from the environment variables configured by the `local-env` script in step 4. No need to include them in the request body.
 
 ## Deployment in the Stratio GenAI API
 
@@ -78,7 +65,7 @@ To deploy the chain in the Stratio GenAI API, follow the steps in the [main READ
 {
   "chain_id": "virtualizer_chain",
   "chain_config": {
-    "package_id": "virtualizer_chain-0.6.0a0",
+    "package_id": "virtualizer_chain-0.7.0a0",
     "chain_module": "virtualizer_chain.chain",
     "chain_class": "VirtualizerChain",
     "chain_params": {

@@ -15,7 +15,7 @@ from genai_core.server.server import GenAiServer
 def main(chain_config):
     """
     Starts a stand-alone GenAI-api-like server with the chain loaded so that in can be easily executed locally.
-    Note that the chain will need access to a Genai-Gateway server, which could be provided from your
+    Note that the chain will need access to a Stratio GenAI LiteLLM server, which could be provided from your
     local machine via the GenAI development proxy. An example of json body to send in invoke POST is
     ```json
        {
@@ -47,13 +47,13 @@ def main(chain_config):
 
 if __name__ == "__main__":
     # Before running this script, refer to the README.md file to know how to set up
-    # your environment correctly in order to communicate with the Stratio GenAI Gateway
+    # your environment correctly in order to communicate with the Stratio GenAI LiteLLM
 
-    # # GenAI Gateway data (chain config)
-    # gateway_endpoint: The ID of the endpoint in the GenAI Gateway pointing to the desired model.
+    # # Stratio GenAI LiteLLM data (chain config)
+    # gateway_endpoint: The ID of the model group in Stratio GenAI LiteLLM pointing to the desired model.
     chain_config = {
         # Change the endpoint according to the model you will use
-        "gateway_endpoint": "openai-chat-gpt-4.1-mini",
+        "gateway_endpoint": "openai-gpt-5.4-mini",
         "llm_timeout": 30,
     }
     main(chain_config)

@@ -5,7 +5,7 @@ hose {
     DEVTIMEOUT = 60
     RELEASETIMEOUT = 60
     BUILDTOOL = 'make'
-    BUILDTOOL_IMAGE = 'stratio/python-builder-3.11:1.2.0'
+    BUILDTOOL_IMAGE = 'stratio/python-builder-3.11:1.3.3'
     BUILDTOOL_CPU_LIMIT = '8'
     BUILDTOOL_CPU_REQUEST = '2'
     PYTHON_MODULE = true
@@ -20,7 +20,7 @@ hose {
             conf: config,
             sonarAdditionalProperties: [
                 "sonar.language": "py",
-                "sonar.python.version": "3.9",
+                "sonar.python.version": "3.11",
                 "sonar.sources": ".",
                 "sonar.exclusions": "*/tests/**,*/scripts/**,*/pytest-coverage.xml",
                 "sonar.tests": ".",

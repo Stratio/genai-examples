@@ -10,15 +10,14 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 
 import pytest
-from genai_core.test.mock_helper import mock_actor, mock_init_stratio_gateway_openai
+from genai_core.test.mock_helper import mock_actor, mock_init_litellm_gateway
 
 from basic_actor_chain.actors.basic_actor import (
-    BasicExampleActor,
     BasicExampleActorOutput,
 )
 from basic_actor_chain.chain import BasicActorChain
 
-GATEWAY_ENDPOINT = "openai-chat-gpt-4.1-mini"
+GATEWAY_ENDPOINT = "openai-gpt-5.4-mini"
 
 USER_REQUEST_EXPLANATION = (
     "The user is asking about the location of the Queen of Hearts in Wonderland."
@@ -34,14 +33,10 @@ ACTOR_OUTPUT = BasicExampleActorOutput(
 
 
 class TestBasicActorChain:
-    @pytest.fixture
-    def actor(self, mocker):
-        mock_init_stratio_gateway_openai(mocker)
-        return BasicExampleActor(gateway_endpoint=GATEWAY_ENDPOINT)
-
-    def test_chain(self, actor, mocker):
-        mock_actor(mocker, actor, [[ACTOR_OUTPUT]])
+    def test_chain(self, mocker):
+        mock_init_litellm_gateway(mocker)
         chain = BasicActorChain(gateway_endpoint=GATEWAY_ENDPOINT, llm_timeout=100)
+        mock_actor(mocker, chain.basic_actor, [ACTOR_OUTPUT])
         chain_dag = chain.chain()
         result = chain_dag.invoke(
             {"user_request": "Hi! Nice to meet you! Where's the Queen of Hearts?"}

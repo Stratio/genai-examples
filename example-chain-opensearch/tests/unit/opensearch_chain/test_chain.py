@@ -24,19 +24,6 @@ COLLECTION_VALUE_TEST_MOCK = "semantic_banking_customer_product360"
 SEARCH_FILTER_TEST_MOCK = "Scott Pillgrim"
 
 
-def mock_init_opensearch_service(mocker):
-    """
-    Mock initialization of the OpenSearch service.
-
-    Args:
-        mocker: The mocker object used to patch methods.
-    """
-    mocker.patch(
-        "opensearchpy.client.indices.IndicesClient.get_alias",
-        return_value={"index": "alias"},
-    )
-
-
 class OpenSearchServiceMock:
     """
     Mock of OpenSearch service with `search_filter_values` method that returns a mock search result.
@@ -147,6 +134,50 @@ class TestOpensearchChain:
             }
         )
         assert OPENSEARCH_NO_RESULTS == result[OPENSEARCH_RESULT_KEY]
+
+    def test_init_opensearch_connection_ok(self, mocker):
+        """
+        Test that _init_opensearch succeeds when test_connection returns True.
+
+        Args:
+            mocker: The mocker object used to patch methods.
+        """
+        mocker.patch(
+            "opensearch_chain.chain.OpenSearchChain._init_credentials",
+            return_value=("cert", "key", "ca"),
+        )
+        mocker.patch(
+            "genai_core.services.opensearch.opensearch_service.OpenSearchService.test_connection",
+            return_value=(True, ""),
+        )
+
+        chain = OpenSearchChain(
+            opensearch_url="mock",
+            opensearch_min_score=30,
+        )
+        assert chain.opensearch_service is not None
+
+    def test_init_opensearch_connection_fail(self, mocker):
+        """
+        Test that _init_opensearch raises RuntimeError when test_connection returns False.
+
+        Args:
+            mocker: The mocker object used to patch methods.
+        """
+        mocker.patch(
+            "opensearch_chain.chain.OpenSearchChain._init_credentials",
+            return_value=("cert", "key", "ca"),
+        )
+        mocker.patch(
+            "genai_core.services.opensearch.opensearch_service.OpenSearchService.test_connection",
+            return_value=(False, "Connection refused"),
+        )
+
+        with pytest.raises(RuntimeError, match="Unable to init OpenSearch Chain"):
+            OpenSearchChain(
+                opensearch_url="mock",
+                opensearch_min_score=30,
+            )
 
 
 if __name__ == "__main__":

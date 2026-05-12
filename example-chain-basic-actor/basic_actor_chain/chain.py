@@ -21,7 +21,7 @@ from .constants.constants import CHAIN_KEY_USER_NAME
 
 # Here you define your chain, which inherits from the BaseGenAiChain, so you only need to implement
 # the `chain` method. Note that this chain is using a custom basic actor that needs to be instantiated with the gateway endpoint (the LLM model used).
-# the model need to be registered in the Stratio Gateway, and the gateway_endpoint variable is the id of the model in the gateway.
+# the model need to be registered in the Stratio GenAI LiteLLM, and the gateway_endpoint variable is the id of the model group in LiteLLM.
 class BasicActorChain(BaseGenAiChain):
     # Actor instance of BasicExampleActor, which will be used in the chain
     basic_actor: BasicExampleActor
@@ -30,7 +30,7 @@ class BasicActorChain(BaseGenAiChain):
         """
         Initializes the BasicActorChain with the given gateway endpoint and timeout.
 
-        :param gateway_endpoint: The ID of the endpoint in the GenAI Gateway pointing to the desired .
+        :param gateway_endpoint: The ID of the model group in Stratio GenAI LiteLLM pointing to the desired model.
         :param llm_timeout: Timeout for the LLM model, default is 30 seconds.
         """
         log.info("Preparing Basic Actor Example chain")

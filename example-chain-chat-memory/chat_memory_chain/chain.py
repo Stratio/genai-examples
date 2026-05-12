@@ -12,7 +12,7 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 import uuid
 
 from genai_core.chain.base import BaseGenAiChain, GenAiChainParams
-from genai_core.chat_models.stratio_chat import StratioGenAIGatewayChat
+from genai_core.chat_models.litellm_chat_model import StratioLitellmGatewayChat
 from genai_core.clients.api.api_client_model import ConversationState
 from genai_core.constants.constants import (
     CHAIN_KEY_CHAT_ID,
@@ -67,7 +67,7 @@ class MemoryChain(BaseGenAiChain):
     chat_memory: StratioConversationMemory
 
     # => Model and prompt for the travel agent chat
-    model = StratioGenAIGatewayChat
+    model = StratioLitellmGatewayChat
     prompt = ChatPromptTemplate
 
     data = GraphData
@@ -82,9 +82,9 @@ class MemoryChain(BaseGenAiChain):
         """
         Initialize the MemoryChain instance.
 
-        :param gateway_endpoint: The endpoint for the model gateway.
-        The endpoint defined should correspond to the model registered in the Stratio GenAi Gateway,
-        and the gateway endpoint need to be accessible through the GenAI development proxy (see README.md)
+        :param gateway_endpoint: The ID of the model group in Stratio GenAI LiteLLM pointing to the desired model.
+        The endpoint defined should correspond to the model group registered in Stratio GenAI LiteLLM,
+        and the LiteLLM endpoint needs to be accessible through the GenAI development proxy (see README.md)
         :param chat_temperature: The temperature setting for the chat model.
         :param request_timeout: The request timeout for the chat model.
         :param n: The number of responses to generate.
@@ -96,7 +96,7 @@ class MemoryChain(BaseGenAiChain):
         self.n = n
         # create an instance of the StratioConversationMemory that will be used to persist the chat history
         self.chat_memory = self._init_stratio_memory()
-        # create model, Gateway target URI is configured from environment variable
+        # create model, LiteLLM target URI is configured from environment variable GENAI_LITELLM_URL
         self.model = self._init_model()
 
         # Create a test prompt for the chat model
@@ -127,7 +127,7 @@ class MemoryChain(BaseGenAiChain):
 
         return StratioConversationMemory(
             max_token_limit=16000,
-            chat_model=StratioGenAIGatewayChat(
+            chat_model=StratioLitellmGatewayChat(
                 endpoint=self.gateway_endpoint,
                 temperature=0,
                 request_timeout=self.request_timeout,
@@ -136,11 +136,11 @@ class MemoryChain(BaseGenAiChain):
 
     def _init_model(self):
         """
-        Initialize the model gateway.
-        Gateway target URI need to be configured from environment variable GENAI_GATEWAY_URL
-        :return: An instance of StratioGenAIGatewayChat.
+        Initialize the LiteLLM model client.
+        LiteLLM target URI needs to be configured from environment variable GENAI_LITELLM_URL
+        :return: An instance of StratioLitellmGatewayChat.
         """
-        return StratioGenAIGatewayChat(
+        return StratioLitellmGatewayChat(
             endpoint=self.gateway_endpoint,
             temperature=self.chat_temperature,
             n=self.n,

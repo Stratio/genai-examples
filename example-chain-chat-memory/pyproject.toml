@@ -1,33 +1,33 @@
 [tool.poetry]
 name = "chat-memory-chain"
-version = "0.6.0a0"
+version = "0.7.0a0"
 description = "A simple chain that permits to store and retrieve conversations in memory"
 authors = []
 
 [tool.poetry.dependencies]
-python = "^3.9"
-genai-core = "0.6.1"
+python = "^3.11"
+genai-core = "0.7.0"
 # already included in genai-core but we set a fixed version
-langchain = "0.3.27"
-langchain-community = "0.3.31"
-langchain-openai = "0.3.35"
-langchain-aws = "0.2.35"
-langgraph = "0.4.10"
-langsmith = "0.4.33"
+langchain = "1.2.15"
+langchain-openai = "1.1.15"
+langgraph = "1.1.8"
+langsmith = "0.7.36"
+openai = "2.33.0"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "8.4.2"
-pytest-asyncio = "1.2.0"
+pytest = "9.0.3"
+pytest-asyncio = "1.3.0"
 pytest-mock = "3.15.1"
-pytest-cov = "7.0.0"
-pylint = "3.3.9"
-pylintfileheader = "1.0.0"
-black = "25.11.0"
-isort = "6.1.0"
-mypy = "1.18.2"
+pytest-cov = "7.1.0"
+pylint = "4.0.5"
+pylintfileheader = "1.1.0"
+black = "26.3.1"
+isort = "8.0.1"
+mypy = "1.20.1"
 
 [tool.poetry.scripts]
 build-fat-package = 'genai_core.builder.builder:main'
+local-env = 'genai_core.local_env.local_env:main'
 
 [tool.isort]
 profile = "black"
@@ -52,7 +52,7 @@ omit = [
 ]
 
 [tool.pylint.main]
-py-version = "3.9"
+py-version = "3.11"
 ignore-patterns = ["^\\.#"]
 ignore-paths = [
     "^tests$",

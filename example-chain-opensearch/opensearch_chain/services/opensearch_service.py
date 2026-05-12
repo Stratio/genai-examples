@@ -11,39 +11,21 @@ written authorization from Stratio Big Data Inc., Sucursal en España.
 
 from typing import Any, Dict, Optional
 
-from opensearchpy import OpenSearch
+from genai_core.services.opensearch.opensearch_service import (
+    OpenSearchService as BaseOpenSearchService,
+)
 
 
-class OpenSearchService:
+class OpenSearchService(BaseOpenSearchService):
     """
     OpenSearch service to interact with an OpenSearch service instance.
+
+    Extends the base OpenSearchService from genai_core, adding a custom
+    search_filter_values method adapted to this example's use case.
+
+    This service should be adapted to the specific needs of your use case
+    and the data indexed in the OpenSearch instance.
     """
-
-    def __init__(
-        self,
-        opensearch_url: str,
-        ca_certs: Optional[str] = None,
-        client_cert: Optional[str] = None,
-        client_key: Optional[str] = None,
-        **kwargs,
-    ):
-        """
-        Initialize the OpenSearchService.
-
-        Args:
-            opensearch_url (str): The URL of the OpenSearch instance.
-            ca_certs (Optional[str], optional): Path to CA certificates. Defaults to None.
-            client_cert (Optional[str], optional): Path to client certificate. Defaults to None.
-            client_key (Optional[str], optional): Path to client key. Defaults to None.
-            **kwargs: Additional keyword arguments for the OpenSearch client.
-        """
-        self.client = OpenSearch(
-            hosts=[opensearch_url],
-            ca_certs=ca_certs,
-            client_cert=client_cert,
-            client_key=client_key,
-            **kwargs,
-        )
 
     def search_filter_values(
         self,
@@ -78,6 +60,7 @@ class OpenSearchService:
             # "column": the column name,
             # "value": the value of the column.
             # the query returns the first documents that matches the search value in a specific table and column
+            transformed_index = self._transform_index(index)
             query = {
                 "size": size,
                 "min_score": min_score,
@@ -100,6 +83,6 @@ class OpenSearchService:
                     }
                 },
             }
-            return self.client.search(index=index, body=query)
+            return self.client.search(index=transformed_index, body=query)
         except Exception as e:
             raise e

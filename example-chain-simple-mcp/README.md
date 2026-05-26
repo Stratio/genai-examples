@@ -14,12 +14,14 @@ This example is the practical counterpart of the MCP server section in the [GenA
 
 ### MCP tools exposed
 
-| Tool | Description |
-|---|---|
-| `get_current_time` | Returns the current UTC date and time in ISO 8601 format. |
-| `format_text` | Formats a string: `upper`, `lower`, `title`, or `reverse`. |
+| Tool | Calls chain? | Description |
+|---|---|---|
+| `get_current_time` | No | Returns the current UTC date and time in ISO 8601 format. |
+| `format_text` | No | Formats a string: `upper`, `lower`, `title`, or `reverse`. |
+| `analyze_text` | **Yes** | Returns word count and character count by delegating to `chain.chain().invoke()`. |
 
-Neither tool calls an LLM, which demonstrates that MCP tools can be pure utility functions.
+`get_current_time` and `format_text` are pure utility functions independent of the chain logic.
+`analyze_text` shows the pattern of calling the chain from an MCP tool.
 
 ## Local deployment
 

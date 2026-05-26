@@ -36,16 +36,21 @@ class FormatTextResponse(McpToolResponse):
     style: Optional[str] = None
 
 
+class AnalyzeTextResponse(McpToolResponse):
+    """Response for the analyze_text MCP tool."""
+
+    text: Optional[str] = None
+    word_count: Optional[int] = None
+    char_count: Optional[int] = None
+
+
 def configure_mcp_tools(mcp: FastMCP, chain: "SimpleMcpChain") -> None:
     """Register all MCP tools on the given FastMCP instance.
 
-    These tools expose utility capabilities that AI assistants and other
-    MCP-compatible clients can call directly, without going through the chain's
-    main invoke endpoint.
-
     Args:
         mcp: The FastMCP server instance to register tools on.
-        chain: The SimpleMcpChain instance (available for tools that need it).
+        chain: The SimpleMcpChain instance used by analyze_text to delegate
+            to the chain's invoke logic.
     """
 
     @mcp.tool(
@@ -96,3 +101,29 @@ def configure_mcp_tools(mcp: FastMCP, chain: "SimpleMcpChain") -> None:
             "reverse": lambda t: t[::-1],
         }
         return FormatTextResponse(result=formatters[style](text), style=style)
+
+    @mcp.tool(
+        annotations={
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+        }
+    )
+    @mcp_tool_wrapper("analyze_text", allowed_roles=MCP_READ_ROLES)
+    def analyze_text(
+        metadata: GenAiMetadata,
+        text: str,
+    ) -> AnalyzeTextResponse:
+        """Returns word count and character count for the given text.
+
+        Delegates to the chain's invoke logic.
+
+        Args:
+            text: The input text to analyze.
+        """
+        result = chain.chain().invoke({"text": text})
+        return AnalyzeTextResponse(
+            text=result["text"],
+            word_count=result["word_count"],
+            char_count=result["char_count"],
+        )

@@ -102,3 +102,19 @@ class TestMcpEndpointTools:
         async with Client(FastMCPTransport(mcp_server)) as client:
             result = await client.call_tool("format_text", {"text": "hello"})
             assert result.structured_content["result"] == "HELLO"
+
+    @pytest.mark.asyncio
+    async def test_analyze_text_calls_chain_invoke(self, mcp_server):
+        async with Client(FastMCPTransport(mcp_server)) as client:
+            result = await client.call_tool("analyze_text", {"text": "hello world"})
+            assert not result.is_error
+            assert result.structured_content["word_count"] == 2
+            assert result.structured_content["char_count"] == 11
+            assert result.structured_content["text"] == "hello world"
+
+    @pytest.mark.asyncio
+    async def test_analyze_text_empty_string(self, mcp_server):
+        async with Client(FastMCPTransport(mcp_server)) as client:
+            result = await client.call_tool("analyze_text", {"text": ""})
+            assert result.structured_content["word_count"] == 0
+            assert result.structured_content["char_count"] == 0

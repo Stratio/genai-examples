@@ -14,6 +14,7 @@ from unittest.mock import MagicMock
 
 from simple_mcp_chain.chain import SimpleMcpChain
 from simple_mcp_chain.mcp_tools import (
+    AnalyzeTextResponse,
     FormatTextResponse,
     GetCurrentTimeResponse,
     configure_mcp_tools,
@@ -51,8 +52,8 @@ class TestSimpleMcpChain:
         mock_mcp = MagicMock()
         result = c.mcp_server(mock_mcp)
         assert result is mock_mcp
-        # configure_mcp_tools calls mcp.tool() twice (one per tool)
-        assert mock_mcp.tool.call_count == 2
+        # configure_mcp_tools calls mcp.tool() three times (one per tool)
+        assert mock_mcp.tool.call_count == 3
 
 
 class TestMcpToolLogic:
@@ -70,11 +71,18 @@ class TestMcpToolLogic:
         assert response.style == "upper"
         assert response.error is None
 
-    def test_configure_mcp_tools_registers_two_tools(self):
+    def test_analyze_text_response_fields(self):
+        response = AnalyzeTextResponse(text="hello world", word_count=2, char_count=11)
+        assert response.text == "hello world"
+        assert response.word_count == 2
+        assert response.char_count == 11
+        assert response.error is None
+
+    def test_configure_mcp_tools_registers_three_tools(self):
         mock_mcp = MagicMock()
         mock_chain = MagicMock()
         configure_mcp_tools(mock_mcp, mock_chain)
-        assert mock_mcp.tool.call_count == 2
+        assert mock_mcp.tool.call_count == 3
 
     def test_configure_mcp_tools_passes_readonly_annotations(self):
         mock_mcp = MagicMock()

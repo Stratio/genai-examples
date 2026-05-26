@@ -82,6 +82,22 @@ async def main() -> None:
                 print(f"  result: {result.structured_content['result']}")
         print()
 
+        # ------------------------------------------------------------------
+        # Call analyze_text — delegates to chain.chain().invoke()
+        # ------------------------------------------------------------------
+        print("Calling analyze_text (delegates to chain invoke) ...")
+        result = await client.call_tool(
+            "analyze_text",
+            {"text": sample_text},
+            meta=AUTH_META,
+        )
+        if result.is_error:
+            print(f"  ERROR: {result.structured_content}")
+        else:
+            print(f"  word_count: {result.structured_content['word_count']}")
+            print(f"  char_count: {result.structured_content['char_count']}")
+        print()
+
         print("Done.")
 
 

@@ -11,12 +11,13 @@ This repository is intended for developers who want to create GenAI chains using
 | [branch-0.3](https://github.com/Stratio/genai-examples/tree/branch-0.3) | 0.3.4              |
 
 This repository provides some simple examples of GenAI chains focused on a specific task.
-There are four basic chains that you can use as a starting point to create your own chains:
+There are five basic chains that you can use as a starting point to create your own chains:
 
 * [Basic Actor Chain](./example-chain-basic-actor/README.md): Example of a GenAI chain that implements a basic actor and invokes it.
 * [Memory Chain](./example-chain-chat-memory/README.md): Example of a GenAI chain that persist the user's conversation in order to remember the context.
 * [Opensearch Chain](./example-chain-opensearch/README.md): Example of a GenAI chain that connects to Opensearch service and processes the result of a search.
 * [Stratio Virtualizer Chain](./example-chain-virtualizer/README.md): Example of a GenAI chain that connects to the Stratio Virtualizer service to perform a query.
+* [Simple MCP Chain](./example-chain-simple-mcp/README.md): Example of a GenAI chain that embeds an MCP server to expose utility tools to AI assistants and other MCP-compatible clients.
 
 Please check the readme of each chain for more information.
 

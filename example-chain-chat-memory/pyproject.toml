@@ -6,7 +6,7 @@ authors = []
 
 [tool.poetry.dependencies]
 python = "^3.11"
-genai-core = "0.7.0"
+genai-core = "0.7.1"
 # already included in genai-core but we set a fixed version
 langchain = "1.2.15"
 langchain-openai = "1.1.15"

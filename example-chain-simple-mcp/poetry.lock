@@ -1018,14 +1018,14 @@ tasks = ["pydocket (>=0.20.0)"]
 
 [[package]]
 name = "genai-core"
-version = "0.7.0"
+version = "0.7.2"
 description = ""
 optional = false
 python-versions = ">=3.11,<4.0"
 groups = ["main"]
 files = [
-    {file = "genai_core-0.7.0-py3-none-any.whl", hash = "sha256:edac88a9e09ce24aa1c18b97cc34750e1efbaddc0479186711d4151758de14f7"},
-    {file = "genai_core-0.7.0.tar.gz", hash = "sha256:7d17fae53250d647f3478df672322dec011cd5135f59b3397813ba1b132ba7b7"},
+    {file = "genai_core-0.7.2-py3-none-any.whl", hash = "sha256:de751928863fa709da5b4c8ae071b4e8caf63e3aa01a4fc12f2304c806a25d5b"},
+    {file = "genai_core-0.7.2.tar.gz", hash = "sha256:0c113ffeceadfb4f0a9af2f45ddd3d1600c5a2fb5def246d340993abec6e9774"},
 ]
 
 [package.dependencies]
@@ -4604,4 +4604,4 @@ cffi = ["cffi (>=1.17,<2.0) ; platform_python_implementation != \"PyPy\" and pyt
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "aec8f5e65773fface09317f63d71d5d11039b43d568c6d137a6dec9a8e074c8f"
+content-hash = "bf8b69ac1e40a194bef4185b034f44cb2d4316a7b90b58f92545bb2dadcd75db"

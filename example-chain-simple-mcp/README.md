@@ -27,7 +27,7 @@ This example is the practical counterpart of the MCP server section in the [GenA
 
 To set up the chain locally, follow the steps in the [main README of this repository](../README.md). Here is a summary:
 
-1. Make sure you have Python >= 3.11 and Poetry >= 2.2 installed.
+1. Make sure you have Python >= 3.14 and Poetry >= 2.2 installed.
 
 2. Edit `pyproject.toml` and set the `stratio-releases` repository URL to your *Stratio GenAI Developer Proxy* Load Balancer:
 
@@ -210,7 +210,7 @@ poetry build
 {
   "chain_id": "simple_mcp_chain",
   "chain_config": {
-    "package_id": "simple_mcp_chain-0.7.0a0",
+    "package_id": "simple_mcp_chain-0.8.0a0",
     "chain_module": "simple_mcp_chain.chain",
     "chain_class": "SimpleMcpChain",
     "chain_params": {}

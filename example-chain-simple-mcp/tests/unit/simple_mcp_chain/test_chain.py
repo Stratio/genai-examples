@@ -9,8 +9,9 @@ nor reverse engineered, disassembled or decompiled, without express
 written authorization from Stratio Big Data Inc., Sucursal en España.
 """
 
-import pytest
 from unittest.mock import MagicMock
+
+import pytest
 
 from simple_mcp_chain.chain import SimpleMcpChain
 from simple_mcp_chain.mcp_tools import (
@@ -60,7 +61,9 @@ class TestMcpToolLogic:
     """Tests for the underlying tool logic, bypassing the async wrapper."""
 
     def test_get_current_time_response_fields(self):
-        response = GetCurrentTimeResponse(time="2025-01-01T00:00:00+00:00", timezone="UTC")
+        response = GetCurrentTimeResponse(
+            time="2025-01-01T00:00:00+00:00", timezone="UTC"
+        )
         assert response.time == "2025-01-01T00:00:00+00:00"
         assert response.timezone == "UTC"
         assert response.error is None

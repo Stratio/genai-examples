@@ -4,7 +4,8 @@ This repository is intended for developers who want to create GenAI chains using
 
 | Git branch                                                              | GenAI Core version | 
 |-------------------------------------------------------------------------|--------------------|
-| main                                                                    | 0.7.0              |
+| main                                                                    | 0.8.0              |
+| [branch-0.7](https://github.com/Stratio/genai-examples/tree/branch-0.7) | 0.7.2              |
 | [branch-0.6](https://github.com/Stratio/genai-examples/tree/branch-0.6) | 0.6.1              |
 | [branch-0.5](https://github.com/Stratio/genai-examples/tree/branch-0.5) | 0.5.1              |
 | [branch-0.4](https://github.com/Stratio/genai-examples/tree/branch-0.4) | 0.4.0              |
@@ -23,7 +24,7 @@ Please check the readme of each chain for more information.
 
 Stratio GenAI chains are built with [Poetry](https://python-poetry.org/docs/#installation), so in order to develop a chain you need to make sure you have the following tools in your machine:
 
-* [Python](https://www.python.org/) >= 3.11 (GenAI-API uses Python 3.12 to deploy the chain)
+* [Python](https://www.python.org/) >= 3.14 (GenAI-API uses Python 3.14 to deploy the chain)
 * [Poetry](https://python-poetry.org/docs/#installing-with-the-official-installer) >= 2.2 (We recommend to use the "official installer method".)
 * A Python editor of you choice, like [PyCharm](https://www.jetbrains.com/pycharm/) or [Visual Studio Code](https://code.visualstudio.com/)
 
@@ -344,7 +345,7 @@ curl -X 'POST' \
   -d '{
       "chain_id": "basic_actor_chain",
       "chain_config": {
-        "package_id": "basic_actor_chain-0.7.0a0",
+        "package_id": "basic_actor_chain-0.8.0a0",
         "chain_module": "basic_actor_chain.chain",
         "chain_class": "BasicActorChain",
         "chain_params": {

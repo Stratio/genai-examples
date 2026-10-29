@@ -3,7 +3,6 @@
 ## Git branch - [main](https://github.com/Stratio/genai-examples)
 
 * Examples built with genai-core 0.8.0
-* [ROCK-15743] CI/CD: update Jenkins builder Docker image to `python-builder-3.14:1.4.0` (Debian 13, Python 3.14, Poetry 2.5.1)
 
 ## Git branch - [branch-0.7](https://github.com/Stratio/genai-examples/tree/branch-0.7)
 

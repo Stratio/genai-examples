@@ -210,7 +210,7 @@ poetry build
 {
   "chain_id": "simple_mcp_chain",
   "chain_config": {
-    "package_id": "simple_mcp_chain-0.8.0a0",
+    "package_id": "simple_mcp_chain-0.9.0a0",
     "chain_module": "simple_mcp_chain.chain",
     "chain_class": "SimpleMcpChain",
     "chain_params": {}

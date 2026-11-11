@@ -4,7 +4,8 @@ This repository is intended for developers who want to create GenAI chains using
 
 | Git branch                                                              | GenAI Core version | 
 |-------------------------------------------------------------------------|--------------------|
-| main                                                                    | 0.8.0              |
+| main                                                                    | 0.9.0              |
+| [branch-0.8](https://github.com/Stratio/genai-examples/tree/branch-0.8) | 0.8.2              |
 | [branch-0.7](https://github.com/Stratio/genai-examples/tree/branch-0.7) | 0.7.2              |
 | [branch-0.6](https://github.com/Stratio/genai-examples/tree/branch-0.6) | 0.6.1              |
 | [branch-0.5](https://github.com/Stratio/genai-examples/tree/branch-0.5) | 0.5.1              |
@@ -345,7 +346,7 @@ curl -X 'POST' \
   -d '{
       "chain_id": "basic_actor_chain",
       "chain_config": {
-        "package_id": "basic_actor_chain-0.8.0a0",
+        "package_id": "basic_actor_chain-0.9.0a0",
         "chain_module": "basic_actor_chain.chain",
         "chain_class": "BasicActorChain",
         "chain_params": {

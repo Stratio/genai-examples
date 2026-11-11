@@ -63,7 +63,7 @@ To deploy the chain in the Stratio GenAI API, follow the steps in the [main READ
 {
   "chain_id": "basic_actor_chain",
   "chain_config": {
-    "package_id": "basic_actor_chain-0.8.0a0",
+    "package_id": "basic_actor_chain-0.9.0a0",
     "chain_module": "basic_actor_chain.chain",
     "chain_class": "BasicActorChain",
     "chain_params": {
